@@ -1115,13 +1115,19 @@ function selectTeamForElim(idx) {
 
 function manualEliminate() {
   const remaining = activeTeamIndices();
-  // Avec exactement 2 équipes restantes (et aucune éliminée), lancer la finale directement
-  if (remaining.length === 2 && state.eliminatedTeams.length === 0) {
-    state.selectedForElim = null;
-    checkFinaleConditionForced();
-    return;
+
+  if (!NO_FINALE) {
+    // Avec exactement 2 équipes restantes (et aucune éliminée), lancer la finale directement
+    if (remaining.length === 2 && state.eliminatedTeams.length === 0) {
+      state.selectedForElim = null;
+      checkFinaleConditionForced();
+      return;
+    }
+    if (remaining.length <= 2) return;
+  } else {
+    // Quiz 2 : pas de finale — permettre l'élimination jusqu'à 2 équipes restantes
+    if (remaining.length <= 2) return;
   }
-  if (remaining.length <= 2) return;
 
   // Si une équipe est sélectionnée manuellement, l'éliminer
   if (state.selectedForElim !== null && remaining.includes(state.selectedForElim)) {
@@ -1729,14 +1735,20 @@ function renderCardGrid(animate) {
 function updateElimBtn() {
   const btn = document.getElementById('elimBtn');
   if (!btn) return;
-  // Quiz 2 : pas d'élimination ni de finale
-  if (NO_FINALE) {
-    btn.classList.add('hidden');
-    return;
-  }
   const remaining = activeTeamIndices();
   if (state.isFinale) {
     btn.classList.add('hidden');
+    return;
+  }
+  // Quiz 2 : pas de label "Passer en Finale" — juste l'élimination classique
+  if (NO_FINALE) {
+    if (remaining.length <= 1) {
+      btn.classList.add('hidden');
+    } else {
+      btn.classList.remove('hidden');
+      btn.innerHTML = '✖ Éliminer';
+      btn.className = 'btn btn-sm btn-danger';
+    }
     return;
   }
   // Avec 2 équipes sans élimination : afficher 'Passer en Finale'
