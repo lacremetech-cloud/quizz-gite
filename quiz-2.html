@@ -1,0 +1,2054 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gîte des G — Défis du savoir</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      /* ── Palette personnalisée ── */
+      --green-dark:   #1F3D2B;   /* Vert profond */
+      --green-mid:    #3E6B4E;   /* Vert moyen */
+      --green-light:  #A8C3A0;   /* Vert clair doux */
+      --green-tint:   #EBF2E8;   /* Vert très pâle */
+      --green-bg:     #F3F7F1;   /* Fond vert quasi blanc */
+      --gold-dark:    #8A6E2A;   /* Doré foncé */
+      --gold-mid:     #C2A65A;   /* Accent doré discret */
+      --gold-light:   #DCC882;   /* Doré clair */
+      --gold-tint:    #F8F2E4;   /* Doré très pâle */
+      --cream:        #F1EBDD;   /* Beige lumineux */
+      --cream-dark:   #E4D8C3;   /* Sable clair */
+      --beige:        #E4D8C3;   /* Sable clair */
+      --beige-dark:   #CFC0A8;   /* Sable plus foncé */
+      --text-dark:    #1F3D2B;   /* Vert profond pour le texte */
+      --text-mid:     #3E6B4E;   /* Vert moyen pour le texte */
+      --text-light:   #6B8C78;   /* Vert grisé */
+      --text-muted:   #A0B8A8;   /* Vert très clair */
+      --sage:         #3E6B4E;   /* Alias vert moyen */
+      --red:          #C0392B;
+      --red-light:    #FADBD8;
+      --shadow-sm:    0 1px 3px rgba(31,61,43,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:    0 4px 12px rgba(31,61,43,0.12), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg:    0 8px 24px rgba(31,61,43,0.15), 0 4px 8px rgba(0,0,0,0.08);
+    }
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #F1EBDD;   /* Beige lumineux */
+      min-height: 100vh;
+      color: var(--text-dark);
+    }
+    body.finale-mode { background: #0F2018; }   /* Vert profond très foncé */
+    body.finale-mode .container { background: transparent; }
+
+    /* ── Pattern background ── */
+    .pattern-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      opacity: 1;
+      background-color: transparent;
+      /* Motif géométrique islamique : carrés en losange entrelacés, style zellige */
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%236B8F71' stroke-width='0.5' opacity='0.13'%3E%3Crect x='5' y='5' width='30' height='30' rx='0' transform='rotate(45 20 20)'/%3E%3Crect x='10' y='10' width='20' height='20' rx='0' transform='rotate(45 20 20)'/%3E%3Cline x1='20' y1='0' x2='20' y2='40'/%3E%3Cline x1='0' y1='20' x2='40' y2='20'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 40px 40px;
+    }
+    .pattern-bg.gold {
+      /* Motif doré pour la finale : même géométrie en doré */
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23C8A84B' stroke-width='0.5' opacity='0.18'%3E%3Crect x='5' y='5' width='30' height='30' rx='0' transform='rotate(45 20 20)'/%3E%3Crect x='10' y='10' width='20' height='20' rx='0' transform='rotate(45 20 20)'/%3E%3Cline x1='20' y1='0' x2='20' y2='40'/%3E%3Cline x1='0' y1='20' x2='40' y2='20'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 40px 40px;
+    }
+
+    /* ── Layout ── */
+    .container { position: relative; z-index: 1; padding: 1rem; max-width: 1400px; margin: 0 auto; }
+    @media (min-width: 768px) { .container { padding: 1.5rem 2rem; } }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+      font-weight: 700; border: none; cursor: pointer;
+      transition: all 0.18s ease; border-radius: 10px;
+      font-size: 0.875rem; font-family: 'Nunito', sans-serif;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-primary {
+      background: var(--green-mid); color: #fff;
+      padding: 0.875rem 2rem; font-size: 1rem; font-weight: 800; border-radius: 12px;
+      box-shadow: 0 2px 0 var(--green-dark), var(--shadow-md);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 3px 0 #2A4D38, var(--shadow-lg); }
+    .btn-primary:active:not(:disabled) { transform: translateY(1px); box-shadow: 0 1px 0 var(--green-dark); }
+    .btn-gold {
+      background: var(--gold-mid); color: #fff;
+      padding: 0.875rem 2rem; font-size: 1rem; font-weight: 800; border-radius: 12px;
+      box-shadow: 0 2px 0 var(--gold-dark), var(--shadow-md);
+    }
+    .btn-gold:hover:not(:disabled) { background: var(--gold-dark); transform: translateY(-1px); }
+    .btn-sm { padding: 0.375rem 0.75rem; font-size: 0.75rem; border-radius: 8px; }
+    .btn-danger { background: var(--red-light); color: var(--red); border: 1px solid #F5B7B1; font-weight: 700; }
+    .btn-danger:hover { background: #F9CECA; }
+    .btn-ghost { background: transparent; color: var(--text-light); font-weight: 700; }
+    .btn-ghost:hover { color: var(--text-dark); background: var(--cream-dark); }
+    .btn-ghost-gold { background: transparent; color: var(--gold-mid); font-weight: 700; }
+    .btn-ghost-gold:hover { color: var(--gold-dark); }
+    .btn-outline-gold {
+      background: var(--gold-tint); color: var(--gold-dark);
+      border: 1.5px solid var(--gold-light); font-weight: 700;
+    }
+    .btn-outline-gold:hover { background: #FAF3D5; }
+    .btn-correct {
+      background: var(--green-mid); color: #fff; flex: 1; padding: 0.875rem;
+      font-weight: 800; font-size: 0.9375rem; border-radius: 10px;
+      box-shadow: 0 2px 0 var(--green-dark);
+    }
+    .btn-correct:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .btn-correct-gold {
+      background: var(--gold-mid); color: #fff; flex: 1; padding: 0.875rem;
+      font-weight: 800; font-size: 0.9375rem; border-radius: 10px;
+      box-shadow: 0 2px 0 var(--gold-dark);
+    }
+    .btn-correct-gold:hover { background: var(--gold-dark); transform: translateY(-1px); }
+    .btn-wrong {
+      flex: 1; padding: 0.875rem; font-weight: 700; font-size: 0.9375rem;
+      background: var(--red-light); color: var(--red);
+      border: 1.5px solid #F5B7B1; border-radius: 10px;
+    }
+    .btn-wrong:hover { background: #F9CECA; }
+    .btn-neutral {
+      width: 100%; padding: 0.75rem; font-weight: 700; border-radius: 10px;
+      background: var(--cream-dark); color: var(--text-light);
+      border: 1.5px solid var(--beige-dark);
+    }
+    .btn-neutral:hover { background: var(--beige); color: var(--text-mid); }
+    .btn-reset {
+      background: var(--gold-mid); color: #fff; padding: 0.875rem 2rem;
+      font-weight: 800; border-radius: 12px;
+      box-shadow: 0 2px 0 var(--gold-dark);
+    }
+    .btn-reset:hover { background: var(--gold-dark); transform: translateY(-1px); }
+
+    /* ── Cards ── */
+    .card-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .card-slot {
+      aspect-ratio: 3/4;
+      width: 90px;
+      flex-shrink: 0;
+    }
+    @media (min-width: 480px) { .card-slot { width: 100px; } }
+    @media (min-width: 640px) { .card-grid { gap: 0.625rem; } .card-slot { width: 110px; } }
+    @media (min-width: 1024px) { .card-slot { width: 120px; } }
+    .card-inner {
+      width: 100%; height: 100%; position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      cursor: pointer; border-radius: 12px;
+    }
+    .card-inner:hover { transform: translateY(-3px) scale(1.03); }
+    .card-inner.flipping { transform: rotateY(180deg) scale(1.03); pointer-events: none; }
+    .card-inner.played { opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    .card-face {
+      position: absolute; inset: 0; border-radius: 12px;
+      border: 1.5px solid; backface-visibility: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 0.5rem; text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    /* ── Palette personnalisée — Cartes par catégorie ── */
+
+    /* Coran : Vert clair doux #A8C3A0 — récitation, soirée calme */
+    .card-face.cat-coran {
+      background: rgba(168, 195, 160, 0.90);
+      border-color: rgba(62,107,78,0.50);
+      box-shadow: 0 2px 6px rgba(62,107,78,0.10), 0 1px 2px rgba(0,0,0,0.04);
+      animation: card-glow-green 4s ease-in-out infinite;
+    }
+    /* Hadith : Sable clair #E4D8C3 — tradition, chaleur */
+    .card-face.cat-hadith {
+      background: rgba(228, 216, 195, 0.90);
+      border-color: rgba(194,166,90,0.45);
+      box-shadow: 0 2px 6px rgba(194,166,90,0.10), 0 1px 2px rgba(0,0,0,0.04);
+      animation: card-glow-sand 4s ease-in-out infinite 0.8s;
+    }
+    /* Culture : Beige lumineux #F1EBDD — connaissance, écriture */
+    .card-face.cat-culture {
+      background: rgba(241, 235, 221, 0.95);
+      border-color: rgba(194,166,90,0.40);
+      box-shadow: 0 2px 8px rgba(194,166,90,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      animation: card-glow-sand 4s ease-in-out infinite 0.4s;
+    }
+    /* Devinettes : Vert moyen #3E6B4E — réflexion, mystère */
+    .card-face.cat-devinettes {
+      background: rgba(62, 107, 78, 0.82);
+      border-color: rgba(31,61,43,0.55);
+      box-shadow: 0 2px 6px rgba(31,61,43,0.12), 0 1px 2px rgba(0,0,0,0.05);
+      animation: card-glow-green 4s ease-in-out infinite 1.2s;
+    }
+    /* Survol */
+    .card-inner:hover .card-face.cat-coran {
+      border-color: rgba(62,107,78,0.80);
+      box-shadow: 0 0 14px rgba(62,107,78,0.25), 0 4px 14px rgba(62,107,78,0.10);
+    }
+    .card-inner:hover .card-face.cat-hadith {
+      border-color: rgba(194,166,90,0.75);
+      box-shadow: 0 0 14px rgba(194,166,90,0.22), 0 4px 14px rgba(194,166,90,0.10);
+    }
+    .card-inner:hover .card-face.cat-culture {
+      border-color: rgba(194,166,90,0.70);
+      box-shadow: 0 0 14px rgba(194,166,90,0.20), 0 4px 14px rgba(194,166,90,0.08);
+    }
+    .card-inner:hover .card-face.cat-devinettes {
+      border-color: rgba(31,61,43,0.80);
+      box-shadow: 0 0 14px rgba(31,61,43,0.25), 0 4px 14px rgba(31,61,43,0.12);
+    }
+    /* Texte */
+    .card-face.cat-coran .card-cat,
+    .card-face.cat-coran .card-level { color: #1F3D2B; }
+    .card-face.cat-hadith .card-cat,
+    .card-face.cat-hadith .card-level { color: #3E4A28; }
+    .card-face.cat-culture .card-cat,
+    .card-face.cat-culture .card-level { color: #3E4A28; }
+    .card-face.cat-devinettes .card-cat { color: #F1EBDD; }
+    .card-face.cat-devinettes .card-level { color: #F1EBDD; }
+    /* Niveau Difficile */
+    .card-face .card-level.difficile-text { color: #8A6E2A !important; font-weight: 900; }
+    .card-face.cat-devinettes .card-level.difficile-text { color: #DCC882 !important; }
+    /* Numéro de carte */
+    .card-face.cat-coran .card-num { background: rgba(31,61,43,0.12); color: #1F3D2B; }
+    .card-face.cat-hadith .card-num { background: rgba(194,166,90,0.15); color: #3E4A28; }
+    .card-face.cat-culture .card-num { background: rgba(194,166,90,0.12); color: #3E4A28; }
+    .card-face.cat-devinettes .card-num { background: rgba(241,235,221,0.20); color: #F1EBDD; }
+    /* Compatibilité */
+    .card-face.debutant { background: rgba(241,235,221,0.95); border-color: rgba(62,107,78,0.35); }
+    .card-face.moyen    { background: rgba(168,195,160,0.90); border-color: rgba(62,107,78,0.45); }
+    .card-face.difficile{ background: rgba(62,107,78,0.82);   border-color: rgba(31,61,43,0.45); }
+    /* Cartes finale : fond vert très foncé, contours lumineux dorés */
+    .card-face.finale-card {
+      background: linear-gradient(145deg, #1F3D2B, #2A4E38);
+      border-color: rgba(194,166,90,0.45);
+      border-width: 1.5px;
+      box-shadow: 0 0 0 0px rgba(194,166,90,0), 0 3px 10px rgba(0,0,0,0.35);
+    }
+    .card-face.finale-card.glow {
+      border-color: var(--gold-mid);
+      border-width: 2px;
+      animation: finale-glow 2.5s ease-in-out infinite;
+    }
+    .card-face.defi-locked {
+      background: #1A2E1E; border-color: #2A4030;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .card-face.defi-locked.finale {
+      background: linear-gradient(145deg, #1F3D2B, #2A4E38);
+      border-color: rgba(194,166,90,0.45);
+      animation: finale-glow 2.5s ease-in-out infinite;
+    }
+    .card-face.defi-unlocked {
+      background: #1A2E1E; border-color: var(--gold-mid);
+      box-shadow: 0 0 0 2px rgba(194,166,90,0.3), 0 4px 12px rgba(0,0,0,0.2);
+    }
+    .card-face.defi-unlocked.finale {
+      background: linear-gradient(145deg, #1F3D2B, #2A4E38);
+      border-color: var(--gold-mid);
+      box-shadow: 0 0 8px rgba(194,166,90,0.5), 0 0 20px rgba(194,166,90,0.2), 0 4px 16px rgba(0,0,0,0.3);
+      animation: finale-glow-strong 1.8s ease-in-out infinite;
+    }
+    .card-icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    .card-cat { font-size: 0.55rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.07em; color: #3E6B4E; margin-bottom: 0.2rem; }
+    .card-cat.gold { color: rgba(194,166,90,0.75); }
+    .card-level { font-size: 0.65rem; font-weight: 800; }
+    .card-face.debutant  .card-level { color: #1F3D2B; }
+    .card-face.moyen     .card-level { color: #1F3D2B; }
+    .card-face.difficile .card-level { color: var(--gold-mid); }
+    .card-level.gold-text { color: rgba(194,166,90,0.85); }
+    .card-num {
+      margin-top: 0.35rem; width: 1.9rem; height: 1.9rem; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      background: rgba(255,255,255,0.50); color: #3E6B4E;
+    }
+    .card-num.gold-bg { background: rgba(194,166,90,0.15); color: rgba(194,166,90,0.9); font-weight: 900; border: 1px solid rgba(194,166,90,0.3); }
+
+    @keyframes deal-in {
+      from { transform: scale(0.6) translateY(16px); opacity: 0; }
+      to   { transform: scale(1) translateY(0);      opacity: 1; }
+    }
+    .card-deal { animation: deal-in 0.3s ease-out both; }
+
+    /* ── Score cards ── */
+    .score-card {
+      padding: 0.75rem 1rem; border-radius: 12px;
+      border: 1.5px solid var(--beige-dark);
+      transition: all 0.3s ease;
+      background: #fff; color: var(--text-light);
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+    }
+    .score-card:hover { border-color: var(--green-light); }
+    .score-card.active {
+      background: var(--green-mid); color: #fff;
+      border-color: var(--green-dark);
+      transform: scale(1.07);
+      box-shadow: 0 4px 16px rgba(92,138,106,0.35), 0 2px 0 var(--green-dark);
+    }
+    .score-card.selected-for-elim {
+      background: var(--red-light); color: var(--red);
+      border-color: #F5B7B1; border-width: 2px;
+      transform: scale(1.07);
+      box-shadow: 0 4px 16px rgba(192,57,43,0.2);
+    }
+    .score-card.eliminated {
+      background: var(--cream-dark); color: var(--text-muted);
+      border-color: var(--beige-dark); opacity: 0.5;
+    }
+    .score-card.finale-active {
+      background: var(--gold-mid); color: #fff;
+      border-color: var(--gold-dark);
+      transform: scale(1.07);
+      box-shadow: 0 4px 16px rgba(194,166,90,0.35), 0 2px 0 var(--gold-dark);
+    }
+    .score-card.finale-inactive {
+      background: rgba(194,166,90,0.08); color: rgba(194,166,90,0.6);
+      border-color: rgba(194,166,90,0.25); opacity: 0.7;
+    }
+    /* Score cards en mode finale : style sombre */
+    body.finale-mode .score-card {
+      background: rgba(255,255,255,0.06); color: rgba(194,166,90,0.7);
+      border-color: rgba(194,166,90,0.2);
+    }
+    body.finale-mode .score-card:hover { border-color: rgba(194,166,90,0.4); }
+    body.finale-mode .score-card.active,
+    body.finale-mode .score-card.finale-active {
+      background: rgba(194,166,90,0.18); color: #E8D08A;
+      border-color: rgba(194,166,90,0.55);
+      box-shadow: 0 0 15px rgba(194,166,90,0.2), 0 4px 16px rgba(0,0,0,0.3);
+    }
+    body.finale-mode .score-label { color: rgba(107,143,113,0.7); }
+    body.finale-mode .score-name { color: #E8D08A; }
+    body.finale-mode .score-pts { color: #fff; }
+    .score-label { font-size: 0.475rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 800; opacity: 0.65; margin-bottom: 0.1rem; }
+    .score-name { font-size: 0.9375rem; font-weight: 800; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .score-pts { font-size: 2rem; font-weight: 900; margin-top: 0.1rem; line-height: 1; }
+    .score-elim { font-size: 0.45rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; color: var(--red); margin-bottom: 0.1rem; }
+
+    /* ── Header ── */
+    .header { max-width: 1400px; margin: 0 auto 1.25rem; }
+    .header-inner { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+    @media (min-width: 768px) { .header-inner { flex-direction: row; justify-content: space-between; } }
+    .header-right { text-align: center; }
+    @media (min-width: 768px) { .header-right { text-align: right; } }
+    .header-title { font-size: 1.125rem; font-weight: 800; color: var(--green-dark); letter-spacing: -0.02em; }
+    .header-title.gold { color: #E8D08A; text-shadow: 0 0 12px rgba(194,166,90,0.3); }
+    .header-subtitle { font-size: 0.8125rem; color: var(--text-light); margin-top: 0.2rem; font-weight: 600; }
+    .header-subtitle.gold { color: rgba(107,143,113,0.8); }
+    .header-turn { font-size: 0.8125rem; color: var(--text-light); }
+    .header-turn span { font-weight: 800; color: var(--gold-dark); }
+    body.finale-mode .header-turn { color: rgba(107,143,113,0.7); }
+    body.finale-mode .header-turn span { color: #E8D08A; }
+    .header-elim { font-size: 0.6875rem; color: var(--text-muted); }
+    .header-controls { display: flex; align-items: center; gap: 0.375rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem; }
+    @media (min-width: 768px) { .header-controls { justify-content: flex-end; } }
+
+    /* ── Finale Banner ── */
+    .finale-banner {
+      text-align: center; padding: 1.25rem 1.5rem; border-radius: 16px; margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, rgba(194,166,90,0.12), rgba(194,166,90,0.06), rgba(107,143,113,0.08));
+      border: 1.5px solid rgba(194,166,90,0.4);
+      box-shadow: 0 0 30px rgba(194,166,90,0.12), 0 4px 20px rgba(0,0,0,0.25);
+      animation: fadeIn 0.4s ease;
+    }
+    .finale-title { font-size: 2.25rem; font-weight: 900; color: var(--gold-light); letter-spacing: 0.04em; text-shadow: 0 0 20px rgba(194,166,90,0.4); animation: pulse 2.5s ease-in-out infinite; }
+    .finale-vs { font-size: 0.8125rem; font-weight: 700; color: rgba(194,166,90,0.7); margin-top: 0.25rem; }
+    .finale-win { font-size: 0.6875rem; color: rgba(107,143,113,0.8); margin-top: 0.2rem; }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: center; padding: 1rem;
+      background: rgba(31,61,43,0.80);
+      backdrop-filter: blur(4px);
+      animation: fadeIn 0.15s ease;
+    }
+    .modal-overlay.sage-bg { background: rgba(31,61,43,0.80); }
+    .modal-overlay.dark-bg { background: rgba(15,25,12,0.88); backdrop-filter: blur(6px); }
+    .modal-box {
+      border-radius: 24px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+      max-width: 42rem; width: 100%; overflow: hidden;
+      animation: scaleIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+      border: 4px solid var(--gold-mid);
+    }
+    .modal-box.light { background: #fff; }
+    .modal-box.dark { background: #fff; border: 3px solid var(--gold-mid); box-shadow: 0 25px 60px rgba(0,0,0,0.5), 0 0 40px rgba(194,166,90,0.15); }
+    .modal-header {
+      padding: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      color: #fff;
+    }
+    .modal-header.sage { background: #3E6B4E; }
+    .modal-header.gold { background: linear-gradient(135deg, #C2A65A, #A8882B); }
+    .modal-header-left { display: flex; align-items: center; gap: 0.875rem; }
+    .modal-cat { font-size: 0.6875rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; }
+    .modal-cat.dark-text { color: rgba(255,255,255,0.85); opacity: 1; }
+    .modal-level { font-size: 1.375rem; font-weight: 900; }
+    .modal-level.dark-text { color: #fff; }
+    .modal-body { padding: 2rem 2.5rem; text-align: center; background: #fff; }
+    @media (max-width: 640px) { .modal-body { padding: 1.5rem; } }
+    .modal-question { font-size: 1.5rem; font-weight: 800; line-height: 1.5; color: #1A2E1E; margin-bottom: 1.75rem; }
+    @media (max-width: 640px) { .modal-question { font-size: 1.125rem; } }
+    .modal-question.gold { color: var(--text-dark); }
+    .modal-audio { padding: 1.25rem; border-radius: 12px; border: 1.5px solid; margin-bottom: 1.75rem; }
+    .modal-audio.light { background: #F5F5DC; border-color: rgba(138,154,91,0.20); }
+    .modal-audio.dark { background: #F5F5DC; border-color: rgba(138,154,91,0.20); }
+    .modal-audio-label { font-weight: 800; font-size: 0.875rem; color: #3E6B4E; margin-bottom: 0.875rem; }
+    .modal-audio-label.gold { color: #3E6B4E; }
+    .modal-response {
+      padding: 1rem 1.25rem; border-radius: 12px;
+      border: 1px solid rgba(212,175,55,0.30);
+      background: #F5F5DC;
+      text-align: left; animation: slideDown 0.2s ease; margin-bottom: 1rem;
+    }
+    .modal-response.dark { background: #F5F5DC; border-color: rgba(212,175,55,0.30); }
+    .modal-response p { font-size: 1.0625rem; font-weight: 700; font-style: italic; color: var(--gold-mid); white-space: pre-line; }
+    .modal-actions { display: flex; gap: 0.875rem; padding-top: 0.875rem; }
+    .modal-defi-actions { display: flex; flex-direction: column; gap: 0.625rem; padding-top: 0.875rem; }
+    .modal-defi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
+    .btn-close {
+      padding: 0.4375rem; border-radius: 50%;
+      background: rgba(255,255,255,0.2); border: none; cursor: pointer;
+      transition: background 0.15s; color: #fff; line-height: 1;
+    }
+    .btn-close:hover { background: rgba(255,255,255,0.3); }
+    .btn-reveal {
+      background: transparent; border: none; cursor: pointer;
+      font-weight: 700; font-size: 0.875rem;
+      text-decoration: underline; text-underline-offset: 3px;
+      transition: opacity 0.15s; font-family: 'Nunito', sans-serif;
+    }
+    .btn-reveal:hover { opacity: 0.6; }
+    .btn-reveal.sage { color: #3E6B4E; }
+    .btn-reveal.gold { color: #3E6B4E; }
+
+    /* ── Timer ── */
+    .timer-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4375rem 0.875rem; border-radius: 9999px;
+      font-weight: 800; font-size: 0.8125rem; border: none; cursor: pointer;
+      font-family: 'Nunito', sans-serif;
+    }
+    .timer-btn.sage { background: var(--green-mid); color: #fff; }
+    .timer-btn.gold { background: var(--gold-tint); color: var(--gold-dark); border: 1.5px solid var(--gold-light); }
+    .timer-display {
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.4375rem 0.875rem; border-radius: 9999px;
+      font-family: 'Nunito', monospace; font-weight: 900; font-size: 1.125rem;
+    }
+    .timer-display.normal { background: var(--green-tint); color: var(--green-dark); border: 1.5px solid #C0D8C8; }
+    .timer-display.normal.gold-bg { background: var(--gold-tint); color: var(--gold-dark); border: 1.5px solid var(--gold-light); }
+    .timer-display.urgent { background: var(--red); color: #fff; animation: pulse 0.5s ease-in-out infinite; }
+
+    /* ── Leaderboard ── */
+    .lb-row { display: flex; align-items: center; gap: 0.875rem; padding: 0.625rem 0.75rem; border-radius: 10px; }
+    .lb-row.first-light { background: var(--gold-tint); border: 1px solid var(--gold-light); }
+    .lb-row.first-dark  { background: rgba(194,166,90,0.1); border: 1px solid rgba(194,166,90,0.22); }
+    .lb-row.other-light { background: var(--green-tint); }
+    .lb-row.other-dark  { background: rgba(255,255,255,0.04); }
+    .lb-row.elim        { background: var(--cream-dark); opacity: 0.45; }
+    .lb-rank  { font-size: 1.125rem; font-weight: 900; width: 1.75rem; text-align: center; }
+    .lb-name  { font-weight: 800; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lb-score { font-size: 1.125rem; font-weight: 900; color: var(--gold-dark); }
+
+    /* ── Home Screen ── */
+    .home-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+    .home-card {
+      position: relative; z-index: 1;
+      background: #fff; padding: 2.5rem 2rem; border-radius: 20px;
+      box-shadow: var(--shadow-lg), 0 0 0 1px rgba(61,107,80,0.06);
+      max-width: 28rem; width: 100%;
+      animation: scaleIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .home-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 60px; height: 60px;
+      background: var(--green-tint); border-radius: 16px; margin-bottom: 1.25rem;
+      border: 1.5px solid #C0D8C8;
+    }
+    .home-title { font-size: 1.875rem; font-weight: 900; color: var(--text-dark); }
+    .home-subtitle { color: var(--text-light); font-weight: 600; margin-top: 0.25rem; font-size: 0.875rem; }
+    .form-label { display: block; font-size: 0.75rem; font-weight: 800; color: var(--text-light); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .form-select, .form-input {
+      width: 100%; padding: 0.6875rem 0.875rem;
+      border: 1.5px solid var(--beige-dark); border-radius: 10px;
+      outline: none; transition: all 0.15s; font-size: 0.875rem;
+      background: var(--cream); color: var(--text-dark); font-weight: 600;
+      font-family: 'Nunito', sans-serif;
+    }
+    .form-select:focus, .form-input:focus {
+      box-shadow: 0 0 0 3px rgba(92,138,106,0.15);
+      border-color: var(--green-mid);
+    }
+    .form-input-wrap { position: relative; }
+    .form-input { padding-left: 2.125rem; }
+    .form-input-icon { position: absolute; left: 0.6875rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.8125rem; }
+    .rules-box { background: var(--green-tint); border-radius: 10px; padding: 0.875rem; font-size: 0.75rem; color: var(--text-mid); border: 1px solid #C0D8C8; }
+    .rules-title { font-weight: 800; color: var(--green-dark); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; font-size: 0.6875rem; }
+    .rules-row { margin-bottom: 0.25rem; }
+
+    /* ── Finished Screen ── */
+    .finished-overlay { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; background: rgba(0,0,0,0.88); backdrop-filter: blur(16px); }
+    .finished-box { position: relative; z-index: 10; text-align: center; max-width: 32rem; width: 100%; animation: scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1); }
+    .finished-trophy { font-size: 7rem; line-height: 1; margin-bottom: 1rem; animation: trophy-bounce 1s ease-in-out 0.5s 3; }
+    .finished-title { font-size: 2.75rem; font-weight: 900; color: var(--gold-mid); margin-bottom: 0.5rem; }
+    .finished-winner { font-size: 1.75rem; font-weight: 900; color: #fff; margin-bottom: 0.5rem; }
+    .finished-sub { color: rgba(194,166,90,0.6); font-size: 1rem; margin-bottom: 2rem; }
+    .finished-scores { background: rgba(255,255,255,0.05); padding: 1.5rem; border-radius: 14px; border: 1px solid rgba(194,166,90,0.18); margin-bottom: 1.25rem; }
+    .finished-scores-title { font-size: 0.6875rem; font-weight: 800; color: rgba(194,166,90,0.5); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.875rem; }
+    .finished-score-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.625rem; }
+    .finished-score-name { font-weight: 800; color: var(--gold-mid); font-size: 0.9375rem; }
+    .finished-score-pts { font-size: 1.75rem; font-weight: 900; color: #fff; }
+    .finished-ranking { background: rgba(255,255,255,0.04); padding: 1rem; border-radius: 12px; border: 1px solid rgba(194,166,90,0.1); margin-bottom: 1.25rem; text-align: left; }
+    .finished-ranking-title { font-size: 0.6875rem; font-weight: 800; color: rgba(194,166,90,0.5); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.625rem; }
+    .finished-rank-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.3rem 0; }
+    .finished-rank-medal { font-size: 0.875rem; }
+    .finished-rank-name { font-weight: 700; color: var(--gold-mid); flex: 1; font-size: 0.875rem; }
+    .finished-rank-pts { font-weight: 900; color: #fff; font-size: 0.875rem; }
+
+    /* ── Animations ── */
+    @keyframes card-glow-green {
+      0%, 100% {
+        box-shadow: 0 2px 6px rgba(120,160,100,0.10), 0 1px 2px rgba(0,0,0,0.04);
+        border-color: rgba(120,160,100,0.40);
+      }
+      50% {
+        box-shadow: 0 0 12px rgba(120,160,100,0.28), 0 2px 8px rgba(120,160,100,0.12);
+        border-color: rgba(120,160,100,0.70);
+      }
+    }
+    @keyframes card-glow-blue {
+      0%, 100% {
+        box-shadow: 0 2px 6px rgba(120,148,170,0.10), 0 1px 2px rgba(0,0,0,0.04);
+        border-color: rgba(120,148,170,0.40);
+      }
+      50% {
+        box-shadow: 0 0 12px rgba(120,148,170,0.28), 0 2px 8px rgba(120,148,170,0.12);
+        border-color: rgba(120,148,170,0.70);
+      }
+    }
+    @keyframes card-glow-gold {
+      0%, 100% {
+        box-shadow: 0 2px 8px rgba(194,166,90,0.10), 0 1px 2px rgba(0,0,0,0.05);
+        border-color: rgba(194,166,90,0.45);
+      }
+      50% {
+        box-shadow: 0 0 14px rgba(194,166,90,0.28), 0 2px 10px rgba(194,166,90,0.12);
+        border-color: rgba(194,166,90,0.75);
+      }
+    }
+    @keyframes card-glow-rose {
+      0%, 100% {
+        box-shadow: 0 2px 6px rgba(185,130,100,0.10), 0 1px 2px rgba(0,0,0,0.04);
+        border-color: rgba(185,130,100,0.40);
+      }
+      50% {
+        box-shadow: 0 0 12px rgba(185,130,100,0.28), 0 2px 8px rgba(185,130,100,0.12);
+        border-color: rgba(185,130,100,0.70);
+      }
+    }
+    @keyframes card-glow-sand {
+      0%, 100% {
+        box-shadow: 0 2px 6px rgba(105,96,78,0.10), 0 1px 2px rgba(0,0,0,0.04);
+        border-color: rgba(105,96,78,0.35);
+      }
+      50% {
+        box-shadow: 0 0 12px rgba(105,96,78,0.24), 0 2px 8px rgba(105,96,78,0.10);
+        border-color: rgba(105,96,78,0.65);
+      }
+    }
+    @keyframes fadeIn    { from { opacity: 0; }                    to { opacity: 1; } }
+    @keyframes scaleIn   { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    @keyframes slideDown { from { max-height: 0; opacity: 0; }     to { max-height: 200px; opacity: 1; } }
+    @keyframes pulse     { 0%, 100% { opacity: 1; } 50% { opacity: 0.65; } }
+    @keyframes defi-border-pulse {
+      0%, 100% { border-color: var(--gold-mid); box-shadow: 0 0 0 2px rgba(194,166,90,0.25), 0 4px 12px rgba(0,0,0,0.15); }
+      50%       { border-color: var(--gold-light); box-shadow: 0 0 0 3px rgba(194,166,90,0.45), 0 4px 16px rgba(0,0,0,0.2); }
+    }
+    @keyframes defi-unlock-flash {
+      0%   { border-color: var(--gold-light); box-shadow: 0 0 0 6px rgba(194,166,90,0.6), 0 0 30px rgba(194,166,90,0.5), 0 0 60px rgba(194,166,90,0.2); transform: scale(1.08); }
+      20%  { border-color: #fff; box-shadow: 0 0 0 8px rgba(255,255,255,0.4), 0 0 40px rgba(194,166,90,0.6); transform: scale(1.12); }
+      40%  { border-color: var(--gold-light); box-shadow: 0 0 0 5px rgba(194,166,90,0.5), 0 0 25px rgba(194,166,90,0.4); transform: scale(1.06); }
+      60%  { border-color: #fff; box-shadow: 0 0 0 7px rgba(255,255,255,0.35), 0 0 35px rgba(194,166,90,0.5); transform: scale(1.10); }
+      80%  { border-color: var(--gold-mid); box-shadow: 0 0 0 4px rgba(194,166,90,0.4), 0 0 20px rgba(194,166,90,0.3); transform: scale(1.04); }
+      100% { border-color: var(--gold-mid); box-shadow: 0 0 0 2px rgba(194,166,90,0.25), 0 4px 12px rgba(0,0,0,0.15); transform: scale(1); }
+    }
+    .card-face.defi-unlocked {
+      animation: defi-unlock-flash 1.2s ease-in-out infinite !important;
+    }
+    @keyframes finale-glow {
+      0%, 100% {
+        border-color: rgba(194,166,90,0.4);
+        box-shadow: 0 0 6px rgba(194,166,90,0.15), 0 3px 10px rgba(0,0,0,0.3);
+      }
+      50% {
+        border-color: rgba(194,166,90,0.75);
+        box-shadow: 0 0 14px rgba(194,166,90,0.35), 0 0 4px rgba(194,166,90,0.2), 0 3px 12px rgba(0,0,0,0.35);
+      }
+    }
+    @keyframes finale-glow-strong {
+      0%, 100% {
+        border-color: var(--gold-mid);
+        box-shadow: 0 0 10px rgba(194,166,90,0.4), 0 0 25px rgba(194,166,90,0.15), 0 4px 16px rgba(0,0,0,0.3);
+      }
+      50% {
+        border-color: var(--gold-light);
+        box-shadow: 0 0 20px rgba(194,166,90,0.65), 0 0 40px rgba(194,166,90,0.25), 0 4px 20px rgba(0,0,0,0.4);
+      }
+    }
+    @keyframes trophy-bounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25%       { transform: translateY(-10px) rotate(-8deg); }
+      75%       { transform: translateY(-10px) rotate(8deg); }
+    }
+    @keyframes defi-unlock-bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-3px); }
+    }
+    .defi-unlock-label { animation: defi-unlock-bounce 1.2s ease-in-out infinite; }
+
+
+    /* ── Bouton Mute ── */
+    #muteBtn {
+      position: fixed;
+      top: 0.75rem;
+      right: 0.75rem;
+      z-index: 9999;
+      background: rgba(255,255,255,0.92);
+      border: 1.5px solid var(--gold-mid);
+      border-radius: 50%;
+      width: 2.25rem;
+      height: 2.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: background 0.2s, transform 0.15s;
+      color: var(--green-deep);
+    }
+    #muteBtn:hover { background: rgba(255,255,255,1); transform: scale(1.08); }
+    body.finale-mode #muteBtn {
+      background: rgba(31,61,43,0.85);
+      border-color: var(--gold-mid);
+      color: var(--gold-light);
+    }
+
+    /* ── Utility ── */
+    .hidden { display: none !important; }
+    .space-y-3 > * + * { margin-top: 0.75rem; }
+    .space-y-4 > * + * { margin-top: 1rem; }
+    .space-y-6 > * + * { margin-top: 1.5rem; }
+    .flex { display: flex; }
+    .flex-wrap { flex-wrap: wrap; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .gap-2 { gap: 0.5rem; }
+    .gap-3 { gap: 0.75rem; }
+    .gap-4 { gap: 1rem; }
+    .text-center { text-align: center; }
+    .font-bold { font-weight: 700; }
+    .font-black { font-weight: 900; }
+    .w-full { width: 100%; }
+    .mt-1 { margin-top: 0.25rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .mt-4 { margin-top: 1rem; }
+    .mb-2 { margin-bottom: 0.5rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .mb-6 { margin-bottom: 1.5rem; }
+    .mb-8 { margin-bottom: 2rem; }
+    audio { width: 100%; }
+    .scores-wrap { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+  </style>
+</head>
+<body>
+  <button id="muteBtn" onclick="toggleMute()" title="Activer/désactiver la musique">🔊</button>
+
+<div class="pattern-bg" id="patternBg"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- HOME SCREEN -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="homeScreen" class="home-wrap">
+  <div class="home-card">
+    <div class="text-center mb-8">
+      <div class="home-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3E6B4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      </div>
+      <h1 class="home-title">Les défis du savoir</h1>
+      <p class="home-subtitle">By Jillaq</p>
+    </div>
+
+    <div class="space-y-6">
+      <div>
+        <label class="form-label">Nombre d'équipes</label>
+        <select id="numTeamsSelect" class="form-select" onchange="handleNumTeamsChange(this.value)">
+          <option value="2">2 équipes</option>
+          <option value="3">3 équipes</option>
+          <option value="4" selected>4 équipes</option>
+          <option value="5">5 équipes</option>
+          <option value="6">6 équipes</option>
+          <option value="7">7 équipes</option>
+          <option value="8">8 équipes</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="form-label">Noms des équipes</label>
+        <div id="teamInputs" class="space-y-3"></div>
+      </div>
+
+      <button class="btn btn-primary w-full" onclick="startTournament()" id="startBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Lancer le Tournoi
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- GAME SCREEN -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="gameScreen" class="hidden">
+  <div class="container">
+
+    <!-- Finale Banner -->
+    <div id="finaleBanner" class="finale-banner hidden">
+      <p class="finale-title">🏆 GRANDE FINALE !</p>
+      <p class="finale-vs" id="finaleVs"></p>
+
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <div class="header-inner">
+        <!-- Scores -->
+        <div class="scores-wrap" id="scoresWrap"></div>
+
+        <!-- Right info -->
+        <div class="header-right">
+          <h1 class="header-title" id="headerTitle">Les défis du savoir</h1>
+          <p class="header-subtitle" id="headerSubtitle">Tour de : <span id="currentTeamName" style="color:var(--gold);font-weight:700;"></span></p>
+          <p class="header-elim" id="elimStatus"></p>
+          <div class="header-controls">
+            <button class="btn btn-sm btn-outline-gold" onclick="showLeaderboard()" id="lbBtn">
+              🏆 Classement
+            </button>
+            <button class="btn btn-sm btn-ghost" onclick="shuffleCards()" id="shuffleBtn" style="color:var(--sage);">
+              🔀 Mélanger
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="manualEliminate()" id="elimBtn">
+              ✖ Éliminer
+            </button>
+            <button class="btn btn-sm btn-ghost" onclick="resetGame()" style="color:var(--sage);">
+              ↺ Recommencer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Grid -->
+    <div class="card-grid" id="cardGrid"></div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- CHALLENGE MODAL -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="challengeModal" class="modal-overlay hidden">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header" id="modalHeader">
+      <div class="modal-header-left">
+        <button class="btn-close" onclick="closeModal()" id="modalCloseBtn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div>
+          <p class="modal-cat" id="modalCat"></p>
+          <h3 class="modal-level" id="modalLevel"></h3>
+        </div>
+      </div>
+      <div id="timerWrap"></div>
+    </div>
+    <div class="modal-body">
+      <p class="modal-question" id="modalQuestion"></p>
+      <div id="audioWrap" class="hidden modal-audio">
+        <div class="flex items-center justify-center gap-4 mb-4">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="audioIcon"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <p class="modal-audio-label" id="audioLabel">Écoute attentive...</p>
+        </div>
+        <audio id="audioPlayer" controls></audio>
+      </div>
+      <div class="space-y-6">
+        <button class="btn-reveal" id="revealBtn" onclick="toggleResponse()">Voir la réponse</button>
+        <div id="responseBox" class="modal-response hidden">
+          <p id="responseText"></p>
+        </div>
+        <div id="actionBtns"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- LEADERBOARD MODAL -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="leaderboardModal" class="modal-overlay hidden dark-bg" onclick="hideLeaderboard()">
+  <div class="modal-box" id="lbBox" onclick="event.stopPropagation()" style="max-width:28rem;">
+    <div class="modal-header" id="lbHeader">
+      <div class="flex items-center gap-3">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+        <h3 style="font-size:1.25rem;font-weight:700;">Classement</h3>
+      </div>
+      <button class="btn-close" onclick="hideLeaderboard()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="lbContent" style="padding:1.5rem;" class="space-y-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<!-- FINISHED SCREEN -->
+<!-- ═══════════════════════════════════════════════════════════════════════════ -->
+<div id="finishedScreen" class="finished-overlay hidden">
+  <div class="pattern-bg gold" style="position:absolute;inset:0;z-index:0;"></div>
+  <div class="finished-box">
+    <div class="finished-trophy">🏆</div>
+    <h2 class="finished-title">🏆 CHAMPION !</h2>
+    <p class="finished-winner" id="winnerName"></p>
+    <p class="finished-sub">Félicitations à toutes les participantes ! 🌟</p>
+    <div class="finished-scores" id="finaleScoreBox"></div>
+    <div class="finished-ranking" id="rankingBox"></div>
+    <button class="btn btn-reset" onclick="resetGame()">
+      ↺ Nouveau Tournoi
+    </button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════════════════
+
+const CHALLENGES = [
+  // ─── Hadiths à compléter (9 cartes) ───────────────────────────────────────
+  { id:1, cat:'Hadith', icon:'📖', level:'Débutant', pts:1, content:"Le Prophète (ﷺ) a dit : « Le sourire que tu fais à ton frère est une ______ »", response:"...aumône. (Hadith rapporté par Jami' at-Tirmidhi) — 1 mot à trouver." },
+  { id:2, cat:'Hadith', icon:'📖', level:'Débutant', pts:1, content:"Le Prophète (ﷺ) a dit : « Il n'est pas permis à un musulman de boycotter son frère plus de ______ ______ »", response:"...trois jours. (Hadith rapporté par Al-Bukhari et Muslim) — 2 mots à trouver." },
+  { id:3, cat:'Hadith', icon:'📖', level:'Moyen', pts:2, content:"Le Prophète (ﷺ) a dit : « Certes Allah ne regarde pas vos corps ni vos apparences, mais Il regarde ______ ______ et ______ ______ »", response:"...vos cœurs et vos actions. (Hadith rapporté par Muslim) — 4 mots à trouver (2 + 2)." },
+  { id:4, cat:'Hadith', icon:'📖', level:'Moyen', pts:2, content:"Le Prophète (ﷺ) a dit : « N'entrera pas au Paradis celui qui a dans son cœur le poids d'un atome de ______ »", response:"...orgueil. (Hadith rapporté par Muslim) — 1 mot à trouver." },
+  { id:5, cat:'Hadith', icon:'📖', level:'Moyen', pts:2, content:"Le Prophète (ﷺ) a dit : « Celui qui délaisse quelque chose pour Allah, Allah le lui remplace par ______ ______ ______ »", response:"...quelque chose de meilleur. (Hadith rapporté par Musnad Ahmad) — 3 mots à trouver." },
+  { id:6, cat:'Hadith', icon:'📖', level:'Difficile', pts:3, content:"Le Prophète (ﷺ) a dit : « Celui qui se rapproche de Moi d'un empan, Je me rapproche de lui d'une ______ »", response:"...coudée. (Hadith Qudsî rapporté par Al-Bukhari et Muslim) — 1 mot à trouver." },
+  { id:7, cat:'Hadith', icon:'📖', level:'Difficile', pts:3, content:"Le Prophète (ﷺ) a dit : « Si le fils d'Adam possédait une vallée d'or, il aimerait ______ ______ ______ »", response:"...en avoir une seconde. (Hadith rapporté par Al-Bukhari) — 3 mots à trouver." },
+  { id:8, cat:'Hadith', icon:'📖', level:'Difficile', pts:3, content:"Le Prophète (ﷺ) a dit : « On amènera l'Enfer ce jour-là avec soixante-dix mille rênes, ______ ______ ______ ______ ______ ______ ______ »", response:"...chacune tenue par soixante-dix mille anges. (Hadith rapporté par Muslim) — 7 mots à trouver." },
+  { id:9, cat:'Hadith', icon:'📖', level:'Difficile', pts:3, content:"Le Prophète (ﷺ) a dit : « Quiconque enlève une difficulté à un croyant dans ce bas-monde, Allah lui enlèvera ______ ______ ______ ______ ______ ______ ______ »", response:"...une difficulté du Jour de la Résurrection. (Hadith rapporté par Muslim) — 7 mots à trouver." },
+
+  // ─── Culture G (11 cartes) ───────────────────────────────────────────────
+  { id:10, cat:'Culture', icon:'🌙', level:'Débutant', pts:1, content:"Quel est le nom de la chamelle du Prophète (ﷺ) ?", response:"Al-Qaswa (القصواء) — la chamelle du Prophète (ﷺ), célèbre pour avoir refusé d'avancer à l'entrée de La Mecque lors du traité d'Al-Hudaybiyyah." },
+  { id:11, cat:'Culture', icon:'🌙', level:'Débutant', pts:1, content:"Quel ange est chargé de souffler dans la trompe le Jour du Jugement ?", response:"Israfil (إسرافيل) — mentionné dans les hadiths (non explicitement dans le Coran). Il soufflera deux fois : une pour anéantir, l'autre pour ressusciter." },
+  { id:12, cat:'Culture', icon:'🌙', level:'Débutant', pts:1, content:"Quelle est la première bataille en Islam ?", response:"La bataille de Badr (غزوة بدر) — 2e année de l'Hégire. 313 musulmans contre ~1000 mécréants de Quraysh." },
+  { id:13, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quel compagnon faisait partie des principaux scribes de la révélation ?", response:"Zayd ibn Thabit (زيد بن ثابت) — principal scribe de la révélation, puis chargé par Abû Bakr (puis ʿUthmân) de compiler le Coran." },
+  { id:14, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quel est le nom du traité conclu entre les musulmans et Quraysh ?", response:"Le traité d'Al-Hudaybiyyah (صلح الحديبية) — conclu en l'an 6 de l'Hégire, trêve de 10 ans entre le Prophète (ﷺ) et Quraysh." },
+  { id:15, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quelle sourate ne commence pas par « Bismillah » ?", response:"Sourate At-Tawba (التوبة) — sourate 9. La seule sourate du Coran qui ne commence pas par la basmalah." },
+  { id:16, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quel prophète a été à la fois roi et juge ?", response:"Dâwûd (داود) — Prophète, roi et juge. Sulaymân (سليمان) est également accepté. Allah dit : « Et Nous avons donné à Dâwûd la sagesse et la parole décisive. » (Sâd 38:20)" },
+  { id:17, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quel est le seul compagnon mentionné explicitement par son nom dans le Coran ?", response:"Zayd ibn Hâritha (زيد بن حارثة) — mentionné dans la sourate Al-Ahzâb (33:37). Fils adoptif du Prophète (ﷺ) avant l'abolition de l'adoption légale." },
+  { id:18, cat:'Culture', icon:'🌙', level:'Difficile', pts:3, content:"Quel est le nom du livre de l'Imam Mâlik qui regroupe hadith et fiqh ?", response:"Al-Muwatta' (الموطأ) — « Le Chemin Aplani ». Premier grand recueil de hadiths et de fiqh, rédigé par l'Imam Mâlik ibn Anas." },
+  { id:19, cat:'Culture', icon:'🌙', level:'Difficile', pts:3, content:"Quel compagnon suivait les traces pour effacer les pistes lors de la Hijra ?", response:"ʿÂmir ibn Fuhayra (عامر بن فهيرة) — berger affranchi d'Abû Bakr, il faisait passer son troupeau derrière le Prophète (ﷺ) et Abû Bakr pour effacer leurs traces." },
+  { id:20, cat:'Culture', icon:'🌙', level:'Difficile', pts:3, content:"Combien de personnes ont prêté serment lors de la seconde Bayʿat al-ʿAqaba ?", response:"73 hommes et 2 femmes — les deux femmes étant Nusayba bint Kaʿb (Umm ʿUmâra) et Asmâʾ bint ʿAmr. Ce serment scelle l'alliance avec les Ansâr avant la Hijra." },
+
+  // ─── Vocabulaire (4 cartes — toutes Difficile 3pt) ───────────────────────
+  { id:21, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot كُفْر (kufr) à l'origine (étymologie) ?", response:"Couvrir, cacher. 💡 L'origine linguistique renvoie au fait de cacher la vérité — d'où le sens théologique d'ingratitude et de rejet de la foi." },
+  { id:22, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot قِيَاس (qiyās) ?", response:"Raisonnement par analogie en jurisprudence — comparer un cas à un autre pour en déduire une règle. 4e source du fiqh après le Coran, la Sunnah et l'Ijmâʿ." },
+  { id:23, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot بَصِيرَة (baṣīra) ?", response:"Clairvoyance intérieure, vision du cœur. 💡 Différent de « baṣar » (voir avec les yeux) : la baṣīra est la perception profonde de la vérité." },
+  { id:24, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot زُهْد (zuhd) ?", response:"Se détacher de ce bas-monde. 💡 Ce n'est pas abandonner le monde — c'est ne pas s'y attacher intérieurement tout en y vivant pleinement." },
+
+  // ─── Écoute du Coran — Juz Amma (4 cartes, 2 pts) ─────────────────────────
+  { id:25, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Mutaffifîn (83) — Les Fraudeurs.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/083.mp3", audioStart:45 },
+  { id:26, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Ghâshiya (88) — L'Enveloppante.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/088.mp3", audioStart:30 },
+  { id:27, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Fajr (89) — L'Aube.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/089.mp3", audioStart:40 },
+  { id:28, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Ad-Duhâ (93) — Le Jour Montant.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/093.mp3", audioStart:20 },
+
+  // ─── Défis (5 cartes) ─────────────────────────────────────────────────────
+  { id:29, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"🐪 En 60 secondes, citez un maximum d'animaux mentionnés dans le Coran. +1 par bonne réponse. Pas de doublon.", response:"Réponses possibles : vache, veau, chameau, cheval, mulet, âne, chien, loup, lion, singe, porc, poisson / baleine, oiseau, corbeau, fourmi, abeille, araignée, éléphant, serpent, grenouille, sauterelles, poux, moustique, mouche, papillon, caille, huppe + catégories : bétail, créatures, animaux marins.", timed:true, timerSec:60 },
+  { id:30, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant « إِسْتَبْرَق » (brocart épais) gagne le point.", response:"Versets possibles : Al-Kahf 18:31 « يَلْبَسُونَ ثِيَابًا خُضْرًا مِّن سُندُسٍ وَإِسْتَبْرَقٍ… » — Ad-Dukhân 44:53 « يَلْبَسُونَ مِن سُندُسٍ وَإِسْتَبْرَقٍ مُّتَقَابِلِينَ » — Ar-Rahmân 55:54 « مُتَّكِئِينَ عَلَىٰ فُرُشٍ بَطَائِنُهَا مِنْ إِسْتَبْرَقٍ… » — Al-Insân 76:21 « عَالِيَهُمْ ثِيَابُ سُندُسٍ خُضْرٌ وَإِسْتَبْرَقٌ… »." },
+  { id:31, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"🧠 En 60 secondes, citez un maximum de sourates qui commencent par des lettres disjointes (حروف مقطعة). +1 par bonne réponse, -1 par erreur, pas de doublon.", response:"29 sourates : Al-Baqara, Âl-ʿImrân, Al-Aʿrâf, Yûnus, Hûd, Yûsuf, Ar-Raʿd, Ibrâhîm, Al-Hijr, Maryam, Tâ-Hâ, Ash-Shuʿarâʾ, An-Naml, Al-Qasas, Al-ʿAnkabût, Ar-Rûm, Luqmân, As-Sajda, Yâ-Sîn, Sâd, Ghâfir, Fussilat, Ash-Shûrâ, Az-Zukhruf, Ad-Dukhân, Al-Jâthiya, Al-Ahqâf, Qâf, Al-Qalam.", timed:true, timerSec:60 },
+  { id:32, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant « أَفْئِدَة » (cœurs) gagne le point.", response:"Versets possibles : Ibrâhîm 14:37 « فَاجْعَلْ أَفْئِدَةً مِّنَ النَّاسِ تَهْوِي إِلَيْهِمْ… » — An-Nahl 16:78 « وَجَعَلَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ… » — Al-Muʾminûn 23:78 « وَهُوَ الَّذِي أَنشَأَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ… »." },
+  { id:33, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"📖 En 60 secondes, citez un maximum de sourates contenant une prosternation (sajda). +1 par bonne réponse, pas de doublon.", response:"15 sajda au total : Al-Aʿrâf, Ar-Raʿd, An-Nahl, Al-Isrâʾ, Maryam, Al-Hajj ⚠️ (2 sajda), Al-Furqân, An-Naml, As-Sajda, Sâd, Fussilat, An-Najm, Al-Inshiqâq, Al-ʿAlaq.", timed:true, timerSec:60 },
+
+  // ─── Écoute du Coran — Difficile (4 cartes, 3 pts) ────────────────────────
+  // Juz Tabarak + 7 sourates salvatrices + Kahf + Yâ-Sîn + Al-Anʿâm
+  { id:46, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Yâ-Sîn (36) — « Le cœur du Coran ».", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/036.mp3", audioStart:180 },
+  { id:47, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Kahf (18) — La Caverne. Récitée chaque vendredi (Sunnah).", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/018.mp3", audioStart:300 },
+  { id:48, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Waqiʿa (56) — L'Événement. L'une des 7 sourates salvatrices (Munjiyât).", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/056.mp3", audioStart:120 },
+  { id:49, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Mulk (67) — La Royauté. Sourate salvatrice du Juz Tabarak.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/067.mp3", audioStart:60 },
+];
+
+const FINALE_CHALLENGES = [
+  // Grille 3x4 alternée : Culture, Défi, Culture, Défi... (12 cartes)
+  // Rangée 1
+  { id:106, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : TAWAKKUL (التوكل)", response:"La confiance totale en Allah après avoir fait tous les efforts nécessaires. Ce n'est pas la passivité — c'est agir puis remettre le résultat à Allah. Référence : 'Et quiconque s'en remet à Allah, Il lui suffit.' (At-Talaq 65:3)" },
+  { id:101, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Un non-musulman te demande : 'Pourquoi les femmes musulmanes portent-elles le voile ?' Donne une réponse concise, convaincante et respectueuse.", response:"Points à évaluer : absence d'agressivité, explication de la notion de pudeur (haya), de liberté de choix, de protection, de relation avec Allah — pas uniquement une réponse défensive.", timed:true, timerSec:120 },
+  { id:107, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : ISTIGHFAR (الاستغفار)", response:"Demander le pardon d'Allah pour ses péchés. C'est un acte d'humilité et de retour vers Allah. Le Prophète ﷺ faisait l'istighfar plus de 70 fois par jour malgré son impeccabilité." },
+  { id:102, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Ton amie traverse une période difficile et dit : 'Je ne comprends pas pourquoi Allah me fait souffrir.' Comment lui réponds-tu avec douceur et sagesse islamique ?", response:"Points à évaluer : rappel de la notion de Sabr, du fait que l'épreuve est un signe d'amour d'Allah, citation possible du hadith 'L'ampleur de la récompense est proportionnelle à l'ampleur de l'épreuve', empathie et douceur.", timed:true, timerSec:120 },
+  // Rangée 2
+  { id:108, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : BARAKAH (البركة)", response:"La bénédiction divine — une abondance de bien qui dépasse la logique humaine. La barakah peut être dans le temps, l'argent, la nourriture, une personne. Elle vient d'Allah et se multiplie par la gratitude et la piété." },
+  { id:103, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Tu vois une publication sur les réseaux sociaux qui insulte le Prophète (ﷺ). Quelle est ta réaction ? Qu'est-ce que tu fais et qu'est-ce que tu ne fais pas ?", response:"Points à évaluer : ne pas partager ni amplifier, signaler la publication, défendre le Prophète ﷺ avec des mots nobles, rappeler sa sîra, ne pas répondre avec violence ou insultes.", timed:true, timerSec:120 },
+  { id:109, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : HAYA (الحياء)", response:"La pudeur, la modestie, la retenue. Ce n'est pas uniquement le voile — c'est une disposition intérieure qui touche le regard, les paroles, les actes. Le Prophète ﷺ a dit : 'La pudeur ne produit que du bien.' (Bukhari)" },
+  { id:104, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Ton petit frère/ta petite sœur passe des heures sur les réseaux sociaux et délaisse ses prières. Comment l'approches-tu avec hikma (sagesse) ?", response:"Points à évaluer : approche douce et non moralisatrice, rappel des bienfaits de la prière plutôt que des menaces, montrer l'exemple, faire preuve d'empathie.", timed:true, timerSec:120 },
+  // Rangée 3
+  { id:110, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : AKHIRA (الآخرة)", response:"La vie de l'au-delà, la vie après la mort. Dans la vision islamique, l'Akhira est la vraie vie — permanente et éternelle — par opposition à la dunya (vie d'ici-bas) qui est temporaire et illusoire." },
+  { id:105, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Une amie te dit qu'elle a honte de dire qu'elle est musulmane devant ses amies. Comment la conseilles-tu ?", response:"Points à évaluer : rappel de la notion d'identité islamique et de fierté (izza), verset ou hadith sur la honte de cacher sa foi, encouragement bienveillant sans jugement.", timed:true, timerSec:120 },
+  { id:111, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : SABR (الصبر)", response:"La patience et la persevérance face aux épreuves. Le Sabr n'est pas la résignation passive — c'est tenir ferme dans l'obéissance à Allah, s'éloigner des péchés et accepter les décrets divins avec soin. Allah dit : 'Certes, Allah est avec les patients.' (Al-Baqara 2:153)" },
+  { id:112, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Défi Argumentation : Convaincs une amie fictive qui a arrêté la prière de la reprendre. L'équipe avec l'argumentation la plus touchante et pertinente gagne le point.", response:"Points à évaluer : douceur dans les paroles, rappel de la miséricorde d'Allah (pas seulement du châtiment), importance de la prière comme lien avec le Créateur, bienfaits de la prière sur le cœur et l'âme.", timed:true, timerSec:120 },
+];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+let state = {
+  numTeams: 4,
+  teams: ['Équipe 1', 'Équipe 2', 'Équipe 3', 'Équipe 4'],
+  teamScores: [0, 0, 0, 0],
+  eliminatedTeams: [],
+  selectedForElim: null,
+  finalisteIndices: null,   // [idxA, idxB]
+  isFinale: false,
+  finaleScores: [0, 0],
+  currentTeamIndex: 0,
+  cycleCount: 0,
+  playedCards: [],
+  playedDefis: [],
+  unlockedDefi: null,
+  newlyUnlockedDefi: null,
+  activeChallenge: null,
+  shuffledChallenges: [],
+  shuffledFinale: [],
+  showResponse: false,
+  timerSec: 60,
+  timerActive: false,
+  timerStarted: false,
+  timerInterval: null,
+  expressStep: 0,        // index de la question courante dans le Défi Express
+  expressAnswered: [],   // tableau de booléens (bonne/mauvaise réponse par question)
+  gameState: 'home',  // 'home' | 'playing' | 'finished'
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function activeTeamIndices() {
+  return state.teams.map((_, i) => i).filter(i => !state.eliminatedTeams.includes(i));
+}
+
+function currentActiveTeamName() {
+  if (state.isFinale && state.finalisteIndices) {
+    const slot = state.cycleCount % 2;
+    return state.teams[state.finalisteIndices[slot]];
+  }
+  const active = activeTeamIndices();
+  if (!active.length) return '';
+  return state.teams[active[state.currentTeamIndex % active.length]];
+}
+
+function playVictorySound() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+    [[523,0],[659,0.12],[784,0.24]].forEach(([freq,t]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime + t);
+      gain.gain.setValueAtTime(0.4, ctx.currentTime + t);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.45);
+      osc.start(ctx.currentTime + t);
+      osc.stop(ctx.currentTime + t + 0.45);
+    });
+  } catch(_) {}
+}
+
+function triggerVictory() {
+  playVictorySound();
+  if (typeof confetti === 'function') {
+    confetti({ particleCount:120, spread:80, origin:{y:0.6}, colors:['#3E6B4E','#D4AF37','#1F3D2B','#F5F5DC','#ffffff'] });
+  }
+}
+
+function triggerMegaVictory() {
+  playVictorySound();
+  if (typeof confetti === 'function') {
+    const fire = (opts) => confetti({ particleCount:80, spread:70, origin:{y:0.6}, colors:['#D4AF37','#FFD700','#FFF8DC','#ffffff'], ...opts });
+    fire({ angle:60, origin:{x:0,y:0.6} });
+    setTimeout(() => fire({ angle:120, origin:{x:1,y:0.6} }), 200);
+    setTimeout(() => fire({ angle:90, origin:{x:0.5,y:0.4}, particleCount:200 }), 400);
+    setTimeout(() => fire({ angle:60, origin:{x:0,y:0.6} }), 800);
+    setTimeout(() => fire({ angle:120, origin:{x:1,y:0.6} }), 1000);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HOME SCREEN
+// ═══════════════════════════════════════════════════════════════════════════
+
+function handleNumTeamsChange(val) {
+  const n = parseInt(val);
+  state.numTeams = n;
+  const prev = state.teams;
+  state.teams = Array.from({length:n}, (_, i) => prev[i] || `Équipe ${i+1}`);
+  renderTeamInputs();
+}
+
+function renderTeamInputs() {
+  const wrap = document.getElementById('teamInputs');
+  wrap.innerHTML = state.teams.map((name, i) => `
+    <div class="form-input-wrap">
+      <span class="form-input-icon">👥</span>
+      <input type="text" class="form-input" value="${escHtml(name)}"
+        oninput="state.teams[${i}]=this.value" placeholder="Équipe ${i+1}" />
+    </div>
+  `).join('');
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TOURNAMENT CONTROL
+// ═══════════════════════════════════════════════════════════════════════════
+
+function startTournament() {
+  if (state.teams.some(t => !t.trim())) return;
+  startMusic(); // Démarrer la musique de fond
+  state.teamScores = Array(state.numTeams).fill(0);
+  state.eliminatedTeams = [];
+  state.selectedForElim = null;
+  state.finalisteIndices = null;
+  state.isFinale = false;
+  state.finaleScores = [0, 0];
+  state.playedCards = [];
+  state.playedDefis = [];
+  state.cycleCount = 0;
+  state.currentTeamIndex = 0;
+  state.unlockedDefi = null;
+  const allShuffled = shuffle([...CHALLENGES]);
+  state.shuffledChallenges = allShuffled.filter(c => !c.isDefi);
+  state.shuffledAllCards = allShuffled;
+  state.shuffledFinale = shuffle(FINALE_CHALLENGES);
+  state.gameState = 'playing';
+  // S'assurer que le mode finale est bien désactivé au démarrage
+  document.body.classList.remove('finale-mode');
+  document.getElementById('patternBg').classList.remove('gold');
+
+  showScreen('game');
+  renderGame();
+}
+
+function showScreen(which) {
+  document.getElementById('homeScreen').classList.toggle('hidden', which !== 'home');
+  document.getElementById('gameScreen').classList.toggle('hidden', which !== 'game');
+  document.getElementById('finishedScreen').classList.toggle('hidden', which !== 'finished');
+  document.body.classList.toggle('finale-mode', state.isFinale);
+  document.getElementById('patternBg').classList.toggle('gold', state.isFinale);
+}
+
+function resetGame() {
+  stopTimer();
+  closeModal(true);
+  state.gameState = 'home';
+  state.isFinale = false;
+  document.body.classList.remove('finale-mode');
+  document.getElementById('patternBg').classList.remove('gold');
+  showScreen('home');
+  renderTeamInputs();
+}
+
+function selectTeamForElim(idx) {
+  if (state.isFinale) return;
+  if (state.eliminatedTeams.includes(idx)) return;
+  // Toggle : cliquer à nouveau désélectionne
+  state.selectedForElim = (state.selectedForElim === idx) ? null : idx;
+  renderGame();
+}
+
+function manualEliminate() {
+  const remaining = activeTeamIndices();
+  // Avec exactement 2 équipes restantes (et aucune éliminée), lancer la finale directement
+  if (remaining.length === 2 && state.eliminatedTeams.length === 0) {
+    state.selectedForElim = null;
+    checkFinaleConditionForced();
+    return;
+  }
+  if (remaining.length <= 2) return;
+
+  // Si une équipe est sélectionnée manuellement, l'éliminer
+  if (state.selectedForElim !== null && remaining.includes(state.selectedForElim)) {
+    state.eliminatedTeams.push(state.selectedForElim);
+    state.selectedForElim = null;
+    checkFinaleCondition();
+    renderGame();
+    return;
+  }
+
+  // Aucune équipe sélectionnée : afficher un message d'aide
+  const elimStatus = document.getElementById('elimStatus');
+  if (elimStatus) {
+    elimStatus.textContent = '⚠️ Sélectionnez une équipe à éliminer en cliquant sur sa carte de score.';
+    setTimeout(() => { elimStatus.textContent = ''; renderGame(); }, 3000);
+  }
+}
+
+function checkAllCardsPlayed() {
+  // Déclenche la finale automatiquement si toutes les cartes normales ont été retournées
+  if (state.isFinale) return;
+  const normalCards = state.shuffledChallenges;
+  const allPlayed = normalCards.every(c => state.playedCards.includes(c.id));
+  if (!allPlayed) return;
+  // Toutes les cartes retournées : éliminer les équipes les plus faibles jusqu'à n'en garder que 2
+  const remaining = activeTeamIndices();
+  if (remaining.length <= 2) {
+    checkFinaleCondition();
+    return;
+  }
+  // Trier par score croissant et éliminer les plus faibles
+  const sorted = [...remaining].sort((a, b) => state.teamScores[a] - state.teamScores[b]);
+  const toKeep = 2;
+  const toElim = sorted.slice(0, sorted.length - toKeep);
+  toElim.forEach(i => {
+    if (!state.eliminatedTeams.includes(i)) state.eliminatedTeams.push(i);
+  });
+  checkFinaleCondition();
+}
+
+function checkFinaleConditionForced() {
+  if (state.isFinale) return;
+  const remaining = activeTeamIndices();
+  if (remaining.length < 2) return;
+  const finalistes = remaining.slice(0, 2);
+  setTimeout(() => {
+    state.finalisteIndices = [finalistes[0], finalistes[1]];
+    state.finaleScores = [0, 0];
+    state.isFinale = true;
+    state.cycleCount = 0;
+    state.playedCards = [];
+    state.playedDefis = [];
+    state.unlockedDefi = null;
+    state.shuffledFinale = shuffle(FINALE_CHALLENGES);
+    document.body.classList.add('finale-mode');
+    document.getElementById('patternBg').classList.add('gold');
+    triggerMegaVictory();
+    renderGame();
+  }, 800);
+}
+
+function checkFinaleCondition() {
+  if (state.isFinale) return;
+  const remaining = activeTeamIndices();
+  // La finale ne se déclenche automatiquement que si des équipes ont été éliminées
+  // (évite le déclenchement immédiat avec seulement 2 équipes au départ)
+  if (remaining.length === 2 && state.eliminatedTeams.length > 0) {
+    setTimeout(() => {
+      state.finalisteIndices = [remaining[0], remaining[1]];
+      state.finaleScores = [0, 0];
+      state.isFinale = true;
+      state.cycleCount = 0;
+      state.playedCards = [];
+      state.playedDefis = [];
+      state.unlockedDefi = null;
+      state.shuffledFinale = shuffle(FINALE_CHALLENGES);
+      document.body.classList.add('finale-mode');
+      document.getElementById('patternBg').classList.add('gold');
+      triggerMegaVictory();
+      renderGame();
+    }, 800);
+  }
+}
+
+function checkFinaleWin() {
+  if (!state.isFinale) return;
+  if (state.finaleScores[0] >= 20 || state.finaleScores[1] >= 20) {
+    setTimeout(() => {
+      state.gameState = 'finished';
+      triggerMegaVictory();
+      renderFinished();
+      showScreen('finished');
+    }, 500);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CARD LOGIC
+// ═══════════════════════════════════════════════════════════════════════════
+
+function handleCardClick(id) {
+  // En finale, chercher dans TOUTES les cartes de finale (y compris isDefi)
+  const cards = state.isFinale ? state.shuffledFinale : state.shuffledChallenges;
+  const challenge = cards.find(c => c.id === id);
+  if (!challenge) return;
+  if (state.playedCards.includes(id)) return;
+  if (state.activeChallenge) return;
+
+  // Animate flip
+  const cardEl = document.getElementById('card-' + id);
+  if (cardEl) {
+    const inner = cardEl.querySelector('.card-inner');
+    if (inner) {
+      inner.classList.add('flipping');
+      setTimeout(() => {
+        inner.classList.remove('flipping');
+        openChallenge(challenge);
+      }, 500);
+    }
+  } else {
+    openChallenge(challenge);
+  }
+}
+
+function handleDefiCardClick(id) {
+  if (state.activeChallenge) return;
+  // Chercher la carte dans CHALLENGES (phase normale)
+  const challenge = CHALLENGES.find(c => c.id === id && c.isDefi);
+  if (!challenge) return;
+  // Si c'était la carte déverrouillée, on la consomme
+  if (state.unlockedDefi && state.unlockedDefi.id === id) {
+    state.unlockedDefi = null;
+  }
+  const cardEl = document.getElementById('card-' + id);
+  if (cardEl) {
+    const inner = cardEl.querySelector('.card-inner');
+    if (inner) {
+      inner.classList.add('flipping');
+      setTimeout(() => {
+        inner.classList.remove('flipping');
+        openChallenge(challenge);
+      }, 800);
+    }
+  } else {
+    openChallenge(challenge);
+  }
+}
+
+function openChallenge(challenge) {
+  state.activeChallenge = challenge;
+  state.showResponse = false;
+  // Pause musique pour les récitations Coran
+  if (challenge.cat === 'Coran') pauseMusic();
+  if (challenge.isExpress) {
+    // Mode Défi Express : initialiser la première question
+    state.expressStep = 0;
+    state.expressAnswered = [];
+    state.timerSec = 30;
+    state.timerActive = false;
+    state.timerStarted = false;
+  } else if (challenge.timed) {
+    state.timerSec = challenge.timerSec || 60;
+    state.timerActive = false;
+    state.timerStarted = false;
+  }
+  renderModal();
+  document.getElementById('challengeModal').classList.remove('hidden');
+}
+
+function closeModal(force) {
+  stopTimer();
+  resumeMusic(); // Reprendre la musique quand la modale se ferme
+  if (!force && state.activeChallenge) {
+    if (state.activeChallenge.isDefi) {
+      state.playedDefis.push(state.activeChallenge.id);
+      // En finale, avancer le tour après un défi aussi
+      if (state.isFinale) advanceTurn();
+    } else {
+      state.playedCards.push(state.activeChallenge.id);
+      advanceTurn();
+    }
+  }
+  state.activeChallenge = null;
+  document.getElementById('challengeModal').classList.add('hidden');
+  stopAudio();
+  renderGame();
+}
+
+function addPoints(pts) {
+  if (state.isFinale && state.finalisteIndices) {
+    const slot = state.cycleCount % 2;
+    state.finaleScores[slot] += pts;
+  } else {
+    const active = activeTeamIndices();
+    const idx = active[state.currentTeamIndex % active.length];
+    state.teamScores[idx] += pts;
+  }
+}
+
+function handleAnswer(correct) {
+  if (correct && state.activeChallenge) {
+    triggerVictory();
+    // En finale : 2 pts pour les cartes Culture (non-défi), 3 pts pour les défis
+    const ptsToAdd = state.isFinale
+      ? (state.activeChallenge.isDefi ? 3 : 2)
+      : (state.activeChallenge.pts || 1);
+    addPoints(ptsToAdd);
+  }
+  if (state.activeChallenge) {
+    // Les cartes DÉFI (y compris en finale) vont dans playedDefis
+    if (state.activeChallenge.isDefi) {
+      state.playedDefis.push(state.activeChallenge.id);
+    } else {
+      state.playedCards.push(state.activeChallenge.id);
+    }
+  }
+  state.activeChallenge = null;
+  stopTimer();
+  document.getElementById('challengeModal').classList.add('hidden');
+  stopAudio();
+
+  if (!state.isFinale) checkAllCardsPlayed();
+  checkFinaleWin();
+  advanceTurn();
+  renderGame();
+}
+function handleDefiAnswer(slot) {
+  triggerVictory();
+  if (state.isFinale && state.finalisteIndices) {
+    // slot est 0 ou 1 (index dans finalisteIndices)
+    state.finaleScores[slot] += 3;
+  } else {
+    // slot est l'index direct dans state.teams
+    state.teamScores[slot] += 3;
+  }
+  if (state.activeChallenge) state.playedDefis.push(state.activeChallenge.id);
+  state.activeChallenge = null;
+  stopTimer();
+  document.getElementById('challengeModal').classList.add('hidden');
+  stopAudio();
+   if (!state.isFinale) checkAllCardsPlayed();
+  checkFinaleWin();
+  renderGame();
+}
+function handleDefiNoPoint() {
+  if (state.activeChallenge) state.playedDefis.push(state.activeChallenge.id);
+  state.activeChallenge = null;
+  stopTimer();
+  document.getElementById('challengeModal').classList.add('hidden');
+  stopAudio();
+  renderGame();
+}
+
+function handleExpressAnswer(slot) {
+  // slot: 1 = équipe A, 2 = équipe B, 0 = personne
+  const c = state.activeChallenge;
+  if (!c || !c.isExpress) return;
+
+  // Attribuer 1 point à l'équipe qui a répondu
+  if (slot === 1 || slot === 2) {
+    triggerVictory();
+    if (state.isFinale && state.finalisteIndices) {
+      state.finaleScores[slot - 1] += 1;
+    } else {
+      const active = activeTeamIndices();
+      const teamIdx = slot === 1
+        ? (active[0] !== undefined ? active[0] : 0)
+        : (active[1] !== undefined ? active[1] : 1);
+      state.teamScores[teamIdx] += 1;
+    }
+  }
+
+  stopTimer();
+  state.timerStarted = false;
+  state.timerActive = false;
+
+  const total = c.expressQuestions.length;
+  const nextStep = state.expressStep + 1;
+
+  if (nextStep < total) {
+    // Passer à la question suivante
+    state.expressStep = nextStep;
+    state.timerSec = 30;
+    state.showResponse = false;
+    // Mettre à jour la modale sans la fermer
+    const fin = state.isFinale;
+    const qEl = document.getElementById('modalQuestion');
+    const q = c.expressQuestions[nextStep];
+    qEl.innerHTML = `<span style="font-size:0.75rem;opacity:0.7;">Question ${nextStep+1} / ${total}</span><br><br>${escHtml(q.q)}`;
+    document.getElementById('responseText').textContent = q.r;
+    document.getElementById('responseBox').classList.add('hidden');
+    document.getElementById('revealBtn').textContent = 'Voir la réponse';
+    renderTimerDisplay();
+    renderActionBtns();
+  } else {
+    // Toutes les questions sont passées : fermer la modale
+    state.playedDefis.push(c.id);
+    state.activeChallenge = null;
+    document.getElementById('challengeModal').classList.add('hidden');
+    stopAudio();
+     if (!state.isFinale) checkAllCardsPlayed();
+    checkFinaleWin();
+    advanceTurn();
+    renderGame();
+  }
+}
+function advanceTurn() {
+  if (state.isFinale) {
+    state.cycleCount++;
+    return;
+  }
+  const active = activeTeamIndices();
+  const newCycle = state.cycleCount + 1;
+  if (newCycle >= active.length) {
+    state.cycleCount = 0;
+    state.currentTeamIndex = 0;
+    // Unlock a défi
+    const DEFI_CARDS = CHALLENGES.filter(c => c.isDefi);
+    const unplayed = DEFI_CARDS.filter(c => !state.playedDefis.includes(c.id));
+    if (unplayed.length > 0) {
+      const pick = unplayed[Math.floor(Math.random() * unplayed.length)];
+      setTimeout(() => {
+        state.unlockedDefi = pick;
+        renderGame();
+      }, 300);
+    }
+  } else {
+    state.cycleCount = newCycle;
+    state.currentTeamIndex = (state.currentTeamIndex + 1) % active.length;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════════════════════════════════
+
+function startTimer() {
+  state.timerActive = true;
+  state.timerStarted = true;
+  state.timerInterval = setInterval(() => {
+    if (state.timerSec > 0) {
+      state.timerSec--;
+      renderTimerDisplay();
+    } else {
+      stopTimer();
+    }
+  }, 1000);
+  renderTimerDisplay();
+}
+
+function stopTimer() {
+  clearInterval(state.timerInterval);
+  state.timerInterval = null;
+  state.timerActive = false;
+}
+
+function stopAudio() {
+  const audio = document.getElementById('audioPlayer');
+  if (!audio) return;
+  // Neutraliser tous les callbacks pour éviter qu'ils relancent la lecture
+  audio.oncanplay = null;
+  audio.onloadedmetadata = null;
+  audio.onplay = null;
+  audio.pause();
+  audio.currentTime = 0;
+  audio.src = '';
+  audio.load();
+}
+
+function renderTimerDisplay() {
+  const wrap = document.getElementById('timerWrap');
+  if (!wrap) return;
+  const c = state.activeChallenge;
+  // Afficher le timer pour les cartes timed ET les cartes Express
+  if (!c || (!c.timed && !c.isExpress)) { wrap.innerHTML = ''; return; }
+  const isFinale = state.isFinale;
+  if (!state.timerStarted) {
+    wrap.innerHTML = `<button class="timer-btn ${isFinale ? 'gold' : 'sage'}" onclick="startTimer()">
+      ⏱ Démarrer le chronomètre
+    </button>`;
+  } else {
+    const urgent = state.timerSec < 10;
+    wrap.innerHTML = `<div class="timer-display ${urgent ? 'urgent' : (isFinale ? 'normal gold-bg' : 'normal')}">
+      ⏱ ${state.timerSec}s
+    </div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SHUFFLE
+// ═══════════════════════════════════════════════════════════════════════════
+
+function shuffleCards() {
+  if (state.isFinale) {
+    state.shuffledFinale = shuffle(FINALE_CHALLENGES);
+  } else {
+    const allShuffled = shuffle([...CHALLENGES]);
+    state.shuffledChallenges = allShuffled.filter(c => !c.isDefi);
+    state.shuffledAllCards = allShuffled;
+  }
+  renderCardGrid(true);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RENDER GAME
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderGame() {
+  renderHeader();
+  renderCardGrid(false);
+  updateElimBtn();
+}
+
+function renderHeader() {
+  const fin = state.isFinale;
+  // Finale banner
+  const banner = document.getElementById('finaleBanner');
+  banner.classList.toggle('hidden', !fin);
+  if (fin && state.finalisteIndices) {
+    document.getElementById('finaleVs').textContent =
+      `${state.teams[state.finalisteIndices[0]]} ⚔️ ${state.teams[state.finalisteIndices[1]]}`;
+  }
+
+  // Title
+  document.getElementById('headerTitle').className = 'header-title' + (fin ? ' gold' : '');
+  document.getElementById('headerSubtitle').className = 'header-subtitle' + (fin ? ' gold' : '');
+  document.getElementById('currentTeamName').textContent = currentActiveTeamName();
+
+  // Elim status
+  const elimStatus = document.getElementById('elimStatus');
+  elimStatus.textContent = '';
+
+  // Scores
+  const scoresWrap = document.getElementById('scoresWrap');
+  if (fin && state.finalisteIndices) {
+    scoresWrap.innerHTML = [0,1].map(slot => {
+      const teamIdx = state.finalisteIndices[slot];
+      const isActive = state.cycleCount % 2 === slot;
+      return `<div class="score-card ${isActive ? 'finale-active' : 'finale-inactive'}">
+        <p class="score-label">Finaliste ${slot+1}</p>
+        <h2 class="score-name">${escHtml(state.teams[teamIdx])}</h2>
+        <p class="score-pts">${state.finaleScores[slot]}</p>
+      </div>`;
+    }).join('');
+  } else {
+    scoresWrap.innerHTML = state.teams.map((name, i) => {
+      const isElim = state.eliminatedTeams.includes(i);
+      const active = activeTeamIndices();
+      const isActive = !isElim && active[state.currentTeamIndex % active.length] === i;
+      const isSelected = state.selectedForElim === i;
+      let cls = isElim ? 'eliminated' : isSelected ? 'selected-for-elim' : isActive ? 'active' : '';
+      const onclick = isElim ? '' : `onclick="selectTeamForElim(${i})"`;
+      return `<div class="score-card ${cls}" ${onclick} title="${isElim ? 'Éliminée' : 'Cliquer pour sélectionner pour élimination'}">
+        ${isElim ? '<p class="score-elim">❌ Éliminée</p>' : ''}
+        ${isSelected ? '<p class="score-elim" style="color:var(--red)">🎯 Sélectionnée</p>' : ''}
+        <h2 class="score-name">${escHtml(name)}</h2>
+        <p class="score-pts">${state.teamScores[i]}</p>
+      </div>`;
+    }).join('');
+  }
+
+  // Leaderboard & shuffle button colors
+  const lbBtn = document.getElementById('lbBtn');
+  if (lbBtn) lbBtn.className = 'btn btn-sm ' + (fin ? 'btn-outline-gold' : 'btn-outline-gold');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  if (shuffleBtn) {
+    if (fin) {
+      shuffleBtn.className = 'btn btn-sm btn-ghost-gold';
+      shuffleBtn.style.color = '';
+      shuffleBtn.style.background = 'rgba(194,166,90,0.12)';
+      shuffleBtn.style.border = '1px solid rgba(194,166,90,0.35)';
+    } else {
+      shuffleBtn.className = 'btn btn-sm btn-ghost';
+      shuffleBtn.style.color = 'var(--sage)';
+      shuffleBtn.style.background = '';
+      shuffleBtn.style.border = '';
+    }
+  }
+  // Bouton Recommencer
+  const restartBtn = document.querySelector('[onclick="resetGame()"]');
+  if (restartBtn) {
+    if (fin) {
+      restartBtn.style.color = 'rgba(194,166,90,0.75)';
+      restartBtn.style.background = 'rgba(194,166,90,0.08)';
+      restartBtn.style.border = '1px solid rgba(194,166,90,0.25)';
+    } else {
+      restartBtn.style.color = 'var(--sage)';
+      restartBtn.style.background = '';
+      restartBtn.style.border = '';
+    }
+  }
+}
+
+function renderCardGrid(animate) {
+  const grid = document.getElementById('cardGrid');
+  const fin = state.isFinale;
+  const cards = fin ? state.shuffledFinale : state.shuffledChallenges;
+  // Grille 3x4 en finale (4 colonnes fixes), sinon grille responsive normale
+  if (fin) {
+    grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+    grid.style.maxWidth = '700px';
+    grid.style.margin = '0 auto';
+  } else {
+    grid.style.gridTemplateColumns = '';
+    grid.style.maxWidth = '';
+    grid.style.margin = '';
+  }
+  const DEFI_CARDS = CHALLENGES.filter(c => c.isDefi);
+
+  // Build all cards to display — toutes les cartes mélangées aléatoirement
+  let allCards = fin ? [...cards] : [...state.shuffledAllCards].filter(c => !state.playedCards.includes(c.id) || !state.playedDefis.includes(c.id));
+  if (!fin) {
+    allCards = [...state.shuffledAllCards];
+  }
+
+  grid.innerHTML = allCards.map((challenge, index) => {
+    const isDefi = challenge.isDefi;
+    // Une carte est jouée si elle est dans playedCards (normales) ou playedDefis (défis)
+    const isPlayed = isDefi
+      ? state.playedDefis.includes(challenge.id)
+      : state.playedCards.includes(challenge.id);
+    const isUnlocked = state.unlockedDefi && state.unlockedDefi.id === challenge.id;
+
+    if (isPlayed) {
+      return `<div class="card-slot" id="card-${challenge.id}"></div>`;
+    }
+
+    if (isDefi) {
+      // En finale : les défis sont directement cliquables (pas de système de déverrouillage)
+      if (fin) {
+        const animStyle = animate ? `animation: deal-in 0.45s ease-out ${index * 0.05}s both;` : '';
+        const displayNum = index + 1;
+        return `<div class="card-slot" id="card-${challenge.id}" style="${animStyle}">
+          <div class="card-inner" onclick="handleCardClick(${challenge.id})">
+            <div class="card-face finale-card glow">
+              <span class="card-icon">${challenge.icon}</span>
+              <span class="card-cat gold">${challenge.cat}</span>
+              <p class="card-level gold-text" style="font-size:0.5625rem;">⚔️ Défi</p>
+              <div class="card-num gold-bg">${displayNum}</div>
+            </div>
+          </div>
+        </div>`;
+      }
+      // Hors finale : toujours cliquable (déverrouillé ou non)
+      const isNewlyUnlocked = state.newlyUnlockedDefi === challenge.id;
+      const faceClass = `card-face defi-${isUnlocked ? 'unlocked' : 'locked'}${isNewlyUnlocked ? ' newly-unlocked' : ''}`;
+      return `<div class="card-slot" id="card-${challenge.id}">
+        <div class="card-inner" onclick="handleDefiCardClick(${challenge.id})">
+          <div class="${faceClass}">
+            <span style="font-size:1.25rem;margin-bottom:0.25rem;">${isUnlocked ? '🔓' : '🔒'}</span>
+            <span class="card-icon">⚔️</span>
+            <span class="card-cat">Défi</span>
+            <!-- pas de numéro sur les cartes Défi -->
+          </div>
+        </div>
+        ${isUnlocked ? `<div class="defi-unlock-label" style="position:absolute;bottom:-2rem;left:50%;transform:translateX(-50%);width:max-content;max-width:120px;text-align:center;font-size:0.5rem;color:var(--gold);font-weight:700;line-height:1.3;">✨ Défi disponible !</div>` : ''}
+      </div>`;
+    }
+
+    // Regular card
+    let faceClass = 'card-face ';
+    if (fin) {
+      faceClass += challenge.level === 'Difficile' ? 'finale-card glow' : 'finale-card';
+    } else {
+      // Classe par catégorie
+      const catKey = challenge.cat ? challenge.cat.toLowerCase() : '';
+      if (catKey === 'coran') faceClass += 'cat-coran';
+      else if (catKey === 'hadith') faceClass += 'cat-hadith';
+      else if (catKey === 'culture') faceClass += 'cat-culture';
+      else if (catKey === 'devinettes') faceClass += 'cat-devinettes';
+      else faceClass += 'cat-culture'; // fallback
+    }
+
+    const animStyle = animate ? `animation: deal-in 0.45s ease-out ${index * 0.05}s both;` : '';
+    const displayNum = fin ? (index + 1) : challenge.id;
+
+    return `<div class="card-slot" id="card-${challenge.id}" style="${animStyle}">
+      <div class="card-inner" onclick="handleCardClick(${challenge.id})">
+        <div class="${faceClass}">
+          <span class="card-icon">${challenge.icon}</span>
+          <span class="card-cat ${fin ? 'gold' : ''}">${challenge.cat}</span>
+          ${fin
+            ? `<p class="card-level gold-text" style="font-size:0.5625rem;">📚 Vocabulaire</p>`
+            : `<p class="card-level ${challenge.level === 'Difficile' ? 'difficile-text' : ''}">${challenge.level}</p>`
+          }
+          <div class="card-num ${fin ? 'gold-bg' : ''}">${displayNum}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateElimBtn() {
+  const btn = document.getElementById('elimBtn');
+  if (!btn) return;
+  const remaining = activeTeamIndices();
+  if (state.isFinale) {
+    btn.classList.add('hidden');
+    return;
+  }
+  // Avec 2 équipes sans élimination : afficher 'Passer en Finale'
+  if (remaining.length === 2 && state.eliminatedTeams.length === 0) {
+    btn.classList.remove('hidden');
+    btn.innerHTML = '🏆 Passer en Finale';
+    btn.className = 'btn btn-sm btn-outline-gold';
+  } else if (remaining.length <= 2) {
+    btn.classList.add('hidden');
+  } else {
+    btn.classList.remove('hidden');
+    btn.innerHTML = '✖ Éliminer';
+    btn.className = 'btn btn-sm btn-danger';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODAL RENDER
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderModal() {
+  const c = state.activeChallenge;
+  if (!c) return;
+  const fin = state.isFinale;
+
+  // Modal box style
+  const box = document.getElementById('modalBox');
+  box.className = `modal-box ${fin ? 'dark' : 'light'}`;
+
+  // Header
+  const header = document.getElementById('modalHeader');
+  header.className = `modal-header ${fin ? 'gold' : 'sage'}`;
+
+  const catEl = document.getElementById('modalCat');
+  catEl.className = `modal-cat ${fin ? 'dark-text' : ''}`;
+  catEl.textContent = `${c.icon} ${c.cat}${fin ? ' — ⭐ FINALE ⭐' : ''}`;
+
+  const levelEl = document.getElementById('modalLevel');
+  levelEl.className = `modal-level ${fin ? 'dark-text' : ''}`;
+  levelEl.textContent = `Défi Niveau ${c.level}`;
+
+  // Close button color
+  const closeBtn = document.getElementById('modalCloseBtn');
+  closeBtn.style.color = 'white';
+
+  // Timer
+  renderTimerDisplay();
+
+  // Question
+  const qEl = document.getElementById('modalQuestion');
+  qEl.className = `modal-question ${fin ? 'gold' : ''}`;
+
+  if (c.isExpress && c.expressQuestions) {
+    // Mode Défi Express : afficher la question courante
+    const step = state.expressStep;
+    const total = c.expressQuestions.length;
+    const q = c.expressQuestions[step];
+    qEl.innerHTML = `<span style="font-size:0.75rem;opacity:0.7;">Question ${step+1} / ${total}</span><br><br>${escHtml(q.q)}`;
+  } else {
+    qEl.textContent = c.content;
+  }
+
+  // Audio
+  const audioWrap = document.getElementById('audioWrap');
+  if (c.audio) {
+    audioWrap.classList.remove('hidden');
+    audioWrap.className = `modal-audio ${fin ? 'dark' : 'light'}`;
+    document.getElementById('audioIcon').style.color = fin ? 'var(--gold)' : 'var(--sage)';
+    document.getElementById('audioLabel').className = `modal-audio-label ${fin ? 'gold' : ''}`;
+    const player = document.getElementById('audioPlayer');
+    player.src = '';
+    player.load();
+    player.src = c.audio;
+    // Seek robuste : on attend que les métadonnées soient chargées
+    player.onloadedmetadata = null;
+    player.oncanplay = null;
+    player.onloadedmetadata = function() {
+      if (c.audioStart && this.duration && c.audioStart < this.duration) {
+        this.currentTime = c.audioStart;
+      }
+    };
+    player.oncanplay = function() {
+      // Second essai de seek si currentTime n'a pas encore bougé
+      if (c.audioStart && this.currentTime < c.audioStart - 1) {
+        this.currentTime = c.audioStart;
+      }
+      this.play().catch(() => {});
+    };
+  } else {
+    audioWrap.classList.add('hidden');
+    const player = document.getElementById('audioPlayer');
+    player.src = '';
+  }
+
+  // Reveal button
+  const revealBtn = document.getElementById('revealBtn');
+  revealBtn.className = `btn-reveal ${fin ? 'gold' : 'sage'}`;
+  revealBtn.textContent = 'Voir la réponse';
+
+  // Response box
+  document.getElementById('responseBox').classList.add('hidden');
+  document.getElementById('responseBox').className = `modal-response hidden ${fin ? 'dark' : 'light'}`;
+  if (c.isExpress && c.expressQuestions) {
+    const step = state.expressStep;
+    document.getElementById('responseText').textContent = c.expressQuestions[step].r;
+  } else {
+    document.getElementById('responseText').textContent = c.response;
+  }
+  state.showResponse = false;
+
+  // Action buttons
+  renderActionBtns();
+
+  // Modal overlay
+  const overlay = document.getElementById('challengeModal');
+  overlay.className = `modal-overlay ${fin ? 'dark-bg' : 'sage-bg'}`;
+}
+
+function renderActionBtns() {
+  const c = state.activeChallenge;
+  if (!c) return;
+  const fin = state.isFinale;
+  const active = activeTeamIndices();
+  const wrap = document.getElementById('actionBtns');
+
+  if (c.isExpress && c.expressQuestions) {
+    // Mode Défi Express : boutons Bonne réponse / Mauvaise réponse + navigation
+    const step = state.expressStep;
+    const total = c.expressQuestions.length;
+    const isLast = step >= total - 1;
+    const nameA = fin && state.finalisteIndices
+      ? state.teams[state.finalisteIndices[0]]
+      : (active[0] !== undefined ? state.teams[active[0]] : 'Équipe A');
+    const nameB = fin && state.finalisteIndices
+      ? state.teams[state.finalisteIndices[1]]
+      : (active[1] !== undefined ? state.teams[active[1]] : 'Équipe B');
+    wrap.innerHTML = `<div class="modal-defi-actions">
+      <p style="text-align:center;font-size:0.75rem;opacity:0.7;margin-bottom:0.5rem;">Qui a répondu correctement ?</p>
+      <div class="modal-defi-row">
+        <button class="btn ${fin ? 'btn-gold' : 'btn-correct'}" onclick="handleExpressAnswer(1)">
+          🏆 ${escHtml(nameA)}
+        </button>
+        <button class="btn ${fin ? 'btn-correct' : 'btn-gold'}" onclick="handleExpressAnswer(2)">
+          🏆 ${escHtml(nameB)}
+        </button>
+      </div>
+      <button class="btn btn-neutral" onclick="handleExpressAnswer(0)">
+        ✖ Personne / Passer
+      </button>
+    </div>`;
+  } else if (c.isDefi) {
+    if (fin && state.finalisteIndices) {
+      // En finale : 2 finalistes seulement
+      const nameA = state.teams[state.finalisteIndices[0]];
+      const nameB = state.teams[state.finalisteIndices[1]];
+      wrap.innerHTML = `<div class="modal-defi-actions">
+        <div class="modal-defi-row">
+          <button class="btn btn-gold" onclick="handleDefiAnswer(0)">
+            🏆 Point pour ${escHtml(nameA)}
+          </button>
+          <button class="btn btn-correct" onclick="handleDefiAnswer(1)">
+            🏆 Point pour ${escHtml(nameB)}
+          </button>
+        </div>
+        <button class="btn btn-neutral" onclick="handleDefiNoPoint()">
+          ✖ Aucun point — Match nul
+        </button>
+      </div>`;
+    } else {
+      // Phase normale : un bouton par équipe active
+      const btnColors = ['btn-correct', 'btn-gold', 'btn-wrong', 'btn-neutral-dark', 'btn-correct', 'btn-gold', 'btn-wrong', 'btn-neutral-dark'];
+      const btns = active.map((teamIdx, i) => {
+        const color = btnColors[i % btnColors.length];
+        return `<button class="btn ${color}" onclick="handleDefiAnswer(${teamIdx})">
+          🏆 Point pour ${escHtml(state.teams[teamIdx])}
+        </button>`;
+      }).join('');
+      wrap.innerHTML = `<div class="modal-defi-actions">
+        <div class="modal-defi-row" style="flex-wrap:wrap;gap:0.5rem;">
+          ${btns}
+        </div>
+        <button class="btn btn-neutral" onclick="handleDefiNoPoint()">
+          ✖ Aucun point — Match nul
+        </button>
+      </div>`;
+    }
+  } else {
+    wrap.innerHTML = `<div class="modal-actions">
+      <button class="btn ${fin ? 'btn-correct-gold' : 'btn-correct'}" onclick="handleAnswer(true)">
+        ✓ Bonne réponse
+      </button>
+      <button class="btn btn-wrong" onclick="handleAnswer(false)">
+        ✗ Mauvaise réponse
+      </button>
+    </div>`;
+  }
+}
+
+function toggleResponse() {
+  state.showResponse = !state.showResponse;
+  const box = document.getElementById('responseBox');
+  const btn = document.getElementById('revealBtn');
+  box.classList.toggle('hidden', !state.showResponse);
+  btn.textContent = state.showResponse ? 'Masquer la réponse' : 'Voir la réponse';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// LEADERBOARD
+// ═══════════════════════════════════════════════════════════════════════════
+
+function showLeaderboard() {
+  const fin = state.isFinale;
+  const lbBox = document.getElementById('lbBox');
+  lbBox.className = `modal-box ${fin ? 'dark' : 'light'}`;
+  const lbHeader = document.getElementById('lbHeader');
+  lbHeader.className = `modal-header ${fin ? 'gold' : 'sage'}`;
+  lbHeader.querySelector('h3').style.color = fin ? 'var(--black)' : 'white';
+  lbHeader.querySelector('svg').style.stroke = fin ? 'var(--black)' : 'white';
+
+  const sorted = state.teams
+    .map((name, i) => ({ name, score: state.teamScores[i], idx: i }))
+    .sort((a, b) => b.score - a.score);
+
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('lbContent').innerHTML = sorted.map((team, i) => {
+    const isElim = state.eliminatedTeams.includes(team.idx);
+    const rowClass = isElim ? 'lb-row elim' : i === 0 ? `lb-row ${fin ? 'first-dark' : 'first-light'}` : `lb-row ${fin ? 'other-dark' : 'other-light'}`;
+    const rankColor = i === 0 ? 'var(--gold)' : i === 1 ? '#9ca3af' : i === 2 ? '#d97706' : fin ? 'rgba(212,175,55,0.5)' : 'var(--sage)';
+    return `<div class="${rowClass}">
+      <span class="lb-rank" style="color:${rankColor}">${isElim ? '❌' : medals[i] || '#'+(i+1)}</span>
+      <span class="lb-name" style="color:${fin ? 'var(--gold)' : 'var(--sage-dark)'}">${escHtml(team.name)}</span>
+      <span class="lb-score" style="color:${fin ? 'var(--gold)' : 'var(--sage)'}">${team.score} pts</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('leaderboardModal').classList.remove('hidden');
+}
+
+function hideLeaderboard() {
+  document.getElementById('leaderboardModal').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// FINISHED SCREEN
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderFinished() {
+  const winnerSlot = state.finaleScores[0] >= 20 ? 0 : state.finaleScores[1] >= 20 ? 1
+    : state.finaleScores[0] > state.finaleScores[1] ? 0 : state.finaleScores[1] > state.finaleScores[0] ? 1 : -1;
+  const winnerName = winnerSlot >= 0 && state.finalisteIndices
+    ? state.teams[state.finalisteIndices[winnerSlot]] : null;
+
+  document.getElementById('winnerName').textContent = winnerName || 'Égalité ! Match nul';
+
+  // Finale scores
+  if (state.finalisteIndices) {
+    document.getElementById('finaleScoreBox').innerHTML = `
+      <p class="finished-scores-title">Score de la Finale</p>
+      <div class="finished-score-row">
+        <span class="finished-score-name">${escHtml(state.teams[state.finalisteIndices[0]])}</span>
+        <span class="finished-score-pts">${state.finaleScores[0]}</span>
+      </div>
+      <div class="finished-score-row">
+        <span class="finished-score-name">${escHtml(state.teams[state.finalisteIndices[1]])}</span>
+        <span class="finished-score-pts">${state.finaleScores[1]}</span>
+      </div>`;
+  }
+
+  // General ranking
+  const sorted = state.teams.map((name,i) => ({name, score:state.teamScores[i], idx:i})).sort((a,b) => b.score-a.score);
+  const medals = ['🥇','🥈','🥉'];
+  document.getElementById('rankingBox').innerHTML = `
+    <p class="finished-ranking-title">Classement général</p>
+    ${sorted.map((t,i) => `<div class="finished-rank-row">
+      <span class="finished-rank-medal">${medals[i] || '#'+(i+1)}</span>
+      <span class="finished-rank-name">${escHtml(t.name)}</span>
+      <span class="finished-rank-pts">${t.score} pts</span>
+    </div>`).join('')}`;
+}
+
+// ═══════════════════════
+
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Initialize home screen
+renderTeamInputs();
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MUSIQUE DE FOND
+// ═══════════════════════════════════════════════════════════════════════════
+let musicMuted = false;
+let musicStarted = false;
+
+function startMusic() {
+  const audio = document.getElementById('bgMusic');
+  if (!audio || musicMuted || musicStarted) return;
+  audio.volume = 0.35;
+  audio.play().then(() => {
+    musicStarted = true;
+  }).catch(() => {
+    // Autoplay bloqué — sera démarré au premier clic
+  });
+}
+
+function pauseMusic() {
+  const audio = document.getElementById('bgMusic');
+  if (audio && !audio.paused) audio.pause();
+}
+
+function resumeMusic() {
+  const audio = document.getElementById('bgMusic');
+  if (!audio || musicMuted) return;
+  if (audio.paused && musicStarted) audio.play().catch(() => {});
+  else if (!musicStarted) startMusic();
+}
+
+function toggleMute() {
+  musicMuted = !musicMuted;
+  const audio = document.getElementById('bgMusic');
+  const btn = document.getElementById('muteBtn');
+  if (musicMuted) {
+    pauseMusic();
+    if (btn) btn.textContent = '🔇';
+  } else {
+    resumeMusic();
+    if (btn) btn.textContent = '🔊';
+  }
+}
+
+// Démarrer la musique au premier clic sur l'écran (contournement autoplay)
+document.addEventListener('click', function startOnFirstClick() {
+  if (!musicStarted && !musicMuted) startMusic();
+}, { once: true });
+
+</script>
+
+  <!-- ── Musique de fond ── -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://files.manuscdn.com/user_upload_by_module/session_file/310519663177928306/RjQcAxuljqyirDDF.mp3" type="audio/mpeg">
+  </audio>
+</body>
+</html>
