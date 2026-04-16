@@ -1135,6 +1135,15 @@ function manualEliminate() {
     state.selectedForElim = null;
     checkFinaleCondition();
     renderGame();
+    // Quiz 2 : s'il ne reste qu'une équipe après élimination, on termine la partie
+    if (NO_FINALE && activeTeamIndices().length === 1) {
+      setTimeout(() => {
+        state.gameState = 'finished';
+        triggerMegaVictory();
+        renderFinished();
+        showScreen('finished');
+      }, 600);
+    }
     return;
   }
 
