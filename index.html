@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quizz Gîte — À quoi on joue aujourd'hui ?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark:   #1F3D2B;
+      --green-mid:    #3E6B4E;
+      --green-light:  #A8C3A0;
+      --green-tint:   #EBF2E8;
+      --green-bg:     #F3F7F1;
+      --gold-dark:    #8A6E2A;
+      --gold-mid:     #C2A65A;
+      --gold-light:   #DCC882;
+      --gold-tint:    #F8F2E4;
+      --cream:        #F1EBDD;
+      --cream-dark:   #E4D8C3;
+      --text-dark:    #1F3D2B;
+      --text-mid:     #3E6B4E;
+      --text-light:   #6B8C78;
+      --text-muted:   #A0B8A8;
+      --red:          #C0392B;
+      --shadow-sm:    0 1px 3px rgba(31,61,43,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:    0 4px 12px rgba(31,61,43,0.12), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg:    0 8px 24px rgba(31,61,43,0.15), 0 4px 8px rgba(0,0,0,0.08);
+      --shadow-xl:    0 20px 40px rgba(31,61,43,0.18), 0 8px 16px rgba(0,0,0,0.08);
+    }
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+    .pattern-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%236B8F71' stroke-width='0.5' opacity='0.13'%3E%3Crect x='5' y='5' width='30' height='30' rx='0' transform='rotate(45 20 20)'/%3E%3Crect x='10' y='10' width='20' height='20' rx='0' transform='rotate(45 20 20)'/%3E%3Cline x1='20' y1='0' x2='20' y2='40'/%3E%3Cline x1='0' y1='20' x2='40' y2='20'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 40px 40px;
+    }
+    .container { position: relative; z-index: 1; padding: 2rem 1rem 4rem; max-width: 1200px; margin: 0 auto; }
+    @media (min-width: 768px) { .container { padding: 3rem 2rem 5rem; } }
+
+    /* ── Header / Hero ── */
+    .hero {
+      text-align: center;
+      padding: 2rem 1rem 3rem;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--gold-dark);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--gold-tint);
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--gold-light);
+      margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-size: 2.25rem;
+      font-weight: 900;
+      color: var(--green-dark);
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+    @media (min-width: 768px) { .hero-title { font-size: 3.25rem; } }
+    .hero-sub {
+      font-size: 1.0625rem;
+      color: var(--text-mid);
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    .hero-accent {
+      display: block;
+      font-family: 'Nunito', sans-serif;
+      font-style: italic;
+      font-weight: 700;
+      color: var(--gold-dark);
+      margin-top: 0.4rem;
+    }
+
+    /* ── Section / Grid ── */
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 2rem 0 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--green-dark);
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .section-count {
+      font-size: 0.8125rem;
+      color: var(--text-light);
+      font-weight: 700;
+      background: var(--green-tint);
+      padding: 0.25rem 0.75rem;
+      border-radius: 999px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+    }
+
+    /* ── Quiz card (marketplace) ── */
+    .quiz-card {
+      position: relative;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      border: 1.5px solid rgba(31,61,43,0.08);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    }
+    .quiz-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--gold-light);
+    }
+    .quiz-card.disabled {
+      opacity: 0.68;
+      pointer-events: none;
+      filter: grayscale(0.2);
+    }
+    .card-banner {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, var(--green-mid) 0%, var(--green-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .card-banner.gold {
+      background: linear-gradient(135deg, var(--gold-mid) 0%, var(--gold-dark) 100%);
+    }
+    .card-banner.sage {
+      background: linear-gradient(135deg, #6B8F71 0%, var(--green-mid) 100%);
+    }
+    .card-banner::before {
+      content: "";
+      position: absolute; inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='0.6' opacity='0.16'%3E%3Crect x='8' y='8' width='44' height='44' transform='rotate(45 30 30)'/%3E%3Crect x='15' y='15' width='30' height='30' transform='rotate(45 30 30)'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 60px 60px;
+    }
+    .card-emoji {
+      position: relative;
+      font-size: 4.5rem;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+    }
+    .card-status {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.7rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.95);
+      color: var(--green-dark);
+    }
+    .card-status.soon { color: var(--gold-dark); background: var(--gold-tint); }
+    .card-status.new { color: #fff; background: var(--red); }
+
+    .card-body {
+      padding: 1.25rem 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-cat {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      color: var(--gold-dark);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: var(--green-dark);
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+    .card-desc {
+      font-size: 0.9375rem;
+      color: var(--text-mid);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      flex: 1;
+    }
+    .card-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .meta-chip {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-mid);
+      background: var(--green-tint);
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .card-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.9rem;
+      border-top: 1px dashed rgba(31,61,43,0.12);
+    }
+    .cta-label {
+      font-size: 0.875rem;
+      font-weight: 800;
+      color: var(--green-mid);
+    }
+    .quiz-card:hover .cta-label { color: var(--green-dark); }
+    .cta-arrow {
+      font-size: 1.125rem;
+      color: var(--gold-mid);
+      transition: transform 0.2s ease;
+    }
+    .quiz-card:hover .cta-arrow { transform: translateX(4px); color: var(--gold-dark); }
+
+    /* ── Footer ── */
+    .foot {
+      text-align: center;
+      margin-top: 3rem;
+      padding: 1.5rem 1rem;
+      color: var(--text-light);
+      font-size: 0.8125rem;
+    }
+    .foot strong { color: var(--green-mid); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="pattern-bg"></div>
+
+  <div class="container">
+    <header class="hero">
+      <span class="hero-tag">✦ Quizz Gîte ✦</span>
+      <h1 class="hero-title">À quoi on joue aujourd'hui ?</h1>
+      <p class="hero-sub">
+        Choisis ton quiz et lance la partie avec tes amis et ta famille.
+        <span class="hero-accent">— Que la meilleure équipe gagne !</span>
+      </p>
+    </header>
+
+    <div class="section-head">
+      <h2 class="section-title">🎮 Quiz disponibles</h2>
+      <span class="section-count" id="quizCount">1 quiz prêt</span>
+    </div>
+
+    <div class="grid" id="quizGrid">
+
+      <!-- ─── QUIZ 1 ────────────────────────────────────────────────────── -->
+      <a href="quiz-1.html" class="quiz-card">
+        <div class="card-banner">
+          <span class="card-emoji">🕌</span>
+          <span class="card-status">Prêt à jouer</span>
+        </div>
+        <div class="card-body">
+          <p class="card-cat">Quiz Islam · Tournoi</p>
+          <h3 class="card-title">Les défis du savoir</h3>
+          <p class="card-desc">
+            Le grand tournoi islamique par équipes : Hadith, Coran,
+            Culture, Devinettes et Défis chronométrés. Grande finale
+            à la clé !
+          </p>
+          <div class="card-meta">
+            <span class="meta-chip">👥 2–8 équipes</span>
+            <span class="meta-chip">📖 48 cartes</span>
+            <span class="meta-chip">🏆 Finale</span>
+          </div>
+          <div class="card-cta">
+            <span class="cta-label">Lancer le tournoi</span>
+            <span class="cta-arrow">→</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- ─── QUIZ 2 (à venir) ──────────────────────────────────────────── -->
+      <div class="quiz-card disabled" aria-disabled="true">
+        <div class="card-banner gold">
+          <span class="card-emoji">📿</span>
+          <span class="card-status soon">Bientôt</span>
+        </div>
+        <div class="card-body">
+          <p class="card-cat">Quiz Islam · À venir</p>
+          <h3 class="card-title">Quiz 2</h3>
+          <p class="card-desc">
+            Un nouveau quiz en préparation — les questions seront bientôt
+            ajoutées.
+          </p>
+          <div class="card-meta">
+            <span class="meta-chip">⏳ En préparation</span>
+          </div>
+          <div class="card-cta">
+            <span class="cta-label">Bientôt disponible</span>
+            <span class="cta-arrow">✦</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="foot">
+      <p>Fait avec ❤️ pour les soirées en famille — <strong>Quizz Gîte</strong></p>
+    </footer>
+  </div>
+
+</body>
+</html>
