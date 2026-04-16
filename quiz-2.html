@@ -928,6 +928,11 @@ const FINALE_CHALLENGES = [
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════
+// CONFIG QUIZ 2 — pas de finale, le gagnant = équipe avec le plus de points
+// ═══════════════════════════════════════════════════════════════════════════
+const NO_FINALE = true;
+
+// ═══════════════════════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1136,18 +1141,28 @@ function manualEliminate() {
 }
 
 function checkAllCardsPlayed() {
-  // Déclenche la finale automatiquement si toutes les cartes normales ont été retournées
   if (state.isFinale) return;
   const normalCards = state.shuffledChallenges;
   const allPlayed = normalCards.every(c => state.playedCards.includes(c.id));
   if (!allPlayed) return;
-  // Toutes les cartes retournées : éliminer les équipes les plus faibles jusqu'à n'en garder que 2
+
+  // Mode Quiz 2 : pas de finale. Le gagnant = équipe avec le score le plus élevé.
+  if (NO_FINALE) {
+    setTimeout(() => {
+      state.gameState = 'finished';
+      triggerMegaVictory();
+      renderFinished();
+      showScreen('finished');
+    }, 600);
+    return;
+  }
+
+  // Sinon : logique classique avec finale (élimination automatique des plus faibles)
   const remaining = activeTeamIndices();
   if (remaining.length <= 2) {
     checkFinaleCondition();
     return;
   }
-  // Trier par score croissant et éliminer les plus faibles
   const sorted = [...remaining].sort((a, b) => state.teamScores[a] - state.teamScores[b]);
   const toKeep = 2;
   const toElim = sorted.slice(0, sorted.length - toKeep);
@@ -1158,6 +1173,7 @@ function checkAllCardsPlayed() {
 }
 
 function checkFinaleConditionForced() {
+  if (NO_FINALE) return;
   if (state.isFinale) return;
   const remaining = activeTeamIndices();
   if (remaining.length < 2) return;
@@ -1179,6 +1195,7 @@ function checkFinaleConditionForced() {
 }
 
 function checkFinaleCondition() {
+  if (NO_FINALE) return;
   if (state.isFinale) return;
   const remaining = activeTeamIndices();
   // La finale ne se déclenche automatiquement que si des équipes ont été éliminées
@@ -1712,6 +1729,11 @@ function renderCardGrid(animate) {
 function updateElimBtn() {
   const btn = document.getElementById('elimBtn');
   if (!btn) return;
+  // Quiz 2 : pas d'élimination ni de finale
+  if (NO_FINALE) {
+    btn.classList.add('hidden');
+    return;
+  }
   const remaining = activeTeamIndices();
   if (state.isFinale) {
     btn.classList.add('hidden');
@@ -1962,15 +1984,23 @@ function hideLeaderboard() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function renderFinished() {
-  const winnerSlot = state.finaleScores[0] >= 20 ? 0 : state.finaleScores[1] >= 20 ? 1
-    : state.finaleScores[0] > state.finaleScores[1] ? 0 : state.finaleScores[1] > state.finaleScores[0] ? 1 : -1;
-  const winnerName = winnerSlot >= 0 && state.finalisteIndices
-    ? state.teams[state.finalisteIndices[winnerSlot]] : null;
+  let winnerName = null;
 
-  document.getElementById('winnerName').textContent = winnerName || 'Égalité ! Match nul';
+  if (NO_FINALE || !state.finalisteIndices) {
+    // Gagnant = équipe avec le score le plus élevé (hors équipes éliminées)
+    const ranking = state.teams.map((name,i) => ({name, score:state.teamScores[i], idx:i}))
+      .filter(t => !state.eliminatedTeams.includes(t.idx))
+      .sort((a,b) => b.score - a.score);
+    const top = ranking[0];
+    if (top && (ranking.length === 1 || top.score > ranking[1].score)) {
+      winnerName = top.name;
+    }
+    document.getElementById('finaleScoreBox').innerHTML = '';
+  } else {
+    const winnerSlot = state.finaleScores[0] >= 20 ? 0 : state.finaleScores[1] >= 20 ? 1
+      : state.finaleScores[0] > state.finaleScores[1] ? 0 : state.finaleScores[1] > state.finaleScores[0] ? 1 : -1;
+    winnerName = winnerSlot >= 0 ? state.teams[state.finalisteIndices[winnerSlot]] : null;
 
-  // Finale scores
-  if (state.finalisteIndices) {
     document.getElementById('finaleScoreBox').innerHTML = `
       <p class="finished-scores-title">Score de la Finale</p>
       <div class="finished-score-row">
@@ -1982,6 +2012,8 @@ function renderFinished() {
         <span class="finished-score-pts">${state.finaleScores[1]}</span>
       </div>`;
   }
+
+  document.getElementById('winnerName').textContent = winnerName || 'Égalité ! Match nul';
 
   // General ranking
   const sorted = state.teams.map((name,i) => ({name, score:state.teamScores[i], idx:i})).sort((a,b) => b.score-a.score);
