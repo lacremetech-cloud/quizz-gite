@@ -688,6 +688,151 @@
     .mb-8 { margin-bottom: 2rem; }
     audio { width: 100%; }
     .scores-wrap { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       RE-SKIN "Défis du savoir" — couleurs, cartes, badges, numéro
+       Surcharge uniquement l'aspect visuel. Aucune classe JS / ID / structure modifiée.
+       ═══════════════════════════════════════════════════════════════════════════ */
+    :root {
+      --green-dark:    #0F3D2E;   /* fond principal */
+      --green-mid:     #1C5E44;
+      --gold-mid:      #C9A961;   /* accents or */
+      --gold-dark:     #9E8240;
+      --gold-light:    #E6CF8C;
+      --white-pure:    #FFFFFF;
+      --cream:         #F5E8D0;
+      --amber:         #D4941E;
+      --red-soft:      #B8423E;
+      --level-green:   #2E7D4F;
+    }
+
+    /* Fond immersif vert émeraude profond */
+    body { background: var(--green-dark); color: var(--cream); }
+
+    /* Motif géométrique doré à ~10% par-dessus */
+    .pattern-bg {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23C9A961' stroke-width='0.5' opacity='0.10'%3E%3Crect x='5' y='5' width='30' height='30' rx='0' transform='rotate(45 20 20)'/%3E%3Crect x='10' y='10' width='20' height='20' rx='0' transform='rotate(45 20 20)'/%3E%3Cline x1='20' y1='0' x2='20' y2='40'/%3E%3Cline x1='0' y1='20' x2='40' y2='20'/%3E%3C/g%3E%3C/svg%3E") !important;
+    }
+
+    /* ── Page d'accueil : carte centrale lisible sur fond sombre ── */
+    .home-card { background: var(--white-pure); color: #1F3D2B; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+    .home-title { color: #0F3D2E !important; }
+    .home-subtitle { color: #6B8C78 !important; }
+    .form-label { color: #1F3D2B !important; }
+    .form-input, .form-select { background: #F9F6EE !important; color: #1F3D2B !important; border-color: rgba(201,169,97,0.35) !important; }
+    .form-input:focus, .form-select:focus { border-color: var(--gold-mid) !important; box-shadow: 0 0 0 3px rgba(201,169,97,0.18) !important; }
+
+    /* ── Header / titres ── */
+    .header-title, .header-subtitle, .header-elim { color: var(--cream) !important; }
+    .header-title a { color: var(--gold-light) !important; }
+    .header-turn { color: rgba(245,232,208,0.65) !important; }
+    .header-turn span { color: var(--gold-light) !important; }
+
+    /* Score cards : fond sombre, bordure dorée */
+    .score-card { background: rgba(255,255,255,0.04) !important; border-color: rgba(201,169,97,0.28) !important; color: var(--cream) !important; }
+    .score-card .score-label { color: rgba(245,232,208,0.65) !important; }
+    .score-card .score-name { color: var(--cream) !important; }
+    .score-card .score-pts { color: var(--gold-light) !important; }
+    .score-card.active, .score-card.selected-for-elim { background: rgba(201,169,97,0.18) !important; border-color: var(--gold-mid) !important; }
+    .score-card.eliminated { opacity: 0.45; }
+
+    /* ── CARTES (tous niveaux / catégories) — blanc pur + bord doré ── */
+    .card-face,
+    .card-face.cat-coran,
+    .card-face.cat-hadith,
+    .card-face.cat-culture,
+    .card-face.cat-devinettes,
+    .card-face.debutant,
+    .card-face.moyen,
+    .card-face.difficile {
+      background: var(--white-pure) !important;
+      border: 1.5px solid rgba(201,169,97,0.30) !important;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.08) !important;
+      animation: none !important;
+    }
+    .card-inner:hover .card-face,
+    .card-inner:hover .card-face.cat-coran,
+    .card-inner:hover .card-face.cat-hadith,
+    .card-inner:hover .card-face.cat-culture,
+    .card-inner:hover .card-face.cat-devinettes {
+      border-color: var(--gold-mid) !important;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.28), 0 0 0 2px rgba(201,169,97,0.18) !important;
+    }
+    .card-inner:hover { transform: translateY(-4px) scale(1.04); }
+
+    /* Couleur de la catégorie dans la carte (au-dessus de l'icône) */
+    .card-face .card-cat,
+    .card-face.cat-coran .card-cat,
+    .card-face.cat-hadith .card-cat,
+    .card-face.cat-culture .card-cat,
+    .card-face.cat-devinettes .card-cat { color: #6B8C78 !important; }
+
+    /* Icône : emoji dans cercle doré doux */
+    .card-icon {
+      width: 2.6rem; height: 2.6rem;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle, rgba(201,169,97,0.22) 0%, rgba(201,169,97,0.08) 70%);
+      border-radius: 50%;
+      font-size: 1.55rem;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── Niveau de difficulté : vert / ambre / rouge ── */
+    .card-face .card-level { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; }
+    .card-face.cat-coran .card-level,
+    .card-face.cat-hadith .card-level,
+    .card-face.cat-culture .card-level,
+    .card-face.cat-devinettes .card-level,
+    .card-face.debutant .card-level { color: var(--level-green) !important; }
+    .card-face .card-level,
+    .card-face.moyen .card-level { color: var(--amber) !important; }
+    /* level text is set via inline JS based on level string, so we scope via the level classes below */
+    .card-face.difficile .card-level,
+    .card-face .card-level.difficile-text,
+    .card-face.cat-devinettes .card-level.difficile-text { color: var(--red-soft) !important; }
+
+    /* ── Numéro de carte mis en avant (style bento) ── */
+    .card-num,
+    .card-face.cat-coran .card-num,
+    .card-face.cat-hadith .card-num,
+    .card-face.cat-culture .card-num,
+    .card-face.cat-devinettes .card-num {
+      width: 2.25rem; height: 2.25rem;
+      font-size: 1.05rem;
+      font-weight: 900;
+      background: linear-gradient(145deg, #FDF6E3, #F3E4BF) !important;
+      color: var(--gold-dark) !important;
+      border: 1.5px solid rgba(201,169,97,0.35) !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08), inset 0 -1px 2px rgba(201,169,97,0.15);
+    }
+
+    /* ── Cartes verrouillées (défi) : look métallique ── */
+    .card-face.defi-locked {
+      background: linear-gradient(145deg, #3A4048, #252A30) !important;
+      border-color: #565B64 !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 10px rgba(0,0,0,0.3) !important;
+    }
+    .card-face.defi-locked .card-cat,
+    .card-face.defi-locked .card-level { color: #9FA4AC !important; }
+    .card-face.defi-locked .card-num { background: linear-gradient(145deg, #4A5058, #2F343A) !important; color: #9FA4AC !important; border-color: #565B64 !important; }
+    .card-face.defi-locked .card-icon {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 70%);
+      filter: grayscale(0.4);
+    }
+    .card-face.defi-unlocked {
+      background: linear-gradient(145deg, #1F3D2B, #0F3D2E) !important;
+      border-color: var(--gold-mid) !important;
+      box-shadow: 0 0 0 2px rgba(201,169,97,0.35), 0 4px 14px rgba(0,0,0,0.35) !important;
+    }
+    .card-face.defi-unlocked .card-cat,
+    .card-face.defi-unlocked .card-level { color: var(--gold-light) !important; }
+    .card-face.defi-unlocked .card-num { background: linear-gradient(145deg, #E6CF8C, #C9A961) !important; color: #1F3D2B !important; border-color: var(--gold-mid) !important; }
+
+    /* ── Boutons du header (mélanger, classement, etc.) adaptés au fond sombre ── */
+    .btn-outline-gold { background: rgba(201,169,97,0.08); color: var(--gold-light); border-color: var(--gold-mid); }
+    .btn-outline-gold:hover { background: rgba(201,169,97,0.18); color: #FFF; }
+    .btn-ghost { color: var(--cream); }
+    .btn-ghost:hover { color: #FFF; background: rgba(255,255,255,0.06); }
   </style>
 </head>
 <body>
