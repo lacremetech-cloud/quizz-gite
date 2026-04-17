@@ -828,11 +828,165 @@
     .card-face.defi-unlocked .card-level { color: var(--gold-light) !important; }
     .card-face.defi-unlocked .card-num { background: linear-gradient(145deg, #E6CF8C, #C9A961) !important; color: #1F3D2B !important; border-color: var(--gold-mid) !important; }
 
-    /* ── Boutons du header (mélanger, classement, etc.) adaptés au fond sombre ── */
-    .btn-outline-gold { background: rgba(201,169,97,0.08); color: var(--gold-light); border-color: var(--gold-mid); }
-    .btn-outline-gold:hover { background: rgba(201,169,97,0.18); color: #FFF; }
-    .btn-ghost { color: var(--cream); }
-    .btn-ghost:hover { color: #FFF; background: rgba(255,255,255,0.06); }
+    /* ═══════════════════════════════════════════════════════════════════
+       V2 — Corrections score cards / boutons / locked / accents catégorie
+       ═══════════════════════════════════════════════════════════════════ */
+
+    /* 1. Score cards — plus opaques, contrastées, équipe active en doré */
+    .score-card {
+      background: rgba(15,40,32,0.55) !important;
+      border: 1.5px solid rgba(201,169,97,0.28) !important;
+      color: var(--cream) !important;
+      min-width: 5.5rem;
+      transition: all 0.25s ease;
+    }
+    .score-card .score-label { color: rgba(245,232,208,0.72) !important; font-weight: 700; }
+    .score-card .score-name { color: var(--cream) !important; font-weight: 800; }
+    .score-card .score-pts {
+      color: var(--gold-light) !important;
+      font-size: 1.85rem !important;
+      font-weight: 900 !important;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .score-card.active,
+    .score-card.finale-active {
+      background: linear-gradient(145deg, #D4B974, #9E8240) !important;
+      border-color: #E6CF8C !important;
+      box-shadow: 0 0 0 2px rgba(230,207,140,0.35), 0 4px 16px rgba(201,169,97,0.35), 0 0 24px rgba(201,169,97,0.25) !important;
+      transform: translateY(-1px);
+    }
+    .score-card.active .score-label,
+    .score-card.active .score-name { color: #1F3D2B !important; }
+    .score-card.active .score-pts { color: #1F3D2B !important; text-shadow: 0 1px 0 rgba(255,255,255,0.25); }
+    .score-card.selected-for-elim {
+      background: rgba(184,66,62,0.22) !important;
+      border-color: rgba(184,66,62,0.75) !important;
+    }
+    .score-card.eliminated { opacity: 0.38; filter: grayscale(0.4); }
+
+    /* 2. Boutons header — 3 niveaux de hiérarchie, même hauteur, icône alignée */
+    .header-controls { gap: 0.5rem; }
+    .header-controls .btn {
+      height: 2.25rem;
+      padding: 0 0.9rem;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 1.5px solid transparent;
+      display: inline-flex; align-items: center;
+      gap: 0.4rem;
+      line-height: 1;
+      transition: all 0.18s ease;
+    }
+    /* Primaire : Classement (doré plein) */
+    .header-controls #lbBtn {
+      background: linear-gradient(145deg, #D4B974, #9E8240) !important;
+      color: #1F3D2B !important;
+      border-color: rgba(230,207,140,0.6) !important;
+      box-shadow: 0 2px 6px rgba(201,169,97,0.3);
+    }
+    .header-controls #lbBtn:hover {
+      background: linear-gradient(145deg, #E6CF8C, #B89855) !important;
+      color: #0F3D2E !important;
+      transform: translateY(-1px);
+    }
+    /* Secondaire : Mélanger / Recommencer / Accueil */
+    .header-controls #shuffleBtn,
+    .header-controls a[href="index.html"],
+    .header-controls button[onclick="resetGame()"] {
+      background: rgba(255,255,255,0.04) !important;
+      color: var(--cream) !important;
+      border-color: rgba(201,169,97,0.4) !important;
+    }
+    .header-controls #shuffleBtn:hover,
+    .header-controls a[href="index.html"]:hover,
+    .header-controls button[onclick="resetGame()"]:hover {
+      background: rgba(201,169,97,0.14) !important;
+      color: #FFF !important;
+      border-color: var(--gold-mid) !important;
+    }
+    /* Destructif : Éliminer (corail doux) */
+    .header-controls #elimBtn {
+      background: rgba(184,66,62,0.12) !important;
+      color: #E89C99 !important;
+      border-color: rgba(184,66,62,0.55) !important;
+    }
+    .header-controls #elimBtn:hover {
+      background: rgba(184,66,62,0.22) !important;
+      color: #FFF !important;
+      border-color: #B8423E !important;
+    }
+
+    /* 3. Cartes défis verrouillées — tablette scellée vert profond */
+    .card-face.defi-locked {
+      background: linear-gradient(160deg, #1A3528 0%, #0F2820 100%) !important;
+      border: 1.5px solid rgba(201,169,97,0.35) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(201,169,97,0.08),
+        inset 0 -8px 20px rgba(0,0,0,0.25),
+        0 4px 12px rgba(0,0,0,0.35) !important;
+      position: relative;
+    }
+    .card-face.defi-locked::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(ellipse at 50% 30%, rgba(201,169,97,0.12) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .card-face.defi-locked .card-cat,
+    .card-face.defi-locked .card-level { color: rgba(201,169,97,0.55) !important; }
+    .card-face.defi-locked .card-icon {
+      background: radial-gradient(circle, rgba(201,169,97,0.18) 0%, rgba(201,169,97,0.04) 70%) !important;
+      color: rgba(201,169,97,0.70);
+      filter: none;
+    }
+    .card-face.defi-locked .card-num {
+      background: linear-gradient(145deg, rgba(201,169,97,0.18), rgba(158,130,64,0.10)) !important;
+      color: rgba(201,169,97,0.75) !important;
+      border-color: rgba(201,169,97,0.30) !important;
+      box-shadow: inset 0 1px 0 rgba(201,169,97,0.1);
+    }
+
+    /* ── Accents de catégorie — cercle d'icône + label coloré ── */
+    /* Hadith → bordeaux */
+    .card-face.cat-hadith .card-icon {
+      background: radial-gradient(circle, rgba(122,46,46,0.18) 0%, rgba(122,46,46,0.04) 70%) !important;
+    }
+    .card-face.cat-hadith .card-cat { color: #7A2E2E !important; }
+    /* Culture → bleu nuit */
+    .card-face.cat-culture .card-icon {
+      background: radial-gradient(circle, rgba(30,58,95,0.18) 0%, rgba(30,58,95,0.04) 70%) !important;
+    }
+    .card-face.cat-culture .card-cat { color: #1E3A5F !important; }
+    /* Coran → vert sauge */
+    .card-face.cat-coran .card-icon {
+      background: radial-gradient(circle, rgba(107,142,90,0.22) 0%, rgba(107,142,90,0.05) 70%) !important;
+    }
+    .card-face.cat-coran .card-cat { color: #4F6B42 !important; }
+    /* Devinettes → violet prune */
+    .card-face.cat-devinettes .card-icon {
+      background: radial-gradient(circle, rgba(93,58,95,0.20) 0%, rgba(93,58,95,0.04) 70%) !important;
+    }
+    .card-face.cat-devinettes .card-cat { color: #5D3A5F !important; }
+    /* Vocabulaire → terracotta / ocre */
+    .card-face.cat-vocabulaire {
+      background: var(--white-pure) !important;
+      border: 1.5px solid rgba(201,169,97,0.30) !important;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.08) !important;
+    }
+    .card-face.cat-vocabulaire .card-icon {
+      background: radial-gradient(circle, rgba(184,115,51,0.20) 0%, rgba(184,115,51,0.04) 70%) !important;
+    }
+    .card-face.cat-vocabulaire .card-cat { color: #B87333 !important; }
+
+    /* Chiffre toujours en doré uniforme, quel que soit la catégorie */
+    .card-face .card-num {
+      background: linear-gradient(145deg, #FDF6E3, #F3E4BF) !important;
+      color: var(--gold-dark) !important;
+      border-color: rgba(201,169,97,0.35) !important;
+    }
   </style>
 </head>
 <body>
@@ -1891,6 +2045,7 @@ function renderCardGrid(animate) {
       else if (catKey === 'hadith') faceClass += 'cat-hadith';
       else if (catKey === 'culture') faceClass += 'cat-culture';
       else if (catKey === 'devinettes') faceClass += 'cat-devinettes';
+      else if (catKey === 'vocabulaire') faceClass += 'cat-vocabulaire';
       else faceClass += 'cat-culture'; // fallback
     }
 
