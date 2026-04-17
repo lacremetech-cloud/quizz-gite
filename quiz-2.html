@@ -918,7 +918,7 @@
       border-color: #B8423E !important;
     }
 
-    /* 3. Cartes défis verrouillées — tablette scellée vert profond */
+    /* 3. Cartes défis verrouillées — tablette scellée vert profond (même taille que les autres) */
     .card-face.defi-locked {
       background: linear-gradient(160deg, #1A3528 0%, #0F2820 100%) !important;
       border: 1.5px solid rgba(201,169,97,0.35) !important;
@@ -926,7 +926,6 @@
         inset 0 1px 0 rgba(201,169,97,0.08),
         inset 0 -8px 20px rgba(0,0,0,0.25),
         0 4px 12px rgba(0,0,0,0.35) !important;
-      position: relative;
     }
     .card-face.defi-locked::after {
       content: '';
@@ -987,6 +986,33 @@
       color: var(--gold-dark) !important;
       border-color: rgba(201,169,97,0.35) !important;
     }
+
+    /* ── Bande colorée latérale gauche (marque-page / fiche de bibliothèque) ── */
+    .card-face.cat-hadith,
+    .card-face.cat-culture,
+    .card-face.cat-coran,
+    .card-face.cat-devinettes,
+    .card-face.cat-vocabulaire {
+      overflow: hidden;
+    }
+    .card-face.cat-hadith::before,
+    .card-face.cat-culture::before,
+    .card-face.cat-coran::before,
+    .card-face.cat-devinettes::before,
+    .card-face.cat-vocabulaire::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 5px;
+      border-top-left-radius: inherit;
+      border-bottom-left-radius: inherit;
+      pointer-events: none;
+    }
+    .card-face.cat-hadith::before     { background: #7A2E2E; }
+    .card-face.cat-culture::before    { background: #1E3A5F; }
+    .card-face.cat-coran::before      { background: #6B8E5A; }
+    .card-face.cat-devinettes::before { background: #5D3A5F; }
+    .card-face.cat-vocabulaire::before{ background: #B87333; }
   </style>
 </head>
 <body>
