@@ -383,7 +383,10 @@
     .modal-box {
       border-radius: 24px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-      max-width: 42rem; width: 100%; overflow: hidden;
+      max-width: 42rem; width: 100%;
+      max-height: calc(100vh - 2rem);
+      display: flex; flex-direction: column;
+      overflow: hidden;
       animation: scaleIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
       border: 4px solid var(--gold-mid);
     }
@@ -393,6 +396,7 @@
       padding: 1.5rem;
       display: flex; align-items: center; justify-content: space-between;
       color: #fff;
+      flex-shrink: 0;
     }
     .modal-header.sage { background: #3E6B4E; }
     .modal-header.gold { background: linear-gradient(135deg, #C2A65A, #A8882B); }
@@ -401,8 +405,13 @@
     .modal-cat.dark-text { color: rgba(255,255,255,0.85); opacity: 1; }
     .modal-level { font-size: 1.375rem; font-weight: 900; }
     .modal-level.dark-text { color: #fff; }
-    .modal-body { padding: 2rem 2.5rem; text-align: center; background: #fff; }
+    .modal-body { padding: 2rem 2.5rem; text-align: center; background: #fff; overflow-y: auto; flex: 1 1 auto; -webkit-overflow-scrolling: touch; }
     @media (max-width: 640px) { .modal-body { padding: 1.5rem; } }
+    /* Scrollbar plus visible dans la modal */
+    .modal-body::-webkit-scrollbar { width: 10px; }
+    .modal-body::-webkit-scrollbar-track { background: #F8F2E4; border-radius: 10px; }
+    .modal-body::-webkit-scrollbar-thumb { background: var(--gold-light); border-radius: 10px; border: 2px solid #F8F2E4; }
+    .modal-body::-webkit-scrollbar-thumb:hover { background: var(--gold-mid); }
     .modal-question { font-size: 1.5rem; font-weight: 800; line-height: 1.5; color: #1A2E1E; margin-bottom: 1.75rem; }
     @media (max-width: 640px) { .modal-question { font-size: 1.125rem; } }
     .modal-question.gold { color: var(--text-dark); }
@@ -418,7 +427,10 @@
       text-align: left; animation: slideDown 0.2s ease; margin-bottom: 1rem;
     }
     .modal-response.dark { background: #F5F5DC; border-color: rgba(212,175,55,0.30); }
-    .modal-response p { font-size: 1.0625rem; font-weight: 700; font-style: italic; color: var(--gold-mid); white-space: pre-line; }
+    .modal-response p {
+      font-size: 1rem; font-weight: 600; color: var(--text-dark);
+      white-space: pre-line; line-height: 1.65;
+    }
     .modal-actions { display: flex; gap: 0.875rem; padding-top: 0.875rem; }
     .modal-defi-actions { display: flex; flex-direction: column; gap: 0.625rem; padding-top: 0.875rem; }
     .modal-defi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.625rem; }
@@ -676,6 +688,346 @@
     .mb-8 { margin-bottom: 2rem; }
     audio { width: 100%; }
     .scores-wrap { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       RE-SKIN "Défis du savoir" — couleurs, cartes, badges, numéro
+       Surcharge uniquement l'aspect visuel. Aucune classe JS / ID / structure modifiée.
+       ═══════════════════════════════════════════════════════════════════════════ */
+    :root {
+      --green-dark:    #0F3D2E;   /* fond principal */
+      --green-mid:     #1C5E44;
+      --gold-mid:      #C9A961;   /* accents or */
+      --gold-dark:     #9E8240;
+      --gold-light:    #E6CF8C;
+      --white-pure:    #FFFFFF;
+      --cream:         #F5E8D0;
+      --amber:         #D4941E;
+      --red-soft:      #B8423E;
+      --level-green:   #2E7D4F;
+    }
+
+    /* Fond immersif vert émeraude profond */
+    body { background: var(--green-dark); color: var(--cream); }
+
+    /* Motif géométrique doré à ~10% par-dessus */
+    .pattern-bg {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23C9A961' stroke-width='0.5' opacity='0.10'%3E%3Crect x='5' y='5' width='30' height='30' rx='0' transform='rotate(45 20 20)'/%3E%3Crect x='10' y='10' width='20' height='20' rx='0' transform='rotate(45 20 20)'/%3E%3Cline x1='20' y1='0' x2='20' y2='40'/%3E%3Cline x1='0' y1='20' x2='40' y2='20'/%3E%3C/g%3E%3C/svg%3E") !important;
+    }
+
+    /* ── Page d'accueil : carte centrale lisible sur fond sombre ── */
+    .home-card { background: var(--white-pure); color: #1F3D2B; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+    .home-title { color: #0F3D2E !important; }
+    .home-subtitle { color: #6B8C78 !important; }
+    .form-label { color: #1F3D2B !important; }
+    .form-input, .form-select { background: #F9F6EE !important; color: #1F3D2B !important; border-color: rgba(201,169,97,0.35) !important; }
+    .form-input:focus, .form-select:focus { border-color: var(--gold-mid) !important; box-shadow: 0 0 0 3px rgba(201,169,97,0.18) !important; }
+
+    /* ── Header / titres ── */
+    .header-title, .header-subtitle, .header-elim { color: var(--cream) !important; }
+    .header-title a { color: var(--gold-light) !important; }
+    .header-turn { color: rgba(245,232,208,0.65) !important; }
+    .header-turn span { color: var(--gold-light) !important; }
+
+    /* Score cards : fond sombre, bordure dorée */
+    .score-card { background: rgba(255,255,255,0.04) !important; border-color: rgba(201,169,97,0.28) !important; color: var(--cream) !important; }
+    .score-card .score-label { color: rgba(245,232,208,0.65) !important; }
+    .score-card .score-name { color: var(--cream) !important; }
+    .score-card .score-pts { color: var(--gold-light) !important; }
+    .score-card.active, .score-card.selected-for-elim { background: rgba(201,169,97,0.18) !important; border-color: var(--gold-mid) !important; }
+    .score-card.eliminated { opacity: 0.45; }
+
+    /* ── CARTES (tous niveaux / catégories) — blanc pur + bord doré ── */
+    .card-face,
+    .card-face.cat-coran,
+    .card-face.cat-hadith,
+    .card-face.cat-culture,
+    .card-face.cat-devinettes,
+    .card-face.debutant,
+    .card-face.moyen,
+    .card-face.difficile {
+      background: var(--white-pure) !important;
+      border: 1.5px solid rgba(201,169,97,0.30) !important;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.08) !important;
+      animation: none !important;
+    }
+    .card-inner:hover .card-face,
+    .card-inner:hover .card-face.cat-coran,
+    .card-inner:hover .card-face.cat-hadith,
+    .card-inner:hover .card-face.cat-culture,
+    .card-inner:hover .card-face.cat-devinettes {
+      border-color: var(--gold-mid) !important;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.28), 0 0 0 2px rgba(201,169,97,0.18) !important;
+    }
+    .card-inner:hover { transform: translateY(-4px) scale(1.04); }
+
+    /* Couleur de la catégorie dans la carte (au-dessus de l'icône) */
+    .card-face .card-cat,
+    .card-face.cat-coran .card-cat,
+    .card-face.cat-hadith .card-cat,
+    .card-face.cat-culture .card-cat,
+    .card-face.cat-devinettes .card-cat { color: #6B8C78 !important; }
+
+    /* Icône : emoji dans cercle doré doux */
+    .card-icon {
+      width: 2.6rem; height: 2.6rem;
+      display: flex; align-items: center; justify-content: center;
+      background: radial-gradient(circle, rgba(201,169,97,0.22) 0%, rgba(201,169,97,0.08) 70%);
+      border-radius: 50%;
+      font-size: 1.55rem;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── Niveau de difficulté : vert / ambre / rouge ── */
+    .card-face .card-level { text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.68rem; }
+    .card-face.cat-coran .card-level,
+    .card-face.cat-hadith .card-level,
+    .card-face.cat-culture .card-level,
+    .card-face.cat-devinettes .card-level,
+    .card-face.debutant .card-level { color: var(--level-green) !important; }
+    .card-face .card-level,
+    .card-face.moyen .card-level { color: var(--amber) !important; }
+    /* level text is set via inline JS based on level string, so we scope via the level classes below */
+    .card-face.difficile .card-level,
+    .card-face .card-level.difficile-text,
+    .card-face.cat-devinettes .card-level.difficile-text { color: var(--red-soft) !important; }
+
+    /* ── Numéro de carte mis en avant (style bento) ── */
+    .card-num,
+    .card-face.cat-coran .card-num,
+    .card-face.cat-hadith .card-num,
+    .card-face.cat-culture .card-num,
+    .card-face.cat-devinettes .card-num {
+      width: 2.25rem; height: 2.25rem;
+      font-size: 1.05rem;
+      font-weight: 900;
+      background: linear-gradient(145deg, #FDF6E3, #F3E4BF) !important;
+      color: var(--gold-dark) !important;
+      border: 1.5px solid rgba(201,169,97,0.35) !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.08), inset 0 -1px 2px rgba(201,169,97,0.15);
+    }
+
+    /* ── Cartes verrouillées (défi) : look métallique ── */
+    .card-face.defi-locked {
+      background: linear-gradient(145deg, #3A4048, #252A30) !important;
+      border-color: #565B64 !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 10px rgba(0,0,0,0.3) !important;
+    }
+    .card-face.defi-locked .card-cat,
+    .card-face.defi-locked .card-level { color: #9FA4AC !important; }
+    .card-face.defi-locked .card-num { background: linear-gradient(145deg, #4A5058, #2F343A) !important; color: #9FA4AC !important; border-color: #565B64 !important; }
+    .card-face.defi-locked .card-icon {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 70%);
+      filter: grayscale(0.4);
+    }
+    .card-face.defi-unlocked {
+      background: linear-gradient(145deg, #F5D980 0%, #D4B055 55%, #A8862F 100%) !important;
+      border: 1.5px solid #FDF6E3 !important;
+      box-shadow:
+        inset 0 1px 0 rgba(253,246,227,0.45),
+        0 0 0 2px rgba(201,169,97,0.55),
+        0 0 18px rgba(201,169,97,0.4),
+        0 4px 16px rgba(0,0,0,0.35) !important;
+    }
+    .card-face.defi-unlocked .card-cat,
+    .card-face.defi-unlocked .card-level { color: #1F3D2B !important; }
+    .card-face.defi-unlocked .card-icon { color: #1F3D2B; }
+    .card-face.defi-unlocked .card-num {
+      background: linear-gradient(145deg, #1F3D2B, #0F3D2E) !important;
+      color: #FDF6E3 !important;
+      border-color: rgba(253,246,227,0.5) !important;
+    }
+    .card-face.defi-unlocked > span:first-child { color: #1F3D2B !important; }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       V2 — Corrections score cards / boutons / locked / accents catégorie
+       ═══════════════════════════════════════════════════════════════════ */
+
+    /* 1. Score cards — plus opaques, contrastées, équipe active en doré */
+    .score-card {
+      background: rgba(15,40,32,0.55) !important;
+      border: 1.5px solid rgba(201,169,97,0.28) !important;
+      color: var(--cream) !important;
+      min-width: 5.5rem;
+      transition: all 0.25s ease;
+    }
+    .score-card .score-label { color: rgba(245,232,208,0.72) !important; font-weight: 700; }
+    .score-card .score-name { color: var(--cream) !important; font-weight: 800; }
+    .score-card .score-pts {
+      color: var(--gold-light) !important;
+      font-size: 1.85rem !important;
+      font-weight: 900 !important;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+    .score-card.active,
+    .score-card.finale-active {
+      background: linear-gradient(145deg, #D4B974, #9E8240) !important;
+      border-color: #E6CF8C !important;
+      box-shadow: 0 0 0 2px rgba(230,207,140,0.35), 0 4px 16px rgba(201,169,97,0.35), 0 0 24px rgba(201,169,97,0.25) !important;
+      transform: translateY(-1px);
+    }
+    .score-card.active .score-label,
+    .score-card.active .score-name { color: #1F3D2B !important; }
+    .score-card.active .score-pts { color: #1F3D2B !important; text-shadow: 0 1px 0 rgba(255,255,255,0.25); }
+    .score-card.selected-for-elim {
+      background: rgba(184,66,62,0.22) !important;
+      border-color: rgba(184,66,62,0.75) !important;
+    }
+    .score-card.eliminated { opacity: 0.38; filter: grayscale(0.4); }
+
+    /* 2. Boutons header — 3 niveaux de hiérarchie, même hauteur, icône alignée */
+    .header-controls { gap: 0.5rem; }
+    .header-controls .btn {
+      height: 2.25rem;
+      padding: 0 0.9rem;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 1.5px solid transparent;
+      display: inline-flex; align-items: center;
+      gap: 0.4rem;
+      line-height: 1;
+      transition: all 0.18s ease;
+    }
+    /* Primaire : Classement (doré plein) */
+    .header-controls #lbBtn {
+      background: linear-gradient(145deg, #D4B974, #9E8240) !important;
+      color: #1F3D2B !important;
+      border-color: rgba(230,207,140,0.6) !important;
+      box-shadow: 0 2px 6px rgba(201,169,97,0.3);
+    }
+    .header-controls #lbBtn:hover {
+      background: linear-gradient(145deg, #E6CF8C, #B89855) !important;
+      color: #0F3D2E !important;
+      transform: translateY(-1px);
+    }
+    /* Secondaire : Mélanger / Recommencer / Accueil */
+    .header-controls #shuffleBtn,
+    .header-controls a[href="index.html"],
+    .header-controls button[onclick="resetGame()"] {
+      background: rgba(255,255,255,0.04) !important;
+      color: var(--cream) !important;
+      border-color: rgba(201,169,97,0.4) !important;
+    }
+    .header-controls #shuffleBtn:hover,
+    .header-controls a[href="index.html"]:hover,
+    .header-controls button[onclick="resetGame()"]:hover {
+      background: rgba(201,169,97,0.14) !important;
+      color: #FFF !important;
+      border-color: var(--gold-mid) !important;
+    }
+    /* Destructif : Éliminer (corail doux) */
+    .header-controls #elimBtn {
+      background: rgba(184,66,62,0.12) !important;
+      color: #E89C99 !important;
+      border-color: rgba(184,66,62,0.55) !important;
+    }
+    .header-controls #elimBtn:hover {
+      background: rgba(184,66,62,0.22) !important;
+      color: #FFF !important;
+      border-color: #B8423E !important;
+    }
+
+    /* 3. Cartes défis verrouillées — coffret doré patiné (se détache du fond vert) */
+    .card-face.defi-locked {
+      background: linear-gradient(160deg, #B8923E 0%, #8A6E2A 55%, #6B5320 100%) !important;
+      border: 1.5px solid rgba(253,246,227,0.45) !important;
+      box-shadow:
+        inset 0 1px 0 rgba(253,246,227,0.25),
+        inset 0 -8px 20px rgba(0,0,0,0.22),
+        0 4px 14px rgba(0,0,0,0.35),
+        0 0 0 1px rgba(158,130,64,0.3) !important;
+    }
+    .card-face.defi-locked::after {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(ellipse at 50% 25%, rgba(253,246,227,0.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .card-face.defi-locked .card-cat,
+    .card-face.defi-locked .card-level { color: rgba(253,246,227,0.80) !important; }
+    .card-face.defi-locked .card-icon {
+      background: radial-gradient(circle, rgba(31,61,43,0.25) 0%, rgba(31,61,43,0.08) 70%) !important;
+      color: #1F3D2B;
+      filter: none;
+    }
+    .card-face.defi-locked .card-num {
+      background: linear-gradient(145deg, #FDF6E3, #F3E4BF) !important;
+      color: var(--gold-dark) !important;
+      border-color: rgba(31,61,43,0.35) !important;
+    }
+    /* Cadenas en vert sombre sur fond doré pour le contraste */
+    .card-face.defi-locked > span:first-child {
+      color: #1F3D2B !important;
+      filter: drop-shadow(0 1px 0 rgba(253,246,227,0.4));
+    }
+
+    /* ── Accents de catégorie — cercle d'icône + label coloré ── */
+    /* Hadith → bordeaux */
+    .card-face.cat-hadith .card-icon {
+      background: radial-gradient(circle, rgba(122,46,46,0.18) 0%, rgba(122,46,46,0.04) 70%) !important;
+    }
+    .card-face.cat-hadith .card-cat { color: #7A2E2E !important; }
+    /* Culture → bleu nuit */
+    .card-face.cat-culture .card-icon {
+      background: radial-gradient(circle, rgba(30,58,95,0.18) 0%, rgba(30,58,95,0.04) 70%) !important;
+    }
+    .card-face.cat-culture .card-cat { color: #1E3A5F !important; }
+    /* Coran → vert sauge */
+    .card-face.cat-coran .card-icon {
+      background: radial-gradient(circle, rgba(107,142,90,0.22) 0%, rgba(107,142,90,0.05) 70%) !important;
+    }
+    .card-face.cat-coran .card-cat { color: #4F6B42 !important; }
+    /* Devinettes → violet prune */
+    .card-face.cat-devinettes .card-icon {
+      background: radial-gradient(circle, rgba(93,58,95,0.20) 0%, rgba(93,58,95,0.04) 70%) !important;
+    }
+    .card-face.cat-devinettes .card-cat { color: #5D3A5F !important; }
+    /* Vocabulaire → terracotta / ocre */
+    .card-face.cat-vocabulaire {
+      background: var(--white-pure) !important;
+      border: 1.5px solid rgba(201,169,97,0.30) !important;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.08) !important;
+    }
+    .card-face.cat-vocabulaire .card-icon {
+      background: radial-gradient(circle, rgba(184,115,51,0.20) 0%, rgba(184,115,51,0.04) 70%) !important;
+    }
+    .card-face.cat-vocabulaire .card-cat { color: #B87333 !important; }
+
+    /* Chiffre toujours en doré uniforme, quel que soit la catégorie */
+    .card-face .card-num {
+      background: linear-gradient(145deg, #FDF6E3, #F3E4BF) !important;
+      color: var(--gold-dark) !important;
+      border-color: rgba(201,169,97,0.35) !important;
+    }
+
+    /* ── Bande colorée latérale gauche (marque-page / fiche de bibliothèque) ── */
+    .card-face.cat-hadith,
+    .card-face.cat-culture,
+    .card-face.cat-coran,
+    .card-face.cat-devinettes,
+    .card-face.cat-vocabulaire {
+      overflow: hidden;
+    }
+    .card-face.cat-hadith::before,
+    .card-face.cat-culture::before,
+    .card-face.cat-coran::before,
+    .card-face.cat-devinettes::before,
+    .card-face.cat-vocabulaire::before {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 5px;
+      border-top-left-radius: inherit;
+      border-bottom-left-radius: inherit;
+      pointer-events: none;
+    }
+    .card-face.cat-hadith::before     { background: #7A2E2E; }
+    .card-face.cat-culture::before    { background: #1E3A5F; }
+    .card-face.cat-coran::before      { background: #6B8E5A; }
+    .card-face.cat-devinettes::before { background: #5D3A5F; }
+    .card-face.cat-vocabulaire::before{ background: #B87333; }
   </style>
 </head>
 <body>
@@ -688,12 +1040,17 @@
 <!-- ═══════════════════════════════════════════════════════════════════════════ -->
 <div id="homeScreen" class="home-wrap">
   <div class="home-card">
+    <div style="margin-bottom: 1rem;">
+      <a href="index.html" class="btn btn-sm btn-ghost" style="color:var(--text-light);text-decoration:none;">
+        ← Retour à l'accueil
+      </a>
+    </div>
     <div class="text-center mb-8">
       <div class="home-icon">
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#3E6B4E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
       </div>
       <h1 class="home-title">Gîte des 3ème / Lycéennes</h1>
-      <p class="home-subtitle">Défis du savoir · By Jillaq</p>
+      <p class="home-subtitle">Défis du savoir · Édition 3</p>
     </div>
 
     <div class="space-y-6">
@@ -744,7 +1101,7 @@
 
         <!-- Right info -->
         <div class="header-right">
-          <h1 class="header-title" id="headerTitle">Gîte des 3ème / Lycéennes</h1>
+          <h1 class="header-title" id="headerTitle"><a href="index.html" style="text-decoration:none;color:inherit;" title="Retour à l'accueil">🏠</a> Gîte des 3ème / Lycéennes</h1>
           <p class="header-subtitle" id="headerSubtitle">Tour de : <span id="currentTeamName" style="color:var(--gold);font-weight:700;"></span></p>
           <p class="header-elim" id="elimStatus"></p>
           <div class="header-controls">
@@ -760,6 +1117,9 @@
             <button class="btn btn-sm btn-ghost" onclick="resetGame()" style="color:var(--sage);">
               ↺ Recommencer
             </button>
+            <a class="btn btn-sm btn-ghost" href="index.html" style="color:var(--text-light);text-decoration:none;" onclick="return confirm('Quitter le quiz et revenir à l\'accueil ?')">
+              🏠 Accueil
+            </a>
           </div>
         </div>
       </div>
@@ -850,209 +1210,85 @@
 // ═══════════════════════════════════════════════════════════════════════════
 
 const CHALLENGES = [
-  // ─── Devinettes ──────────────────────────────────────────────────────────
-  { id:1, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3,
-    content:"J'ai été tachée d'un faux sang pour cacher un mensonge. J'ai été déchirée par-derrière pour révéler la vérité. Qui suis-je ?",
-    response:"La chemise de Yûsuf (عليه السلام). Mentionnée plusieurs fois dans sourate Yûsuf : tachée du sang d'un animal pour faire croire au père Yaʿqûb qu'un loup avait dévoré Yûsuf (12:18), puis déchirée par-derrière par la femme de l'ʿAzîz, preuve de l'innocence de Yûsuf (12:25-28)." },
-  { id:2, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3,
-    content:"Je ne suis qu'un insecte, et pourtant, ce jour-là, j'ai crié à mon peuple de rentrer avant que les sabots ne passent — un roi m'a entendue. Qui suis-je ?",
-    response:"La fourmi (النملة) — qui avertit son peuple de rentrer dans leurs demeures avant que Sulaymân (ﷺ) et ses armées ne les écrasent. Sulaymân l'entendit et sourit. Sourate An-Naml (27:18-19)." },
-  { id:3, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3,
-    content:"Je ne pousse pas sur Terre. Mes racines plongent là où le feu jaillit, et mes branches portent le repas des injustes. Qui suis-je ?",
-    response:"Shajarat az-Zaqqûm (شجرة الزقوم) — l'arbre de Zaqqûm, planté au fond de l'Enfer, dont se nourriront les injustes. Mentionné dans As-Sâffât (37:62-65), Ad-Dukhân (44:43-46) et Al-Wâqiʿa (56:52)." },
-  { id:4, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3,
-    content:"On m'a demandé de confier mon trésor à ce qui, d'ordinaire, emporte tout. Et ce que j'avais perdu m'est revenu — sans que personne ne le sache. Je suis une femme, qui suis-je ?",
-    response:"La mère de Mûsâ (أم موسى) — inspirée par Allah de déposer son bébé dans le Nil dans un coffret. Allah le lui a rendu sain et sauf après qu'il fut recueilli par Pharaon. Sourate Al-Qasas (28:7-13) et Tâ-Hâ (20:38-40)." },
-  { id:5, cat:'Devinettes', icon:'🧩', level:'Moyen', pts:2,
-    content:"Jeté à terre, je suis devenu ce que je n'étais pas. J'ai dévoré les illusions des magiciens, et je suis redevenu bois dans la main de mon maître. Qui suis-je ?",
-    response:"Le bâton de Mûsâ (عليه السلام) devenu serpent devant Firʿawn. Récit dans Al-Aʿrâf 7:117, Tâ-Hâ 20:17-21, Ash-Shuʿarâʾ 26:45. Allah l'a transformé en serpent qui a dévoré les cordes et bâtons des magiciens de Pharaon, puis l'a rendu à son état initial dans la main de Mûsâ." },
+  // ─── Devinettes ─────────────────────────────────────────────
+  { id:1, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3, content:"J'ai été tachée d'un faux sang pour cacher un mensonge. J'ai été déchirée par-derrière pour révéler la vérité. Qui suis-je ?", response:"La chemise de Yûsuf (عليه السلام). Mentionnée dans sourate Yûsuf : tachée du sang d'un animal (12:18), puis déchirée par-derrière par la femme de l'ʿAzîz, preuve de l'innocence de Yûsuf (12:25-28)." },
+  { id:2, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3, content:"Je ne suis qu'un insecte, et pourtant, ce jour-là, j'ai crié à mon peuple de rentrer avant que les sabots ne passent — un roi m'a entendue. Qui suis-je ?", response:"La fourmi (النملة) — qui avertit son peuple avant que Sulaymân (ﷺ) et ses armées ne les écrasent. Sulaymân l'entendit et sourit. Sourate An-Naml (27:18-19)." },
+  { id:3, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3, content:"Je ne pousse pas sur Terre. Mes racines plongent là où le feu jaillit, et mes branches portent le repas des injustes. Qui suis-je ?", response:"Shajarat az-Zaqqûm (شجرة الزقوم) — l'arbre de Zaqqûm, planté au fond de l'Enfer. Mentionné dans As-Sâffât (37:62-65), Ad-Dukhân (44:43-46) et Al-Wâqiʿa (56:52)." },
+  { id:4, cat:'Devinettes', icon:'🧩', level:'Difficile', pts:3, content:"On m'a demandé de confier mon trésor à ce qui, d'ordinaire, emporte tout. Et ce que j'avais perdu m'est revenu — sans que personne ne le sache. Je suis une femme, qui suis-je ?", response:"La mère de Mûsâ (أم موسى) — inspirée par Allah de déposer son bébé dans le Nil. Allah le lui a rendu sain et sauf. Sourate Al-Qasas (28:7-13) et Tâ-Hâ (20:38-40)." },
+  { id:5, cat:'Devinettes', icon:'🧩', level:'Moyen', pts:2, content:"Jeté à terre, je suis devenu ce que je n'étais pas. J'ai dévoré les illusions des magiciens, et je suis redevenu bois dans la main de mon maître. Qui suis-je ?", response:"Le bâton de Mûsâ (عليه السلام) devenu serpent devant Firʿawn. Récit dans Al-Aʿrâf 7:117, Tâ-Hâ 20:17-21, Ash-Shuʿarâʾ 26:45." },
 
-  // ─── Hadiths ─────────────────────────────────────────────────────────────
-  { id:6, cat:'Hadith', icon:'📖', level:'Débutant', pts:1,
-    content:"Le Prophète (ﷺ) a dit : « Il n'est pas permis à un musulman de boycotter son frère plus de ______ ______ »",
-    response:"...trois jours. (Hadith rapporté par Al-Bukhari et Muslim) — 2 mots à trouver." },
-  { id:7, cat:'Hadith', icon:'📖', level:'Moyen', pts:2,
-    content:"Le Prophète (ﷺ) a dit : « Le sourire que tu fais à ton frère est une ______ »",
-    response:"...aumône. (Hadith rapporté par Jami' at-Tirmidhi) — 1 mot à trouver." },
-  { id:8, cat:'Hadith', icon:'📖', level:'Moyen', pts:2,
-    content:"Le Prophète (ﷺ) a dit : « Celui qui croit en Allah et au Jour dernier, qu'il dise du bien ou qu'il ______ »",
-    response:"...se taise. (Hadith rapporté par Al-Bukhari et Muslim) — 1 mot à trouver. Ce hadith insiste sur la responsabilité de la parole en Islam." },
-  { id:9, cat:'Hadith', icon:'📖', level:'Moyen', pts:2,
-    content:"Le Prophète (ﷺ) a dit : « N'entrera pas au Paradis celui qui a dans son cœur le poids d'un atome de ______ »",
-    response:"...orgueil. (Hadith rapporté par Muslim) — 1 mot à trouver." },
-  { id:10, cat:'Hadith', icon:'📖', level:'Difficile', pts:3,
-    content:"Le Prophète (ﷺ) a dit : « Celui qui se rapproche de Moi d'un empan, Je me rapproche de lui d'une ______ »",
-    response:"...coudée. (Hadith Qudsî rapporté par Al-Bukhari et Muslim) — 1 mot à trouver." },
-  { id:11, cat:'Hadith', icon:'📖', level:'Difficile', pts:3,
-    content:"Le Prophète (ﷺ) a dit : « On amènera l'Enfer ce jour-là avec soixante-dix mille rênes, chacune tenue par ______ ______ »",
-    response:"...soixante-dix mille anges (70 000 anges). (Hadith rapporté par Muslim) — 2 mots à trouver." },
+  // ─── Hadiths ────────────────────────────────────────────────
+  { id:6, cat:'Hadith', icon:'📖', level:'Débutant', pts:1, content:"Le Prophète (ﷺ) a dit : « Il n'est pas permis à un musulman de boycotter son frère plus de ______ ______ »", response:"...trois jours. (Hadith rapporté par Al-Bukhari et Muslim) — 2 mots à trouver." },
+  { id:7, cat:'Hadith', icon:'📖', level:'Moyen', pts:2, content:"Le Prophète (ﷺ) a dit : « Le sourire que tu fais à ton frère est une ______ »", response:"...aumône. (Hadith rapporté par Jami' at-Tirmidhi) — 1 mot à trouver." },
+  { id:8, cat:'Hadith', icon:'📖', level:'Moyen', pts:2, content:"Le Prophète (ﷺ) a dit : « Celui qui croit en Allah et au Jour dernier, qu'il dise du bien ou qu'il ______ »", response:"...se taise. (Hadith rapporté par Al-Bukhari et Muslim) — 1 mot à trouver." },
+  { id:9, cat:'Hadith', icon:'📖', level:'Moyen', pts:2, content:"Le Prophète (ﷺ) a dit : « N'entrera pas au Paradis celui qui a dans son cœur le poids d'un atome de ______ »", response:"...orgueil. (Hadith rapporté par Muslim) — 1 mot à trouver." },
+  { id:10, cat:'Hadith', icon:'📖', level:'Difficile', pts:3, content:"Le Prophète (ﷺ) a dit : « Celui qui se rapproche de Moi d'un empan, Je me rapproche de lui d'une ______ »", response:"...coudée. (Hadith Qudsî rapporté par Al-Bukhari et Muslim) — 1 mot à trouver." },
+  { id:11, cat:'Hadith', icon:'📖', level:'Difficile', pts:3, content:"Le Prophète (ﷺ) a dit : « On amènera l'Enfer ce jour-là avec soixante-dix mille rênes, chacune tenue par ______ ______ »", response:"...soixante-dix mille anges. (Hadith rapporté par Muslim) — 2 mots à trouver." },
 
-  // ─── Culture G ───────────────────────────────────────────────────────────
-  { id:12, cat:'Culture', icon:'🌙', level:'Débutant', pts:1,
-    content:"Quel ange est chargé de souffler dans la trompe le Jour du Jugement ?",
-    response:"Israfil (إسرافيل) — mentionné dans les hadiths (non explicitement dans le Coran). Il soufflera deux fois : une pour anéantir, l'autre pour ressusciter." },
-  { id:13, cat:'Culture', icon:'🌙', level:'Débutant', pts:1,
-    content:"Quelle est la première bataille en Islam ?",
-    response:"La bataille de Badr (غزوة بدر) — 2e année de l'Hégire. 313 musulmans contre ~1000 mécréants de Quraysh." },
-  { id:14, cat:'Culture', icon:'🌙', level:'Débutant', pts:1,
-    content:"Combien d'années a duré la révélation du Coran ?",
-    response:"23 ans — 13 ans à La Mecque (période makkiyya) et 10 ans à Médine (période madaniyya), de l'an 610 (grotte de Hirâʾ) jusqu'au décès du Prophète (ﷺ) en 632." },
-  { id:15, cat:'Culture', icon:'🌙', level:'Moyen', pts:2,
-    content:"Quelle sourate ne commence pas par « Bismillah » ?",
-    response:"Sourate At-Tawba (التوبة) — sourate 9. La seule sourate du Coran qui ne commence pas par la basmalah." },
-  { id:16, cat:'Culture', icon:'🌙', level:'Moyen', pts:2,
-    content:"Quel est le nom de la chamelle du Prophète (ﷺ) ?",
-    response:"Al-Qaswa (القصواء) — la chamelle du Prophète (ﷺ), célèbre pour avoir refusé d'avancer à l'entrée de La Mecque lors du traité d'Al-Hudaybiyyah." },
-  { id:17, cat:'Culture', icon:'🌙', level:'Moyen', pts:2,
-    content:"Quelle est la bataille où les musulmans ont creusé un fossé ?",
-    response:"La bataille d'Al-Khandaq (الخندق) — aussi appelée « bataille du Fossé » ou « bataille des Coalisés » (Al-Ahzâb). Année 5 de l'Hégire. Stratégie suggérée par Salmân al-Fârisî (رضي الله عنه) de creuser un fossé autour de Médine pour la protéger." },
-  { id:18, cat:'Culture', icon:'🌙', level:'Difficile', pts:3,
-    content:"Quel est le seul compagnon mentionné explicitement par son nom dans le Coran ?",
-    response:"Zayd ibn Hâritha (زيد بن حارثة) — mentionné dans la sourate Al-Ahzâb (33:37). Fils adoptif du Prophète (ﷺ) avant l'abolition de l'adoption légale." },
-  { id:19, cat:'Culture', icon:'🌙', level:'Difficile', pts:3,
-    content:"Quel est le nom du traité conclu entre les musulmans et Quraysh ?",
-    response:"Le traité d'Al-Hudaybiyyah (صلح الحديبية) — conclu en l'an 6 de l'Hégire, trêve de 10 ans entre le Prophète (ﷺ) et Quraysh." },
-  { id:20, cat:'Culture', icon:'🌙', level:'Difficile', pts:3,
-    content:"Quel prophète a été envoyé au peuple des ʿÂd ?",
-    response:"Hûd (هود عليه السلام) — envoyé au peuple des ʿÂd, un peuple arabe ancien d'Arabie du Sud, connu pour sa puissance et ses constructions imposantes (Iram aux colonnes). Ils furent détruits par un vent glacial pour avoir rejeté le prophète. Sourate Hûd (11:50-60) et Al-Ahqâf (46:21-25)." },
+  // ─── Culture G ──────────────────────────────────────────────
+  { id:12, cat:'Culture', icon:'🌙', level:'Débutant', pts:1, content:"Quel ange est chargé de souffler dans la trompe le Jour du Jugement ?", response:"Israfil (إسرافيل) — mentionné dans les hadiths. Il soufflera deux fois : une pour anéantir, l'autre pour ressusciter." },
+  { id:13, cat:'Culture', icon:'🌙', level:'Débutant', pts:1, content:"Quelle est la première bataille en Islam ?", response:"La bataille de Badr (غزوة بدر) — 2e année de l'Hégire. 313 musulmans contre ~1000 mécréants de Quraysh." },
+  { id:14, cat:'Culture', icon:'🌙', level:'Débutant', pts:1, content:"Combien d'années a duré la révélation du Coran ?", response:"23 ans — 13 ans à La Mecque et 10 ans à Médine, de l'an 610 jusqu'au décès du Prophète (ﷺ) en 632." },
+  { id:15, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quelle sourate ne commence pas par « Bismillah » ?", response:"Sourate At-Tawba (التوبة) — sourate 9. La seule sourate du Coran qui ne commence pas par la basmalah." },
+  { id:16, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quel est le nom de la chamelle du Prophète (ﷺ) ?", response:"Al-Qaswa (القصواء) — célèbre pour avoir refusé d'avancer à l'entrée de La Mecque lors du traité d'Al-Hudaybiyyah." },
+  { id:17, cat:'Culture', icon:'🌙', level:'Moyen', pts:2, content:"Quelle est la bataille où les musulmans ont creusé un fossé ?", response:"La bataille d'Al-Khandaq (الخندق) — aussi appelée « bataille des Coalisés ». An 5 de l'Hégire. Stratégie suggérée par Salmân al-Fârisî (رضي الله عنه)." },
+  { id:18, cat:'Culture', icon:'🌙', level:'Difficile', pts:3, content:"Quel est le seul compagnon mentionné explicitement par son nom dans le Coran ?", response:"Zayd ibn Hâritha (زيد بن حارثة) — mentionné dans la sourate Al-Ahzâb (33:37). Fils adoptif du Prophète (ﷺ) avant l'abolition de l'adoption légale." },
+  { id:19, cat:'Culture', icon:'🌙', level:'Difficile', pts:3, content:"Quel est le nom du traité conclu entre les musulmans et Quraysh ?", response:"Le traité d'Al-Hudaybiyyah (صلح الحديبية) — conclu en l'an 6 de l'Hégire, trêve de 10 ans entre le Prophète (ﷺ) et Quraysh." },
+  { id:20, cat:'Culture', icon:'🌙', level:'Difficile', pts:3, content:"Quel prophète a été envoyé au peuple des ʿÂd ?", response:"Hûd (هود عليه السلام) — envoyé au peuple des ʿÂd, connu pour ses constructions imposantes (Iram aux colonnes). Détruits par un vent glacial. Sourate Hûd (11:50-60)." },
 
-  // ─── Vocabulaire ─────────────────────────────────────────────────────────
-  { id:21, cat:'Vocabulaire', icon:'🧠', level:'Débutant', pts:1,
-    content:"Que signifie le mot ذِكْر (dhikr) ?",
-    response:"Rappel, mention — évocation d'Allah par la langue et le cœur. 💡 Le dhikr recouvre toutes les formes d'invocation (tasbîh, tahmîd, takbîr, istighfâr, lecture du Coran…). Allah dit : « Certes, c'est par le rappel d'Allah que les cœurs se tranquillisent. » (Ar-Raʿd 13:28)" },
-  { id:22, cat:'Vocabulaire', icon:'🧠', level:'Débutant', pts:1,
-    content:"Que signifie le mot أَمَانَة (amâna) ?",
-    response:"Dépôt, responsabilité confiée. 💡 C'est tout ce qu'Allah ou une personne te confie et dont tu dois être digne : la foi, les obligations religieuses, les secrets, les biens d'autrui, les relations humaines. Allah dit : « Certes, Allah vous ordonne de rendre les dépôts à leurs ayants droit. » (An-Nisâʾ 4:58)" },
-  { id:23, cat:'Vocabulaire', icon:'🧠', level:'Moyen', pts:2,
-    content:"Que signifie le mot آيَة (âya) dans le Coran ?",
-    response:"Signe, preuve (pas seulement « verset »). 💡 Chaque verset est appelé « âya » car il est un signe de la véracité divine. Le mot désigne aussi les signes d'Allah dans la création (le soleil, la lune, la naissance, la mort…)." },
-  { id:24, cat:'Vocabulaire', icon:'🧠', level:'Moyen', pts:2,
-    content:"Que signifie le mot غَيْب (ghayb) ?",
-    response:"L'invisible, ce qui est caché. 💡 Tout ce qui échappe aux sens humains : Allah, les anges, le Paradis, l'Enfer, le destin, l'avenir. Croire au ghayb est la première qualité des croyants mentionnée dans sourate Al-Baqara (2:3)." },
-  { id:25, cat:'Vocabulaire', icon:'🧠', level:'Moyen', pts:2,
-    content:"Que signifie le mot سَكِينَة (sakîna) ?",
-    response:"Sérénité envoyée par Allah — une paix intérieure descendue sur le cœur du croyant dans les moments difficiles. 💡 Allah la fit descendre sur le Prophète (ﷺ) et Abû Bakr dans la grotte lors de la Hijra (At-Tawba 9:40), et sur les croyants à Hudaybiyyah (Al-Fath 48:4)." },
-  { id:26, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3,
-    content:"Que signifie le mot رِزْق (rizq) ?",
-    response:"Subsistance accordée par Allah. 💡 Ne se limite pas à l'argent : santé, savoir, enfants, paix intérieure, bonne compagnie, foi — tout ce qu'Allah accorde comme part à chaque créature. Allah est Ar-Razzâq (Le Pourvoyeur)." },
-  { id:27, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3,
-    content:"Que signifie le mot طَغَى (ṭaghâ) ?",
-    response:"Dépasser les limites, transgresser avec orgueil. 💡 Utilisé dans le Coran pour décrire Pharaon : « Va chez Pharaon, il a vraiment dépassé les limites (إِنَّهُ طَغَى) » (Tâ-Hâ 20:24). La racine ṭ-gh-y donne aussi « ṭâghût » (idole, tyran qu'on adore en dehors d'Allah)." },
+  // ─── Vocabulaire ────────────────────────────────────────────
+  { id:21, cat:'Vocabulaire', icon:'🧠', level:'Débutant', pts:1, content:"Que signifie le mot ذِكْر (dhikr) ?", response:"Rappel, mention — évocation d'Allah par la langue et le cœur. 💡 Recouvre toutes les formes d'invocation. Allah dit : « Certes, c'est par le rappel d'Allah que les cœurs se tranquillisent. » (Ar-Raʿd 13:28)" },
+  { id:22, cat:'Vocabulaire', icon:'🧠', level:'Débutant', pts:1, content:"Que signifie le mot أَمَانَة (amâna) ?", response:"Dépôt, responsabilité confiée. 💡 Tout ce qu'Allah ou une personne te confie : la foi, les obligations, les secrets, les biens d'autrui. Allah dit : « Certes, Allah vous ordonne de rendre les dépôts à leurs ayants droit. » (An-Nisâʾ 4:58)" },
+  { id:23, cat:'Vocabulaire', icon:'🧠', level:'Moyen', pts:2, content:"Que signifie le mot آيَة (âya) dans le Coran ?", response:"Signe, preuve (pas seulement « verset »). 💡 Chaque verset est un signe de la véracité divine. Le mot désigne aussi les signes d'Allah dans la création (le soleil, la lune, la naissance, la mort…)." },
+  { id:24, cat:'Vocabulaire', icon:'🧠', level:'Moyen', pts:2, content:"Que signifie le mot غَيْب (ghayb) ?", response:"L'invisible, ce qui est caché. 💡 Tout ce qui échappe aux sens : Allah, les anges, le Paradis, l'Enfer, le destin. Croire au ghayb est la première qualité des croyants (Al-Baqara 2:3)." },
+  { id:25, cat:'Vocabulaire', icon:'🧠', level:'Moyen', pts:2, content:"Que signifie le mot سَكِينَة (sakîna) ?", response:"Sérénité envoyée par Allah — paix intérieure descendue sur le cœur du croyant. 💡 Allah la fit descendre sur le Prophète (ﷺ) et Abû Bakr dans la grotte lors de la Hijra (At-Tawba 9:40)." },
+  { id:26, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot رِزْق (rizq) ?", response:"Subsistance accordée par Allah. 💡 Ne se limite pas à l'argent : santé, savoir, enfants, paix intérieure, foi — tout ce qu'Allah accorde à chaque créature. Allah est Ar-Razzâq (Le Pourvoyeur)." },
+  { id:27, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot طَغَى (ṭaghâ) ?", response:"Dépasser les limites, transgresser avec orgueil. 💡 Utilisé pour décrire Pharaon : « Va chez Pharaon, il a vraiment dépassé les limites (إِنَّهُ طَغَى) » (Tâ-Hâ 20:24). La racine donne aussi « ṭâghût » (idole, tyran adoré en dehors d'Allah)." },
 
-  // ─── Coran — Écoute et devine ────────────────────────────────────────────
-  { id:28, cat:'Coran', icon:'🎧', level:'Moyen', pts:2,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Inshiqâq (84) — La Déchirure.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/084.mp3", audioStart:30 },
-  { id:29, cat:'Coran', icon:'🎧', level:'Moyen', pts:2,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate ʿAbasa (80) — Il s'est renfrogné.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/080.mp3", audioStart:35 },
-  { id:30, cat:'Coran', icon:'🎧', level:'Moyen', pts:2,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Bayyina (98) — La Preuve Évidente.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/098.mp3", audioStart:25 },
-  { id:31, cat:'Coran', icon:'🎧', level:'Moyen', pts:2,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Muṭaffifîn (83) — Les Fraudeurs.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/083.mp3", audioStart:45 },
-  { id:32, cat:'Coran', icon:'🎧', level:'Moyen', pts:2,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Burûj (85) — Les Constellations.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/085.mp3", audioStart:30 },
-  { id:33, cat:'Coran', icon:'🎧', level:'Difficile', pts:3,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Jinn (72) — Les Djinns.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/072.mp3", audioStart:60 },
-  { id:34, cat:'Coran', icon:'🎧', level:'Difficile', pts:3,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Maʿârij (70) — Les Voies d'Ascension.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/070.mp3", audioStart:55 },
-  { id:35, cat:'Coran', icon:'🎧', level:'Difficile', pts:3,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Yâ-Sîn (36) — « Le cœur du Coran ».",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/036.mp3", audioStart:180 },
-  { id:36, cat:'Coran', icon:'🎧', level:'Difficile', pts:3,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Al-Mulk (67) — La Royauté. Sourate salvatrice (Juz Tabarak), protège de la punition de la tombe.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/067.mp3", audioStart:60 },
-  { id:37, cat:'Coran', icon:'🎧', level:'Difficile', pts:3,
-    content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.",
-    response:"Sourate Ad-Dukhân (44) — La Fumée.",
-    audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/044.mp3", audioStart:90 },
+  // ─── Coran — Écoute et devine ────────────────────────────────
+  { id:28, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Inshiqâq (84) — La Déchirure.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/084.mp3", audioStart:30 },
+  { id:29, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate ʿAbasa (80) — Il s'est renfrogné.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/080.mp3", audioStart:35 },
+  { id:30, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Bayyina (98) — La Preuve Évidente.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/098.mp3", audioStart:25 },
+  { id:31, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Muṭaffifîn (83) — Les Fraudeurs.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/083.mp3", audioStart:45 },
+  { id:32, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, content:"🎧 Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Burûj (85) — Les Constellations.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/085.mp3", audioStart:30 },
+  { id:33, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Jinn (72) — Les Djinns.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/072.mp3", audioStart:60 },
+  { id:34, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Maʿârij (70) — Les Voies d'Ascension.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/070.mp3", audioStart:55 },
+  { id:35, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Yâ-Sîn (36) — Le cœur du Coran.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/036.mp3", audioStart:180 },
+  { id:36, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Al-Mulk (67) — La Royauté. Protège de la punition de la tombe.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/067.mp3", audioStart:60 },
+  { id:37, cat:'Coran', icon:'🎧', level:'Difficile', pts:3, content:"🎧 Niveau Difficile — Écoutez attentivement et identifiez le nom de cette sourate.", response:"Sourate Ad-Dukhân (44) — La Fumée.", audio:"https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/044.mp3", audioStart:90 },
 
-  // ─── Défis ───────────────────────────────────────────────────────────────
-  { id:38, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"👥 En 60 secondes, citez un maximum de Compagnons du Prophète (ﷺ). +1 par bonne réponse, -1 par erreur, pas de doublon.",
-    response:"Réponses acceptées (non exhaustif) :\n\nLES 4 CALIFES BIEN GUIDÉS : Abû Bakr as-Siddîq, ʿUmar ibn al-Khattâb, ʿUthmân ibn ʿAffân, ʿAlî ibn Abî Tâlib.\n\nLES 10 PROMIS AU PARADIS : les 4 califes + Talha ibn ʿUbayd Allah, Az-Zubayr ibn al-ʿAwwâm, ʿAbdurrahmân ibn ʿAwf, Saʿd ibn Abî Waqqâs, Saʿîd ibn Zayd, Abû ʿUbayda ibn al-Jarrâh.\n\nAUTRES GRANDS COMPAGNONS : Bilâl ibn Rabâh, Hamza ibn ʿAbd al-Muttalib, Al-ʿAbbâs, Khâlid ibn al-Walîd, Muʿâdh ibn Jabal, Ubayy ibn Kaʿb, Zayd ibn Thâbit, Zayd ibn Hâritha, Usâma ibn Zayd, Muʿâwiya ibn Abî Sufyân, ʿAmr ibn al-ʿÂs, Salmân al-Fârisî, Suhayb ar-Rûmî, ʿAmmâr ibn Yâsir, Abû Dharr al-Ghifârî, Abû Hurayra, Ibn ʿAbbâs, Ibn ʿUmar, Ibn Masʿûd, Anas ibn Mâlik, Jâbir ibn ʿAbd Allah, Al-Hasan et Al-Husayn.\n\nMÈRES DES CROYANTS : Khadîja, Sawda, ʿÂʾisha, Hafsa, Zaynab bint Khuzayma, Umm Salama, Zaynab bint Jahsh, Juwayriyya, Umm Habîba, Safiyya, Maymûna.\n\nAUTRES COMPAGNONNES : Fâtima az-Zahrâʾ, Asmâʾ bint Abî Bakr, Sumayya (première martyre), Umm ʿUmâra (Nusayba bint Kaʿb), Umm Sulaym, Halîma as-Saʿdiyya.",
-    timed:true, timerSec:60 },
-  { id:39, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"📖 En 60 secondes, citez un maximum de sourates commençant par « Al- » (ex : Al-Baqara, Al-Fâtiha…). +1 par bonne réponse, pas de doublon.",
-    response:"Réponses acceptées (non exhaustif) : Al-Fâtiha, Al-Baqara, Al-Mâʾida, Al-Anʿâm, Al-Aʿrâf, Al-Anfâl, Al-Hijr, Al-Isrâʾ, Al-Kahf, Al-Anbiyâʾ, Al-Hajj, Al-Muʾminûn, Al-Furqân, Al-Qasas, Al-ʿAnkabût, Al-Ahzâb, Al-Fath, Al-Hujurât, Al-Hadîd, Al-Hashr, Al-Mumtahana, Al-Jumuʿa, Al-Munâfiqûn, Al-Taghâbun, Al-Mulk, Al-Qalam, Al-Hâqqa, Al-Maʿârij, Al-Jinn, Al-Muzzammil, Al-Muddaththir, Al-Qiyâma, Al-Mursalât, Al-Inshiqâq, Al-Burûj, Al-Ghâshiya, Al-Fajr, Al-Balad, Al-Layl, Al-ʿAlaq, Al-Qadr, Al-Bayyina, Al-Zalzala, Al-ʿÂdiyât, Al-Qâriʿa, Al-Humaza, Al-Fîl, Al-Mâʿûn, Al-Kawthar, Al-Kâfirûn, Al-Masad, Al-Ikhlâs, Al-Falaq, An-Nâs (an = al assimilé).",
-    timed:true, timerSec:60 },
-  { id:40, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant le mot « إِسْتَبْرَق » (brocart épais) gagne le point.",
-    response:"Versets possibles : Al-Kahf 18:31 « يَلْبَسُونَ ثِيَابًا خُضْرًا مِّن سُندُسٍ وَإِسْتَبْرَقٍ… » — Ad-Dukhân 44:53 « يَلْبَسُونَ مِن سُندُسٍ وَإِسْتَبْرَقٍ مُّتَقَابِلِينَ » — Ar-Rahmân 55:54 « مُتَّكِئِينَ عَلَىٰ فُرُشٍ بَطَائِنُهَا مِنْ إِسْتَبْرَقٍ… » — Al-Insân 76:21 « عَالِيَهُمْ ثِيَابُ سُندُسٍ خُضْرٌ وَإِسْتَبْرَقٌ… »." },
-  { id:41, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant le mot « أَفْئِدَة » (cœurs) gagne le point.",
-    response:"Versets possibles : Ibrâhîm 14:37 « فَاجْعَلْ أَفْئِدَةً مِّنَ النَّاسِ تَهْوِي إِلَيْهِمْ… » — An-Nahl 16:78 « وَجَعَلَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ… » — Al-Muʾminûn 23:78 « وَهُوَ الَّذِي أَنشَأَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ… » — Al-Mulk 67:23 « هُوَ الَّذِي أَنشَأَكُمْ وَجَعَلَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ… »." },
-  { id:42, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant l'expression « أَصْحَاب » (les gens de / compagnons de) gagne le point.",
-    response:"Versets possibles : Al-Kahf 18:9 « أَمْ حَسِبْتَ أَنَّ أَصْحَابَ الْكَهْفِ وَالرَّقِيمِ كَانُوا مِنْ آيَاتِنَا عَجَبًا » — Al-Burûj 85:4 « قُتِلَ أَصْحَابُ الْأُخْدُودِ » — Al-Fîl 105:1 « أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَابِ الْفِيلِ » — Al-Wâqiʿa 56:8-9 « فَأَصْحَابُ الْمَيْمَنَةِ… وَأَصْحَابُ الْمَشْأَمَةِ » — Yâ-Sîn 36:13 « وَاضْرِبْ لَهُم مَّثَلًا أَصْحَابَ الْقَرْيَةِ »." },
-  { id:43, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"🧠 En 60 secondes, citez un maximum de sourates qui commencent par des lettres disjointes (ḥurûf muqaṭṭaʿa). +1 par bonne réponse, -1 par erreur, pas de doublon.",
-    response:"29 sourates au total : Al-Baqara (Alif-Lâm-Mîm), Âl-ʿImrân, Al-Aʿrâf, Yûnus, Hûd, Yûsuf, Ar-Raʿd, Ibrâhîm, Al-Hijr, Maryam (Kâf-Hâ-Yâ-ʿAyn-Sâd), Tâ-Hâ, Ash-Shuʿarâʾ, An-Naml, Al-Qasas, Al-ʿAnkabût, Ar-Rûm, Luqmân, As-Sajda, Yâ-Sîn, Sâd, Ghâfir, Fuṣṣilat, Ash-Shûrâ, Az-Zukhruf, Ad-Dukhân, Al-Jâthiya, Al-Ahqâf, Qâf, Al-Qalam (Nûn).",
-    timed:true, timerSec:60 },
+  // ─── Défis ──────────────────────────────────────────────────
+  { id:38, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"👥 En 60 secondes, citez un maximum de Compagnons du Prophète (ﷺ). +1 par bonne réponse, -1 par erreur, pas de doublon.", response:"Réponses acceptées :\n\nCALIFES : Abû Bakr, ʿUmar, ʿUthmân, ʿAlî.\nLES 10 PROMIS AU PARADIS : + Talha, Az-Zubayr, ʿAbdurrahmân ibn ʿAwf, Saʿd ibn Abî Waqqâs, Saʿîd ibn Zayd, Abû ʿUbayda.\nAUTRES : Bilâl, Hamza, Khâlid ibn al-Walîd, Muʿâdh ibn Jabal, Zayd ibn Hâritha, Salmân al-Fârisî, Abû Hurayra, Ibn ʿAbbâs, Anas ibn Mâlik…\nMÈRES DES CROYANTS : Khadîja, ʿÂʾisha, Hafsa, Umm Salama, Zaynab bint Jahsh…\nCOMPAGNONNES : Fâtima az-Zahrâʾ, Asmâʾ bint Abî Bakr, Sumayya (1ère martyre), Umm ʿUmâra.", timed:true, timerSec:60 },
+  { id:39, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"📖 En 60 secondes, citez un maximum de sourates commençant par « Al- ». +1 par bonne réponse, pas de doublon.", response:"Réponses acceptées : Al-Fâtiha, Al-Baqara, Al-Mâʾida, Al-Anʿâm, Al-Aʿrâf, Al-Anfâl, Al-Hijr, Al-Isrâʾ, Al-Kahf, Al-Anbiyâʾ, Al-Hajj, Al-Muʾminûn, Al-Furqân, Al-Qasas, Al-ʿAnkabût, Al-Ahzâb, Al-Fath, Al-Hujurât, Al-Hadîd, Al-Hashr, Al-Mulk, Al-Qalam, Al-Hâqqa, Al-Maʿârij, Al-Jinn, Al-Inshiqâq, Al-Burûj, Al-Ghâshiya, Al-Fajr, Al-Balad, Al-Layl, Al-ʿAlaq, Al-Qadr, Al-Bayyina, Al-Zalzala, Al-ʿÂdiyât, Al-Qâriʿa, Al-Humaza, Al-Fîl, Al-Mâʿûn, Al-Kawthar, Al-Kâfirûn, Al-Masad, Al-Ikhlâs, Al-Falaq.", timed:true, timerSec:60 },
+  { id:40, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant « إِسْتَبْرَق » (brocart épais) gagne le point.", response:"Versets : Al-Kahf 18:31 — Ad-Dukhân 44:53 — Ar-Rahmân 55:54 — Al-Insân 76:21." },
+  { id:41, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant « أَفْئِدَة » (cœurs) gagne le point.", response:"Versets : Ibrâhîm 14:37 — An-Nahl 16:78 « وَجَعَلَ لَكُمُ السَّمْعَ وَالْأَبْصَارَ وَالْأَفْئِدَةَ… » — Al-Muʾminûn 23:78 — Al-Mulk 67:23." },
+  { id:42, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"💣 Défi récitation — La première équipe qui récite un verset complet contenant « أَصْحَاب » gagne le point.", response:"Versets : Al-Kahf 18:9 (Ashâb al-Kahf) — Al-Burûj 85:4 (Ashâb al-Ukhdûd) — Al-Fîl 105:1 (Ashâb al-Fîl) — Al-Wâqiʿa 56:8-9 — Yâ-Sîn 36:13." },
+  { id:43, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"🧠 En 60 secondes, citez un maximum de sourates commençant par des lettres disjointes (حروف مقطعة). +1 par bonne réponse, -1 par erreur, pas de doublon.", response:"29 sourates : Al-Baqara, Âl-ʿImrân, Al-Aʿrâf, Yûnus, Hûd, Yûsuf, Ar-Raʿd, Ibrâhîm, Al-Hijr, Maryam, Tâ-Hâ, Ash-Shuʿarâʾ, An-Naml, Al-Qasas, Al-ʿAnkabût, Ar-Rûm, Luqmân, As-Sajda, Yâ-Sîn, Sâd, Ghâfir, Fussilat, Ash-Shûrâ, Az-Zukhruf, Ad-Dukhân, Al-Jâthiya, Al-Ahqâf, Qâf, Al-Qalam.", timed:true, timerSec:60 },
 ];
 
 const FINALE_CHALLENGES = [
-  // Grille 3x4 alternée : Vocabulaire/Défi... (12 cartes)
+  // Grille 3x4 alternée : Culture, Défi, Culture, Défi... (12 cartes)
   // Rangée 1
-  { id:101, cat:'Vocabulaire', icon:'📚', level:'Difficile', pts:3,
-    content:"📚 Finale — Expliquez le concept : TAWAKKUL (التوكل)",
-    response:"La confiance totale en Allah après avoir pris les dispositions nécessaires. Ce n'est pas la passivité — c'est agir puis remettre le résultat à Allah. 'Et quiconque s'en remet à Allah, Il lui suffit.' (At-Talaq 65:3)" },
-  { id:102, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"⏱️ 2 min — FINALE : Citez des versets du Coran en rapport avec la justice ('adl). L'équipe qui en cite le plus gagne !",
-    response:"Exemples : Al-Baqara 2:282 (témoignage), An-Nisa 4:135 (justice même contre soi), Al-Ma'ida 5:8, An-Nahl 16:90 ('Allah ordonne la justice...')",
-    timed:true, timerSec:120 },
-  { id:103, cat:'Vocabulaire', icon:'📚', level:'Difficile', pts:3,
-    content:"📚 Finale — Expliquez le concept : IKHLAS (الإخلاص)",
-    response:"La sincérité totale — faire les actes uniquement pour Allah, sans aucune trace de riya' (ostentation). Allah n'accepte que ce qui est fait avec sincérité. La sourate Al-Ikhlas (112) en est la quintessence." },
-  { id:104, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"⏱️ 2 min — FINALE : Quelle est la différence entre Islam, Iman et Ihsan ? Expliquez-les clairement avec un exemple pour chacun.",
-    response:"Islam = soumission (actes extérieurs : prière, jeûne...) | Iman = foi (croyances du cœur : Allah, anges, livres, prophètes, Jour dernier, destin) | Ihsan = excellence (adorer Allah comme si tu Le voyais). Hadith de Jibril (Muslim).",
-    timed:true, timerSec:120 },
+  { id:106, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : TAWAKKUL (التوكل)", response:"La confiance totale en Allah après avoir fait tous les efforts nécessaires. Ce n'est pas la passivité — c'est agir puis remettre le résultat à Allah. Référence : 'Et quiconque s'en remet à Allah, Il lui suffit.' (At-Talaq 65:3)" },
+  { id:101, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Un non-musulman te demande : 'Pourquoi les femmes musulmanes portent-elles le voile ?' Donne une réponse concise, convaincante et respectueuse.", response:"Points à évaluer : absence d'agressivité, explication de la notion de pudeur (haya), de liberté de choix, de protection, de relation avec Allah — pas uniquement une réponse défensive.", timed:true, timerSec:120 },
+  { id:107, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : ISTIGHFAR (الاستغفار)", response:"Demander le pardon d'Allah pour ses péchés. C'est un acte d'humilité et de retour vers Allah. Le Prophète ﷺ faisait l'istighfar plus de 70 fois par jour malgré son impeccabilité." },
+  { id:102, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Ton amie traverse une période difficile et dit : 'Je ne comprends pas pourquoi Allah me fait souffrir.' Comment lui réponds-tu avec douceur et sagesse islamique ?", response:"Points à évaluer : rappel de la notion de Sabr, du fait que l'épreuve est un signe d'amour d'Allah, citation possible du hadith 'L'ampleur de la récompense est proportionnelle à l'ampleur de l'épreuve', empathie et douceur.", timed:true, timerSec:120 },
   // Rangée 2
-  { id:105, cat:'Vocabulaire', icon:'📚', level:'Difficile', pts:3,
-    content:"📚 Finale — Expliquez le concept : NIFAQ (النفاق)",
-    response:"L'hypocrisie — afficher l'Islam en cachant la mécréance ou la trahison. Le munafiq (hypocrite) sera au plus bas de l'Enfer selon le Coran (An-Nisa 4:145). Signe : ment, trahit, rompt sa parole." },
-  { id:106, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"⏱️ 2 min — FINALE Défi récitation : Récitez et expliquez un verset du Coran sur la miséricorde d'Allah. L'équipe avec la récitation + explication la plus complète gagne !",
-    response:"Exemples : Al-Baqara 2:286 — Al-Zumar 39:53 ('Ne désespérez pas de la miséricorde d'Allah') — Al-Baqara 2:173 — Al-Fatiha. Évaluer : récitation correcte + explication du verset.",
-    timed:true, timerSec:120 },
-  { id:107, cat:'Vocabulaire', icon:'📚', level:'Difficile', pts:3,
-    content:"📚 Finale — Expliquez le concept : WARA' (الورع)",
-    response:"La piété scrupuleuse — s'abstenir de tout ce qui pourrait mener au haram, même le licite douteux (shubuhaat). Hadith : 'Laisse ce qui te doute pour ce qui ne te doute pas.' (At-Tirmidhi). Plus élevé que la simple halal/haram." },
-  { id:108, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"⏱️ 2 min — FINALE : Comment expliquer la notion de Qadar (destin) à quelqu'un qui dit : 'Si tout est écrit, à quoi ça sert de faire des efforts ?'",
-    response:"Points : Le Qadar n'annule pas la responsabilité — Allah a créé nos actions ET notre libre arbitre. On agit, puis on accepte le résultat. Hadith : 'Lie ton chameau, puis mets ta confiance en Allah.' Le savoir préalable d'Allah ne nous contraint pas.",
-    timed:true, timerSec:120 },
+  { id:108, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : BARAKAH (البركة)", response:"La bénédiction divine — une abondance de bien qui dépasse la logique humaine. La barakah peut être dans le temps, l'argent, la nourriture, une personne. Elle vient d'Allah et se multiplie par la gratitude et la piété." },
+  { id:103, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Tu vois une publication sur les réseaux sociaux qui insulte le Prophète (ﷺ). Quelle est ta réaction ? Qu'est-ce que tu fais et qu'est-ce que tu ne fais pas ?", response:"Points à évaluer : ne pas partager ni amplifier, signaler la publication, défendre le Prophète ﷺ avec des mots nobles, rappeler sa sîra, ne pas répondre avec violence ou insultes.", timed:true, timerSec:120 },
+  { id:109, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : HAYA (الحياء)", response:"La pudeur, la modestie, la retenue. Ce n'est pas uniquement le voile — c'est une disposition intérieure qui touche le regard, les paroles, les actes. Le Prophète ﷺ a dit : 'La pudeur ne produit que du bien.' (Bukhari)" },
+  { id:104, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Ton petit frère/ta petite sœur passe des heures sur les réseaux sociaux et délaisse ses prières. Comment l'approches-tu avec hikma (sagesse) ?", response:"Points à évaluer : approche douce et non moralisatrice, rappel des bienfaits de la prière plutôt que des menaces, montrer l'exemple, faire preuve d'empathie.", timed:true, timerSec:120 },
   // Rangée 3
-  { id:109, cat:'Vocabulaire', icon:'📚', level:'Difficile', pts:3,
-    content:"📚 Finale — Expliquez le concept : 'ILM (العلم) en Islam",
-    response:"La connaissance/science — L'une des plus hautes vertus en Islam. 'Lis !' (Iqra') est le premier mot révélé. Les savants héritent des prophètes. Chercher le savoir est une obligation pour tout musulman. L'ignorance ('jahl) est combattue en Islam." },
-  { id:110, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"⏱️ 2 min — FINALE Défi ultime : En 2 minutes, chaque membre de l'équipe cite un hadith différent. Le plus grand nombre de hadiths corrects gagne !",
-    response:"Exemples valides : 'Les actions ne valent que par les intentions', 'Le sourire est une aumône', 'La pureté est la moitié de la foi', 'Facilite et ne complique pas', 'L'Islam a été fondé sur 5 piliers'... Vérifier la cohérence du contenu.",
-    timed:true, timerSec:120 },
-  { id:111, cat:'Vocabulaire', icon:'📚', level:'Difficile', pts:3,
-    content:"📚 Finale — Expliquez le concept : TAWBAH (التوبة)",
-    response:"Le repentir sincère vers Allah — 3 conditions : (1) regretter le péché du fond du cœur, (2) l'abandonner immédiatement, (3) prendre la ferme résolution de ne plus y revenir. + Restituer les droits si on en a lésé quelqu'un. 'Allah aime ceux qui se repentent.' (Al-Baqara 2:222)" },
-  { id:112, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true,
-    content:"⏱️ 2 min — FINALE GRAND DÉFI : Chaque équipe désigne une oratrice. Elle a 2 minutes pour convaincre les autres équipes qu'elle a le meilleur argument islamique sur le thème : 'Pourquoi l'Islam nous libère plutôt qu'il nous contraint.' La plus convaincante gagne !",
-    response:"Évaluer : clarté du discours, arguments islamiques solides (liberté du cœur, libération des dépendances mondaines, dignité humaine, guidance divine...), charisme et sincérité.",
-    timed:true, timerSec:120 },
+  { id:110, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : AKHIRA (الآخرة)", response:"La vie de l'au-delà, la vie après la mort. Dans la vision islamique, l'Akhira est la vraie vie — permanente et éternelle — par opposition à la dunya (vie d'ici-bas) qui est temporaire et illusoire." },
+  { id:105, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Une amie te dit qu'elle a honte de dire qu'elle est musulmane devant ses amies. Comment la conseilles-tu ?", response:"Points à évaluer : rappel de la notion d'identité islamique et de fierté (izza), verset ou hadith sur la honte de cacher sa foi, encouragement bienveillant sans jugement.", timed:true, timerSec:120 },
+  { id:111, cat:'Culture', icon:'📚', level:'Difficile', pts:3, content:"📚 Vocabulaire Coranique — Expliquez avec vos propres mots le concept : SABR (الصبر)", response:"La patience et la persevérance face aux épreuves. Le Sabr n'est pas la résignation passive — c'est tenir ferme dans l'obéissance à Allah, s'éloigner des péchés et accepter les décrets divins avec soin. Allah dit : 'Certes, Allah est avec les patients.' (Al-Baqara 2:153)" },
+  { id:112, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, content:"⏱️ 2 min — Défi Argumentation : Convaincs une amie fictive qui a arrêté la prière de la reprendre. L'équipe avec l'argumentation la plus touchante et pertinente gagne le point.", response:"Points à évaluer : douceur dans les paroles, rappel de la miséricorde d'Allah (pas seulement du châtiment), importance de la prière comme lien avec le Créateur, bienfaits de la prière sur le cœur et l'âme.", timed:true, timerSec:120 },
 ];
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIG QUIZ 2 — pas de finale, le gagnant = équipe avec le plus de points
+// ═══════════════════════════════════════════════════════════════════════════
+const NO_FINALE = true;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // STATE
@@ -1237,13 +1473,19 @@ function selectTeamForElim(idx) {
 
 function manualEliminate() {
   const remaining = activeTeamIndices();
-  // Avec exactement 2 équipes restantes (et aucune éliminée), lancer la finale directement
-  if (remaining.length === 2 && state.eliminatedTeams.length === 0) {
-    state.selectedForElim = null;
-    checkFinaleConditionForced();
-    return;
+
+  if (!NO_FINALE) {
+    // Avec exactement 2 équipes restantes (et aucune éliminée), lancer la finale directement
+    if (remaining.length === 2 && state.eliminatedTeams.length === 0) {
+      state.selectedForElim = null;
+      checkFinaleConditionForced();
+      return;
+    }
+    if (remaining.length <= 2) return;
+  } else {
+    // Quiz 2 : pas de finale — permettre l'élimination jusqu'à 1 équipe restante
+    if (remaining.length <= 1) return;
   }
-  if (remaining.length <= 2) return;
 
   // Si une équipe est sélectionnée manuellement, l'éliminer
   if (state.selectedForElim !== null && remaining.includes(state.selectedForElim)) {
@@ -1251,6 +1493,15 @@ function manualEliminate() {
     state.selectedForElim = null;
     checkFinaleCondition();
     renderGame();
+    // Quiz 2 : s'il ne reste qu'une équipe après élimination, on termine la partie
+    if (NO_FINALE && activeTeamIndices().length === 1) {
+      setTimeout(() => {
+        state.gameState = 'finished';
+        triggerMegaVictory();
+        renderFinished();
+        showScreen('finished');
+      }, 600);
+    }
     return;
   }
 
@@ -1263,18 +1514,28 @@ function manualEliminate() {
 }
 
 function checkAllCardsPlayed() {
-  // Déclenche la finale automatiquement si toutes les cartes normales ont été retournées
   if (state.isFinale) return;
   const normalCards = state.shuffledChallenges;
   const allPlayed = normalCards.every(c => state.playedCards.includes(c.id));
   if (!allPlayed) return;
-  // Toutes les cartes retournées : éliminer les équipes les plus faibles jusqu'à n'en garder que 2
+
+  // Mode Quiz 2 : pas de finale. Le gagnant = équipe avec le score le plus élevé.
+  if (NO_FINALE) {
+    setTimeout(() => {
+      state.gameState = 'finished';
+      triggerMegaVictory();
+      renderFinished();
+      showScreen('finished');
+    }, 600);
+    return;
+  }
+
+  // Sinon : logique classique avec finale (élimination automatique des plus faibles)
   const remaining = activeTeamIndices();
   if (remaining.length <= 2) {
     checkFinaleCondition();
     return;
   }
-  // Trier par score croissant et éliminer les plus faibles
   const sorted = [...remaining].sort((a, b) => state.teamScores[a] - state.teamScores[b]);
   const toKeep = 2;
   const toElim = sorted.slice(0, sorted.length - toKeep);
@@ -1285,6 +1546,7 @@ function checkAllCardsPlayed() {
 }
 
 function checkFinaleConditionForced() {
+  if (NO_FINALE) return;
   if (state.isFinale) return;
   const remaining = activeTeamIndices();
   if (remaining.length < 2) return;
@@ -1306,6 +1568,7 @@ function checkFinaleConditionForced() {
 }
 
 function checkFinaleCondition() {
+  if (NO_FINALE) return;
   if (state.isFinale) return;
   const remaining = activeTeamIndices();
   // La finale ne se déclenche automatiquement que si des équipes ont été éliminées
@@ -1814,6 +2077,7 @@ function renderCardGrid(animate) {
       else if (catKey === 'hadith') faceClass += 'cat-hadith';
       else if (catKey === 'culture') faceClass += 'cat-culture';
       else if (catKey === 'devinettes') faceClass += 'cat-devinettes';
+      else if (catKey === 'vocabulaire') faceClass += 'cat-vocabulaire';
       else faceClass += 'cat-culture'; // fallback
     }
 
@@ -1842,6 +2106,17 @@ function updateElimBtn() {
   const remaining = activeTeamIndices();
   if (state.isFinale) {
     btn.classList.add('hidden');
+    return;
+  }
+  // Quiz 2 : pas de label "Passer en Finale" — juste l'élimination classique
+  if (NO_FINALE) {
+    if (remaining.length <= 1) {
+      btn.classList.add('hidden');
+    } else {
+      btn.classList.remove('hidden');
+      btn.innerHTML = '✖ Éliminer';
+      btn.className = 'btn btn-sm btn-danger';
+    }
     return;
   }
   // Avec 2 équipes sans élimination : afficher 'Passer en Finale'
@@ -2089,15 +2364,23 @@ function hideLeaderboard() {
 // ═══════════════════════════════════════════════════════════════════════════
 
 function renderFinished() {
-  const winnerSlot = state.finaleScores[0] >= 20 ? 0 : state.finaleScores[1] >= 20 ? 1
-    : state.finaleScores[0] > state.finaleScores[1] ? 0 : state.finaleScores[1] > state.finaleScores[0] ? 1 : -1;
-  const winnerName = winnerSlot >= 0 && state.finalisteIndices
-    ? state.teams[state.finalisteIndices[winnerSlot]] : null;
+  let winnerName = null;
 
-  document.getElementById('winnerName').textContent = winnerName || 'Égalité ! Match nul';
+  if (NO_FINALE || !state.finalisteIndices) {
+    // Gagnant = équipe avec le score le plus élevé (hors équipes éliminées)
+    const ranking = state.teams.map((name,i) => ({name, score:state.teamScores[i], idx:i}))
+      .filter(t => !state.eliminatedTeams.includes(t.idx))
+      .sort((a,b) => b.score - a.score);
+    const top = ranking[0];
+    if (top && (ranking.length === 1 || top.score > ranking[1].score)) {
+      winnerName = top.name;
+    }
+    document.getElementById('finaleScoreBox').innerHTML = '';
+  } else {
+    const winnerSlot = state.finaleScores[0] >= 20 ? 0 : state.finaleScores[1] >= 20 ? 1
+      : state.finaleScores[0] > state.finaleScores[1] ? 0 : state.finaleScores[1] > state.finaleScores[0] ? 1 : -1;
+    winnerName = winnerSlot >= 0 ? state.teams[state.finalisteIndices[winnerSlot]] : null;
 
-  // Finale scores
-  if (state.finalisteIndices) {
     document.getElementById('finaleScoreBox').innerHTML = `
       <p class="finished-scores-title">Score de la Finale</p>
       <div class="finished-score-row">
@@ -2109,6 +2392,8 @@ function renderFinished() {
         <span class="finished-score-pts">${state.finaleScores[1]}</span>
       </div>`;
   }
+
+  document.getElementById('winnerName').textContent = winnerName || 'Égalité ! Match nul';
 
   // General ranking
   const sorted = state.teams.map((name,i) => ({name, score:state.teamScores[i], idx:i})).sort((a,b) => b.score-a.score);
