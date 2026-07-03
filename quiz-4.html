@@ -995,6 +995,17 @@
     }
     .card-face.cat-vocabulaire .card-cat { color: #B87333 !important; }
 
+    /* Fiqh → vert émeraude / teal — balance de la justice */
+    .card-face.cat-fiqh {
+      background: var(--white-pure) !important;
+      border: 1.5px solid rgba(45,107,79,0.30) !important;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.08) !important;
+    }
+    .card-face.cat-fiqh .card-icon {
+      background: radial-gradient(circle, rgba(45,107,79,0.22) 0%, rgba(45,107,79,0.05) 70%) !important;
+    }
+    .card-face.cat-fiqh .card-cat { color: #2D6B4F !important; }
+
     /* Espiègle → orange vif joker */
     .card-face.cat-espiegle {
       background: var(--white-pure) !important;
@@ -1019,6 +1030,7 @@
     .card-face.cat-coran,
     .card-face.cat-devinettes,
     .card-face.cat-vocabulaire,
+    .card-face.cat-fiqh,
     .card-face.cat-espiegle {
       overflow: hidden;
     }
@@ -1027,6 +1039,7 @@
     .card-face.cat-coran::before,
     .card-face.cat-devinettes::before,
     .card-face.cat-vocabulaire::before,
+    .card-face.cat-fiqh::before,
     .card-face.cat-espiegle::before {
       content: '';
       position: absolute;
@@ -1041,6 +1054,7 @@
     .card-face.cat-coran::before      { background: #6B8E5A; }
     .card-face.cat-devinettes::before { background: #5D3A5F; }
     .card-face.cat-vocabulaire::before{ background: #B87333; }
+    .card-face.cat-fiqh::before       { background: #2D6B4F; }
     .card-face.cat-espiegle::before   { background: #E58C1A; }
   </style>
 </head>
@@ -1287,9 +1301,19 @@ const CHALLENGES = [
   { id:50, cat:'Culture', icon:'🏛️', level:'Difficile', pts:3, content:"Quel prince omeyyade fonda l'émirat de Cordoue après avoir fui les Abbassides ?", response:"ʿAbd ar-Raḥmân Iᵉʳ, surnommé « Ad-Dâkhil » (الداخل, « celui qui est entré »). Fondateur en 756 de l'émirat omeyyade de Cordoue." },
   { id:51, cat:'Culture', icon:'🏛️', level:'Difficile', pts:3, content:"Quel peuple était à l'origine de la dynastie seldjoukide ?", response:"Les Turcs oghouzes (Ghuzz, غز) — venus d'Asie centrale. Ils convertirent en masse à l'islam sunnite et fondèrent le grand empire seldjoukide au 11ᵉ siècle." },
 
+  // ─── Fiqh ─────────────────────────────────────────────────
+  { id:52, cat:'Fiqh', icon:'⚖️', level:'Débutant', pts:1, content:"Comment appelle-t-on les ablutions sèches lorsque l'on ne peut pas utiliser d'eau ?", response:"Le tayammum (التيمم) — ablutions symboliques avec de la terre pure. Basé sur Al-Mâʾida 5:6." },
+  { id:53, cat:'Fiqh', icon:'⚖️', level:'Débutant', pts:1, content:"Combien de rakʿât obligatoires compte une journée de prières ?", response:"17 rakʿât — Fajr 2 + Dhuhr 4 + ʿAṣr 4 + Maghrib 3 + ʿIshâʾ 4 = 17." },
+  { id:54, cat:'Fiqh', icon:'⚖️', level:'Moyen', pts:2, content:"Comment appelle-t-on le raisonnement par analogie utilisé par les savants ?", response:"Le qiyâs (القياس) — 4ᵉ source du fiqh après le Coran, la Sunnah et l'Ijmâʿ." },
+  { id:55, cat:'Fiqh', icon:'⚖️', level:'Moyen', pts:2, content:"Quelle est la part d'héritage de deux filles lorsqu'il n'y a pas de fils ?", response:"Les deux tiers (2/3) — mentionné explicitement dans An-Nisâʾ 4:11 : « S'il n'y a que des filles, même plus de deux, à elles alors les deux tiers de ce que le défunt laisse. »" },
+  { id:56, cat:'Fiqh', icon:'⚖️', level:'Moyen', pts:2, content:"Comment appelle-t-on l'effort de réflexion juridique d'un savant lorsqu'aucun texte explicite ne traite d'une question ?", response:"L'ijtihâd (الاجتهاد) — effort déductif d'un savant qualifié (mujtahid) pour statuer sur une question nouvelle." },
+  { id:57, cat:'Fiqh', icon:'⚖️', level:'Moyen', pts:2, content:"Comment appelle-t-on la retraite spirituelle que l'on accomplit à la mosquée ?", response:"Al-Iʿtikâf (الاعتكاف) — retraite spirituelle, particulièrement recommandée durant les 10 dernières nuits de Ramadan (Sunnah du Prophète ﷺ)." },
+  { id:58, cat:'Fiqh', icon:'⚖️', level:'Moyen', pts:2, content:"Quel est le nom du délai de viduité qu'une femme doit observer après un divorce ou un décès ?", response:"Al-ʿIdda (العدة) — 3 cycles menstruels pour un divorce, 4 mois et 10 jours en cas de décès du mari (Al-Baqara 2:234)." },
+  { id:59, cat:'Fiqh', icon:'⚖️', level:'Difficile', pts:3, content:"Comment appelle-t-on la prière demandée lorsqu'il ne pleut plus ?", response:"Ṣalât al-Istisqâʾ (صلاة الاستسقاء) — prière de demande de pluie. Se compose de 2 rakʿât suivies d'un sermon et d'invocations." },
+
   // ─── Cartes Espiègles (vol de points) ────────────────────
-  { id:52, cat:'Espiègle', icon:'🃏', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle ! Invente une question de ton choix et pose-la à l'équipe que tu veux. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Aucune réponse préparée — c'est toi qui inventes la question. Sois maline : pose la à celle qui a le plus de points… ou à celle que tu veux couler !" },
-  { id:53, cat:'Espiègle', icon:'🃏', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle ! Invente une question de ton choix et pose-la à l'équipe que tu veux. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Rappel : le point est transféré d'une équipe à l'autre, pas ajouté au total général." },
+  { id:60, cat:'Espiègle', icon:'🃏', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle ! Invente une question de ton choix et pose-la à l'équipe que tu veux. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Aucune réponse préparée — c'est toi qui inventes la question. Sois maline : pose la à celle qui a le plus de points… ou à celle que tu veux couler !" },
+  { id:61, cat:'Espiègle', icon:'🃏', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle ! Invente une question de ton choix et pose-la à l'équipe que tu veux. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Rappel : le point est transféré d'une équipe à l'autre, pas ajouté au total général." },
 ];
 
 const FINALE_CHALLENGES = [
@@ -2106,6 +2130,7 @@ function renderCardGrid(animate) {
       else if (catKey === 'culture') faceClass += 'cat-culture';
       else if (catKey === 'devinettes') faceClass += 'cat-devinettes';
       else if (catKey === 'vocabulaire') faceClass += 'cat-vocabulaire';
+      else if (catKey === 'fiqh') faceClass += 'cat-fiqh';
       else if (catKey === 'espiègle') faceClass += 'cat-espiegle';
       else faceClass += 'cat-culture'; // fallback
     }
