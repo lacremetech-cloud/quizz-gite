@@ -2175,8 +2175,8 @@ function renderCardGrid(animate) {
       else if (catKey === 'fiqh') faceClass += 'cat-fiqh';
       else if (catKey === 'espiègle') faceClass += 'cat-espiegle';
       else faceClass += 'cat-culture'; // fallback
-      // Marqueur Espiègle superposé (halo orange + badge 🃏 en coin)
-      if (challenge.isEspiegle) faceClass += ' espiegle-marker';
+      // Note : les cartes Espiègle restent visuellement identiques aux autres
+      // cartes de leur catégorie. L'effet surprise se joue à l'ouverture du modal.
     }
 
     const animStyle = animate ? `animation: deal-in 0.45s ease-out ${index * 0.05}s both;` : '';
