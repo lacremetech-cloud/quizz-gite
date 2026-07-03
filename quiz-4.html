@@ -400,6 +400,59 @@
     }
     .modal-header.sage { background: #3E6B4E; }
     .modal-header.gold { background: linear-gradient(135deg, #C2A65A, #A8882B); }
+
+    /* ═══ CARTE PIÉGÉE (Espiègle) — design distinct ═══ */
+    .modal-box.espiegle {
+      background: #FFF7EE;
+      border: 4px solid #E58C1A;
+      box-shadow:
+        0 25px 60px rgba(0,0,0,0.35),
+        0 0 60px rgba(229,140,26,0.35),
+        0 0 0 6px rgba(229,140,26,0.10);
+      animation: espiegle-open 0.55s cubic-bezier(0.36,1.65,0.5,1);
+    }
+    .modal-header.espiegle {
+      background: linear-gradient(135deg, #E58C1A 0%, #B85A0A 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .modal-header.espiegle::before {
+      content: '🃏';
+      position: absolute;
+      right: -8px; bottom: -18px;
+      font-size: 5rem;
+      opacity: 0.18;
+      transform: rotate(-14deg);
+      pointer-events: none;
+    }
+    .modal-header.espiegle .modal-level {
+      color: #FFF !important;
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }
+    .modal-header.espiegle .modal-cat { display: none; }
+    .modal-box.espiegle .modal-body { background: #FFF7EE; }
+    .modal-box.espiegle .modal-question {
+      color: #7A3A00 !important;
+      font-weight: 800;
+    }
+    @keyframes espiegle-open {
+      0%   { transform: scale(0.4) rotate(-8deg); opacity: 0; }
+      35%  { transform: scale(1.08) rotate(4deg); opacity: 1; }
+      55%  { transform: scale(0.96) rotate(-2deg); }
+      75%  { transform: scale(1.02) rotate(1deg); }
+      100% { transform: scale(1) rotate(0); }
+    }
+    @keyframes espiegle-shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+    .modal-box.espiegle .modal-header {
+      animation: espiegle-shake 0.5s ease-in-out 0.55s 1;
+    }
     .modal-header-left { display: flex; align-items: center; gap: 0.875rem; }
     .modal-cat { font-size: 0.6875rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; }
     .modal-cat.dark-text { color: rgba(255,255,255,0.85); opacity: 1; }
@@ -1290,10 +1343,10 @@ const CHALLENGES = [
   { id:21, cat:'Coran', icon:'📖', level:'Difficile', pts:3, content:"Combien de sourates commencent par l'expression « Al-ḥamdu lillâh » ?", response:"Cinq sourates : Al-Fâtiḥa (1), Al-Anʿâm (6), Al-Kahf (18), Sabaʾ (34), Fâṭir (35)." },
 
   // ─── Récitation · Espiègle 🃏 ─────────────────────────────
-  { id:22, cat:'Coran', icon:'🎧', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle · Récitation ! Invente une question sur la récitation, une sourate à identifier ou un point de tajwid et pose-la à l'équipe de ton choix. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Le point est transféré d'une équipe à l'autre, pas ajouté au total général. Cible malignement !" },
+  { id:22, cat:'Coran', icon:'🎧', level:'Moyen', pts:2, isEspiegle:true, content:"🃏 Carte piégée ! Pose une question de ton choix, sur n'importe quel thème, à l'équipe de ton choix. Si elle répond juste, elle te vole 2 points. Si elle répond faux, tu lui voles 2 points.", response:"Astuce : cible l'équipe qui te dépasse au score, ou pose une question dont tu es sûre de la réponse pour pouvoir juger. Pas de thème imposé — invente librement !" },
 
   // ─── Connaissance coranique · Espiègle 🃏 ─────────────────
-  { id:23, cat:'Coran', icon:'📖', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle · Connaissance ! Invente une question de connaissance coranique (nombre de sourates commençant par…, prophète cité, verset avec un thème donné, statistiques du Coran…) et pose-la à l'équipe de ton choix. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Le point est transféré d'une équipe à l'autre, pas ajouté au total général. Cible malignement !" },
+  { id:23, cat:'Coran', icon:'📖', level:'Moyen', pts:2, isEspiegle:true, content:"🃏 Carte piégée ! Pose une question de ton choix, sur n'importe quel thème, à l'équipe de ton choix. Si elle répond juste, elle te vole 2 points. Si elle répond faux, tu lui voles 2 points.", response:"Astuce : cible l'équipe qui te dépasse au score, ou pose une question dont tu es sûre de la réponse pour pouvoir juger. Pas de thème imposé — invente librement !" },
 
   // ─── Culture · Sîra Nabawiyya ─────────────────────────────
   { id:24, cat:'Culture', icon:'🕌', level:'Débutant', pts:1, content:"Quel grand événement eut lieu durant la 8ᵉ année de l'Hégire ?", response:"La conquête de La Mecque (Fatḥ Makka) — en Ramadân de l'an 8 H." },
@@ -1345,10 +1398,10 @@ const CHALLENGES = [
   { id:64, cat:'Culture', icon:'🏛️', level:'Difficile', pts:3, content:"Quel peuple était à l'origine de la dynastie seldjoukide ?", response:"Les Turcs oghouzes (Ghuzz, غز) — venus d'Asie centrale. Ils convertirent en masse à l'islam sunnite et fondèrent le grand empire seldjoukide au 11ᵉ siècle." },
 
   // ─── Culture · Espiègle (4 sous-thèmes) 🃏 ────────────────
-  { id:65, cat:'Culture', icon:'🕌', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle · Sîra ! Invente une question sur la Sîra du Prophète (ﷺ) — batailles, événements, vie familiale et pose-la à l'équipe de ton choix. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Le point est transféré d'une équipe à l'autre, pas ajouté au total général. Cible malignement !" },
-  { id:66, cat:'Culture', icon:'👳', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle · Prophète ! Invente une question sur un prophète — récit, miracle, peuple, invocation et pose-la à l'équipe de ton choix. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Le point est transféré d'une équipe à l'autre, pas ajouté au total général. Cible malignement !" },
-  { id:67, cat:'Culture', icon:'🤝', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle · Compagnon ! Invente une question sur un compagnon (ṣaḥâba) — surnom, exploit, biographie et pose-la à l'équipe de ton choix. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Le point est transféré d'une équipe à l'autre, pas ajouté au total général. Cible malignement !" },
-  { id:68, cat:'Culture', icon:'🏛️', level:'Moyen', pts:1, isEspiegle:true, content:"🃏 Espiègle · Civilisation ! Invente une question sur la civilisation musulmane — dynastie, ville, savant, exploration et pose-la à l'équipe de ton choix. Si elle répond juste, elle te vole 1 point. Si elle répond faux, tu lui voles 1 point.", response:"Le point est transféré d'une équipe à l'autre, pas ajouté au total général. Cible malignement !" },
+  { id:65, cat:'Culture', icon:'🕌', level:'Moyen', pts:2, isEspiegle:true, content:"🃏 Carte piégée ! Pose une question de ton choix, sur n'importe quel thème, à l'équipe de ton choix. Si elle répond juste, elle te vole 2 points. Si elle répond faux, tu lui voles 2 points.", response:"Astuce : cible l'équipe qui te dépasse au score, ou pose une question dont tu es sûre de la réponse pour pouvoir juger. Pas de thème imposé — invente librement !" },
+  { id:66, cat:'Culture', icon:'👳', level:'Moyen', pts:2, isEspiegle:true, content:"🃏 Carte piégée ! Pose une question de ton choix, sur n'importe quel thème, à l'équipe de ton choix. Si elle répond juste, elle te vole 2 points. Si elle répond faux, tu lui voles 2 points.", response:"Astuce : cible l'équipe qui te dépasse au score, ou pose une question dont tu es sûre de la réponse pour pouvoir juger. Pas de thème imposé — invente librement !" },
+  { id:67, cat:'Culture', icon:'🤝', level:'Moyen', pts:2, isEspiegle:true, content:"🃏 Carte piégée ! Pose une question de ton choix, sur n'importe quel thème, à l'équipe de ton choix. Si elle répond juste, elle te vole 2 points. Si elle répond faux, tu lui voles 2 points.", response:"Astuce : cible l'équipe qui te dépasse au score, ou pose une question dont tu es sûre de la réponse pour pouvoir juger. Pas de thème imposé — invente librement !" },
+  { id:68, cat:'Culture', icon:'🏛️', level:'Moyen', pts:2, isEspiegle:true, content:"🃏 Carte piégée ! Pose une question de ton choix, sur n'importe quel thème, à l'équipe de ton choix. Si elle répond juste, elle te vole 2 points. Si elle répond faux, tu lui voles 2 points.", response:"Astuce : cible l'équipe qui te dépasse au score, ou pose une question dont tu es sûre de la réponse pour pouvoir juger. Pas de thème imposé — invente librement !" },
 
   // ─── Fiqh ─────────────────────────────────────────────────
   { id:69, cat:'Fiqh', icon:'⚖️', level:'Débutant', pts:1, content:"Comment appelle-t-on les ablutions sèches lorsque l'on ne peut pas utiliser d'eau ?", response:"Le tayammum (التيمم) — ablutions symboliques avec de la terre pure. Basé sur Al-Mâʾida 5:6." },
@@ -2252,21 +2305,21 @@ function renderModal() {
   if (!c) return;
   const fin = state.isFinale;
 
-  // Modal box style
+  // Modal box style — Espiègle = look "carte piégée" (orange), sinon light/dark
   const box = document.getElementById('modalBox');
-  box.className = `modal-box ${fin ? 'dark' : 'light'}`;
+  box.className = `modal-box ${c.isEspiegle ? 'espiegle' : (fin ? 'dark' : 'light')}`;
 
-  // Header
+  // Header — Espiègle a un header orange distinct sans catégorie ni niveau
   const header = document.getElementById('modalHeader');
-  header.className = `modal-header ${fin ? 'gold' : 'sage'}`;
+  header.className = `modal-header ${c.isEspiegle ? 'espiegle' : (fin ? 'gold' : 'sage')}`;
 
   const catEl = document.getElementById('modalCat');
   catEl.className = `modal-cat ${fin ? 'dark-text' : ''}`;
-  catEl.textContent = `${c.icon} ${c.cat}${fin ? ' — ⭐ FINALE ⭐' : ''}`;
+  catEl.textContent = c.isEspiegle ? '' : `${c.icon} ${c.cat}${fin ? ' — ⭐ FINALE ⭐' : ''}`;
 
   const levelEl = document.getElementById('modalLevel');
   levelEl.className = `modal-level ${fin ? 'dark-text' : ''}`;
-  levelEl.textContent = `Défi Niveau ${c.level}`;
+  levelEl.textContent = c.isEspiegle ? '🃏 CARTE PIÉGÉE !' : `Défi Niveau ${c.level}`;
 
   // Close button color
   const closeBtn = document.getElementById('modalCloseBtn');
@@ -2321,10 +2374,11 @@ function renderModal() {
     player.src = '';
   }
 
-  // Reveal button
+  // Reveal button — masqué pour les cartes Espiègle (pas de réponse fixe)
   const revealBtn = document.getElementById('revealBtn');
   revealBtn.className = `btn-reveal ${fin ? 'gold' : 'sage'}`;
   revealBtn.textContent = 'Voir la réponse';
+  revealBtn.classList.toggle('hidden', !!c.isEspiegle);
 
   // Response box
   document.getElementById('responseBox').classList.add('hidden');
@@ -2462,10 +2516,10 @@ function renderEspiegleBtns(wrap, active) {
     </p>
     <div class="modal-defi-row" style="grid-template-columns:1fr 1fr;gap:0.5rem;">
       <button class="btn btn-correct" onclick="handleEspiegleAnswer(true)">
-        ✓ Juste — <strong>${escHtml(nameB)}</strong> vole 1 pt à ${escHtml(nameA)}
+        ✓ Juste — <strong>${escHtml(nameB)}</strong> vole 2 pts à ${escHtml(nameA)}
       </button>
       <button class="btn btn-wrong" onclick="handleEspiegleAnswer(false)">
-        ✗ Faux — <strong>${escHtml(nameA)}</strong> vole 1 pt à ${escHtml(nameB)}
+        ✗ Faux — <strong>${escHtml(nameA)}</strong> vole 2 pts à ${escHtml(nameB)}
       </button>
     </div>
     <button class="btn btn-neutral" onclick="handleEspiegleCancel()">
@@ -2485,13 +2539,13 @@ function handleEspiegleAnswer(correctByTarget) {
   const teamB = state.espiegleTargetSlot;                        // équipe ciblée
   if (teamB >= 0) {
     if (correctByTarget) {
-      // B a répondu juste → B vole 1 pt à A
-      state.teamScores[teamB] += 1;
-      state.teamScores[teamA] -= 1;
+      // B a répondu juste → B vole 2 pts à A
+      state.teamScores[teamB] += 2;
+      state.teamScores[teamA] -= 2;
     } else {
-      // B a répondu faux → A vole 1 pt à B
-      state.teamScores[teamA] += 1;
-      state.teamScores[teamB] -= 1;
+      // B a répondu faux → A vole 2 pts à B
+      state.teamScores[teamA] += 2;
+      state.teamScores[teamB] -= 2;
     }
     triggerVictory();
   }
