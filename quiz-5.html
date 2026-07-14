@@ -1048,6 +1048,20 @@
     }
     .card-face.cat-vocabulaire .card-cat { color: #B87333 !important; }
 
+    /* Bonus → doré-ambré ⭐ (cartes personnalisées +2 pts) */
+    .card-face.cat-bonus {
+      background: var(--white-pure) !important;
+      border: 1.5px solid rgba(229,161,0,0.45) !important;
+      box-shadow:
+        0 0 0 1px rgba(229,161,0,0.20),
+        0 3px 12px rgba(229,161,0,0.20),
+        0 1px 3px rgba(0,0,0,0.08) !important;
+    }
+    .card-face.cat-bonus .card-icon {
+      background: radial-gradient(circle, rgba(229,161,0,0.32) 0%, rgba(229,161,0,0.08) 70%) !important;
+    }
+    .card-face.cat-bonus .card-cat { color: #B57F00 !important; }
+
     /* Fiqh → vert émeraude / teal — balance de la justice */
     .card-face.cat-fiqh {
       background: var(--white-pure) !important;
@@ -1108,7 +1122,8 @@
     .card-face.cat-devinettes,
     .card-face.cat-vocabulaire,
     .card-face.cat-fiqh,
-    .card-face.cat-espiegle {
+    .card-face.cat-espiegle,
+    .card-face.cat-bonus {
       overflow: hidden;
     }
     .card-face.cat-hadith::before,
@@ -1117,7 +1132,8 @@
     .card-face.cat-devinettes::before,
     .card-face.cat-vocabulaire::before,
     .card-face.cat-fiqh::before,
-    .card-face.cat-espiegle::before {
+    .card-face.cat-espiegle::before,
+    .card-face.cat-bonus::before {
       content: '';
       position: absolute;
       top: 0; bottom: 0; left: 0;
@@ -1133,6 +1149,7 @@
     .card-face.cat-vocabulaire::before{ background: #B87333; }
     .card-face.cat-fiqh::before       { background: #2D6B4F; }
     .card-face.cat-espiegle::before   { background: #E58C1A; }
+    .card-face.cat-bonus::before      { background: #E5A100; }
   </style>
 </head>
 <body>
@@ -1359,20 +1376,24 @@ const CHALLENGES = [
   { id:29, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot « Shafâʿa » ?", response:"L'intercession — le fait qu'un serviteur pieux intercède auprès d'Allah pour un autre. La grande intercession (Ash-Shafâʿa al-ʿUẓmâ) sera accordée au Prophète (ﷺ) le Jour du Jugement pour soulager l'attente des créatures." },
   { id:30, cat:'Vocabulaire', icon:'🧠', level:'Difficile', pts:3, content:"Que signifie le mot « Tadabbur » ?", response:"La méditation et la réflexion approfondie sur les versets du Coran. Ne pas se contenter de la récitation : chercher le sens, les leçons et la mise en pratique. Voir Muḥammad 47:24 : « Ne méditent-ils donc pas sur le Coran ? »" },
 
+  // ─── Bonus ⭐ (+2 points) ─────────────────────────────────
+  { id:31, cat:'Bonus', icon:'⭐', level:'Moyen', pts:2, content:"📅 Quelle est la date de naissance d'Ansa Soumiya ?", response:"06 / 10 / 1982 — +2 points ⭐" },
+  { id:32, cat:'Bonus', icon:'⭐', level:'Moyen', pts:2, content:"📅 Quelle est la date de naissance d'Ansa Rayyan ?", response:"06 / 03 / 1996 — +2 points ⭐" },
+
   // ─── Devinettes 🔍 ───────────────────────────────────────
-  { id:31, cat:'Devinettes', icon:'🔍', level:'Débutant', pts:1, content:"J'ai été aimé par un père. J'ai été jalousé par des frères. J'ai disparu au fond d'un puits. Puis je suis devenu l'un des hommes les plus puissants de mon époque. Qui suis-je ?", response:"Yûsuf (يوسف) عليه السلام.\n\nFils de Yaʿqûb, jeté dans un puits par ses frères jaloux, vendu comme esclave en Égypte, emprisonné injustement, puis élevé au rang de gouverneur d'Égypte après avoir interprété le rêve du roi. Toute son histoire est racontée dans la sourate Yûsuf (12)." },
-  { id:32, cat:'Devinettes', icon:'🔍', level:'Débutant', pts:1, content:"Je suis née dans une vallée où il n'y avait ni eau, ni culture. J'ai jailli sous les pieds d'un nourrisson. Depuis des milliers d'années, je désaltère des millions de pèlerins. Qui suis-je ?", response:"Zamzam (زمزم).\n\nEau qui jaillit miraculeusement dans la vallée aride de La Mecque sous les pieds d'Ismâʿîl (عليه السلام), alors que sa mère Hâjar cherchait de l'eau entre les collines de Ṣafâ et Marwa. La source coule sans interruption depuis plus de 4000 ans." },
-  { id:33, cat:'Devinettes', icon:'🔍', level:'Moyen', pts:2, content:"J'ai été ouverte. Puis refermée. Et une armée entière y est restée prisonnière. Qui suis-je ?", response:"La mer Rouge (البحر الأحمر).\n\nAllah la fendit pour que Mûsâ (عليه السلام) et les Enfants d'Israël puissent la traverser à pied sec en fuyant Firʿawn. Une fois qu'ils furent passés, les eaux se refermèrent sur Firʿawn et son armée. Voir Ash-Shuʿarâʾ 26:60-66 et Ṭâ-Hâ 20:77-78." },
-  { id:34, cat:'Devinettes', icon:'🔍', level:'Difficile', pts:3, content:"Je n'ai duré qu'une seule nuit. J'ai commencé sur la Terre. Je me suis poursuivi dans les cieux. J'ai permis au Prophète (ﷺ) de rencontrer plusieurs prophètes avant de revenir avant l'aube. Qui suis-je ?", response:"Al-Isrâʾ wal-Miʿrâj (الإسراء والمعراج).\n\nLe voyage nocturne du Prophète (ﷺ) de La Mecque à Al-Aqṣâ (Jérusalem), puis son ascension à travers les sept cieux. Il rencontra Âdam, ʿÎsâ, Yaḥyâ, Yûsuf, Idrîs, Hârûn, Mûsâ, et Ibrâhîm (عليهم السلام) avant de revenir avant l'aube. C'est lors de cette nuit que les 5 prières furent prescrites." },
-  { id:35, cat:'Devinettes', icon:'🔍', level:'Difficile', pts:3, content:"Je suis né de bijoux fondus. Certains se sont prosternés devant moi. Un prophète est revenu en colère. Je n'ai fini qu'en poussière. Qui suis-je ?", response:"Le veau d'or (العجل الذهبي).\n\nPendant l'absence de Mûsâ (عليه السلام), parti recevoir les Tables de la Loi, As-Sâmirî fabriqua un veau à partir des bijoux des Enfants d'Israël. Beaucoup se mirent à l'adorer. À son retour, Mûsâ, profondément attristé, détruisit le veau, le réduisit en poussière et en dispersa les restes dans la mer. (Ṭâ-Hâ 20:83-97)" },
-  { id:36, cat:'Devinettes', icon:'🔍', level:'Difficile', pts:3, content:"Au début, je ne voulais pas de lui. À la fin, je ne voulais plus le quitter. Son arrivée transforma ma monture, mon troupeau et ma famille. Qui suis-je ?", response:"Ḥalîma As-Saʿdiyya (حليمة السعدية).\n\nLa nourrice bédouine du Prophète (ﷺ). Lorsqu'elle vint chercher un nourrisson à allaiter à La Mecque, elle refusa d'abord Muḥammad ﷺ car il était orphelin (donc peu de rémunération espérée), mais finit par le prendre. Dès son arrivée dans sa tribu (Banû Saʿd), sa monture, son troupeau et sa maison connurent une baraka immense. Elle finit par ne plus vouloir se séparer de lui." },
+  { id:33, cat:'Devinettes', icon:'🔍', level:'Débutant', pts:1, content:"J'ai été aimé par un père. J'ai été jalousé par des frères. J'ai disparu au fond d'un puits. Puis je suis devenu l'un des hommes les plus puissants de mon époque. Qui suis-je ?", response:"Yûsuf (يوسف) عليه السلام.\n\nFils de Yaʿqûb, jeté dans un puits par ses frères jaloux, vendu comme esclave en Égypte, emprisonné injustement, puis élevé au rang de gouverneur d'Égypte après avoir interprété le rêve du roi. Toute son histoire est racontée dans la sourate Yûsuf (12)." },
+  { id:34, cat:'Devinettes', icon:'🔍', level:'Débutant', pts:1, content:"Je suis née dans une vallée où il n'y avait ni eau, ni culture. J'ai jailli sous les pieds d'un nourrisson. Depuis des milliers d'années, je désaltère des millions de pèlerins. Qui suis-je ?", response:"Zamzam (زمزم).\n\nEau qui jaillit miraculeusement dans la vallée aride de La Mecque sous les pieds d'Ismâʿîl (عليه السلام), alors que sa mère Hâjar cherchait de l'eau entre les collines de Ṣafâ et Marwa. La source coule sans interruption depuis plus de 4000 ans." },
+  { id:35, cat:'Devinettes', icon:'🔍', level:'Moyen', pts:2, content:"J'ai été ouverte. Puis refermée. Et une armée entière y est restée prisonnière. Qui suis-je ?", response:"La mer Rouge (البحر الأحمر).\n\nAllah la fendit pour que Mûsâ (عليه السلام) et les Enfants d'Israël puissent la traverser à pied sec en fuyant Firʿawn. Une fois qu'ils furent passés, les eaux se refermèrent sur Firʿawn et son armée. Voir Ash-Shuʿarâʾ 26:60-66 et Ṭâ-Hâ 20:77-78." },
+  { id:36, cat:'Devinettes', icon:'🔍', level:'Difficile', pts:3, content:"Je n'ai duré qu'une seule nuit. J'ai commencé sur la Terre. Je me suis poursuivi dans les cieux. J'ai permis au Prophète (ﷺ) de rencontrer plusieurs prophètes avant de revenir avant l'aube. Qui suis-je ?", response:"Al-Isrâʾ wal-Miʿrâj (الإسراء والمعراج).\n\nLe voyage nocturne du Prophète (ﷺ) de La Mecque à Al-Aqṣâ (Jérusalem), puis son ascension à travers les sept cieux. Il rencontra Âdam, ʿÎsâ, Yaḥyâ, Yûsuf, Idrîs, Hârûn, Mûsâ, et Ibrâhîm (عليهم السلام) avant de revenir avant l'aube. C'est lors de cette nuit que les 5 prières furent prescrites." },
+  { id:37, cat:'Devinettes', icon:'🔍', level:'Difficile', pts:3, content:"Je suis né de bijoux fondus. Certains se sont prosternés devant moi. Un prophète est revenu en colère. Je n'ai fini qu'en poussière. Qui suis-je ?", response:"Le veau d'or (العجل الذهبي).\n\nPendant l'absence de Mûsâ (عليه السلام), parti recevoir les Tables de la Loi, As-Sâmirî fabriqua un veau à partir des bijoux des Enfants d'Israël. Beaucoup se mirent à l'adorer. À son retour, Mûsâ, profondément attristé, détruisit le veau, le réduisit en poussière et en dispersa les restes dans la mer. (Ṭâ-Hâ 20:83-97)" },
+  { id:38, cat:'Devinettes', icon:'🔍', level:'Difficile', pts:3, content:"Au début, je ne voulais pas de lui. À la fin, je ne voulais plus le quitter. Son arrivée transforma ma monture, mon troupeau et ma famille. Qui suis-je ?", response:"Ḥalîma As-Saʿdiyya (حليمة السعدية).\n\nLa nourrice bédouine du Prophète (ﷺ). Lorsqu'elle vint chercher un nourrisson à allaiter à La Mecque, elle refusa d'abord Muḥammad ﷺ car il était orphelin (donc peu de rémunération espérée), mais finit par le prendre. Dès son arrivée dans sa tribu (Banû Saʿd), sa monture, son troupeau et sa maison connurent une baraka immense. Elle finit par ne plus vouloir se séparer de lui." },
 
   // ─── Défis (débloqués un par tour complet) ⚔️ ─────────────
-  { id:37, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:180, content:"📜 La vie du Prophète (ﷺ)\n\nReplacez ces 6 événements dans le bon ordre chronologique :\n\n• 🕋 Conquête de La Mecque\n• 🕌 Hijra vers Médine\n• 📖 Première révélation\n• ⚔️ Bataille de Badr\n• 🤝 Traité d'Al-Ḥudaybiya\n• 🕊️ Pèlerinage d'adieu\n\n⏱ 3 minutes.", response:"Ordre chronologique :\n\n1. 📖 Première révélation (610 CE)\n2. 🕌 Hijra vers Médine (1 H / 622 CE)\n3. ⚔️ Bataille de Badr (2 H)\n4. 🤝 Traité d'Al-Ḥudaybiya (6 H)\n5. 🕋 Conquête de La Mecque (8 H)\n6. 🕊️ Pèlerinage d'adieu (10 H)" },
-  { id:38, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:180, content:"📜 La vie de Mûsâ (عليه السلام)\n\nReplacez ces 6 événements dans le bon ordre chronologique :\n\n• 👶 Naissance de Mûsâ\n• 🏰 Mûsâ grandit au palais de Pharaon\n• 🔥 L'appel d'Allah près du buisson ardent\n• 🌊 Ouverture de la mer\n• 📜 Révélation de la Tawrâh\n• 🐄 L'histoire de la vache (Al-Baqara)\n\n⏱ 3 minutes.", response:"Ordre chronologique :\n\n1. 👶 Naissance de Mûsâ\n2. 🏰 Mûsâ grandit au palais de Pharaon\n3. 🔥 L'appel d'Allah près du buisson ardent (Ṭûr Sinâʾ)\n4. 🌊 Ouverture de la mer (fuite de Firʿawn)\n5. 📜 Révélation de la Tawrâh sur le mont Ṭûr\n6. 🐄 L'histoire de la vache (épisode qui donne son nom à sourate Al-Baqara)" },
-  { id:39, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:180, content:"📖 Replacez ces 10 sourates dans leur ordre d'apparition dans le Coran :\n\n• 🌿 Ar-Raḥmân\n• 📖 Al-Fâtiḥa\n• 🐄 Al-Baqara\n• 👨‍👩‍👧 Maryam\n• 🕷️ Al-ʿAnkabût\n• 🌙 Yâ-Sîn\n• 👑 Al-Mulk\n• 🌅 Ad-Duḥâ\n• 🌍 Az-Zalzala\n• 👥 An-Nâs\n\n⏱ 3 minutes.", response:"Ordre canonique :\n\n1. 📖 Al-Fâtiḥa (1)\n2. 🐄 Al-Baqara (2)\n3. 👨‍👩‍👧 Maryam (19)\n4. 🕷️ Al-ʿAnkabût (29)\n5. 🌙 Yâ-Sîn (36)\n6. 🌿 Ar-Raḥmân (55)\n7. 👑 Al-Mulk (67)\n8. 🌅 Ad-Duḥâ (93)\n9. 🌍 Az-Zalzala (99)\n10. 👥 An-Nâs (114)" },
-  { id:40, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:120, content:"⚔️ Défi de récitation — النَّار (le Feu)\n\nLa première équipe à réciter un verset complet contenant le mot النار (an-nâr, le Feu) gagne le point.\n\n⏱ 2 minutes.", response:"Exemples de versets acceptés :\n\n• Al-Baqara 2:24 — « فَاتَّقُوا النَّارَ الَّتِي وَقُودُهَا النَّاسُ وَالْحِجَارَةُ… »\n• Al-Baqara 2:174 — « أُولَٰئِكَ مَا يَأْكُلُونَ فِي بُطُونِهِمْ إِلَّا النَّارَ… »\n• Âl ʿImrân 3:131 — « وَاتَّقُوا النَّارَ الَّتِي أُعِدَّتْ لِلْكَافِرِينَ »\n• An-Nisâʾ 4:56 — « إِنَّ الَّذِينَ كَفَرُوا بِآيَاتِنَا سَوْفَ نُصْلِيهِمْ نَارًا… »\n• Al-Aḥzâb 33:64 — « إِنَّ اللَّهَ لَعَنَ الْكَافِرِينَ وَأَعَدَّ لَهُمْ سَعِيرًا »\n\nLe mot النار apparaît dans plus de 100 versets du Coran." },
-  { id:41, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:120, content:"⚔️ Défi de récitation — الصَّبر (la Patience)\n\nLa première équipe à réciter un verset complet contenant le mot الصبر (aṣ-ṣabr, la patience) ou une forme dérivée gagne le point.\n\n⏱ 2 minutes.", response:"Exemples de versets acceptés :\n\n• Al-Baqara 2:45 — « وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ… »\n• Al-Baqara 2:153 — « يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ »\n• Âl ʿImrân 3:200 — « يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا وَصَابِرُوا وَرَابِطُوا… »\n• Az-Zumar 39:10 — « إِنَّمَا يُوَفَّى الصَّابِرُونَ أَجْرَهُم بِغَيْرِ حِسَابٍ »\n• Al-ʿAṣr 103:3 — « … وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ »" },
+  { id:39, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:180, content:"📜 La vie du Prophète (ﷺ)\n\nReplacez ces 6 événements dans le bon ordre chronologique :\n\n• 🕋 Conquête de La Mecque\n• 🕌 Hijra vers Médine\n• 📖 Première révélation\n• ⚔️ Bataille de Badr\n• 🤝 Traité d'Al-Ḥudaybiya\n• 🕊️ Pèlerinage d'adieu\n\n⏱ 3 minutes.", response:"Ordre chronologique :\n\n1. 📖 Première révélation (610 CE)\n2. 🕌 Hijra vers Médine (1 H / 622 CE)\n3. ⚔️ Bataille de Badr (2 H)\n4. 🤝 Traité d'Al-Ḥudaybiya (6 H)\n5. 🕋 Conquête de La Mecque (8 H)\n6. 🕊️ Pèlerinage d'adieu (10 H)" },
+  { id:40, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:180, content:"📜 La vie de Mûsâ (عليه السلام)\n\nReplacez ces 6 événements dans le bon ordre chronologique :\n\n• 👶 Naissance de Mûsâ\n• 🏰 Mûsâ grandit au palais de Pharaon\n• 🔥 L'appel d'Allah près du buisson ardent\n• 🌊 Ouverture de la mer\n• 📜 Révélation de la Tawrâh\n• 🐄 L'histoire de la vache (Al-Baqara)\n\n⏱ 3 minutes.", response:"Ordre chronologique :\n\n1. 👶 Naissance de Mûsâ\n2. 🏰 Mûsâ grandit au palais de Pharaon\n3. 🔥 L'appel d'Allah près du buisson ardent (Ṭûr Sinâʾ)\n4. 🌊 Ouverture de la mer (fuite de Firʿawn)\n5. 📜 Révélation de la Tawrâh sur le mont Ṭûr\n6. 🐄 L'histoire de la vache (épisode qui donne son nom à sourate Al-Baqara)" },
+  { id:41, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:180, content:"📖 Replacez ces 10 sourates dans leur ordre d'apparition dans le Coran :\n\n• 🌿 Ar-Raḥmân\n• 📖 Al-Fâtiḥa\n• 🐄 Al-Baqara\n• 👨‍👩‍👧 Maryam\n• 🕷️ Al-ʿAnkabût\n• 🌙 Yâ-Sîn\n• 👑 Al-Mulk\n• 🌅 Ad-Duḥâ\n• 🌍 Az-Zalzala\n• 👥 An-Nâs\n\n⏱ 3 minutes.", response:"Ordre canonique :\n\n1. 📖 Al-Fâtiḥa (1)\n2. 🐄 Al-Baqara (2)\n3. 👨‍👩‍👧 Maryam (19)\n4. 🕷️ Al-ʿAnkabût (29)\n5. 🌙 Yâ-Sîn (36)\n6. 🌿 Ar-Raḥmân (55)\n7. 👑 Al-Mulk (67)\n8. 🌅 Ad-Duḥâ (93)\n9. 🌍 Az-Zalzala (99)\n10. 👥 An-Nâs (114)" },
+  { id:42, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:120, content:"⚔️ Défi de récitation — النَّار (le Feu)\n\nLa première équipe à réciter un verset complet contenant le mot النار (an-nâr, le Feu) gagne le point.\n\n⏱ 2 minutes.", response:"Exemples de versets acceptés :\n\n• Al-Baqara 2:24 — « فَاتَّقُوا النَّارَ الَّتِي وَقُودُهَا النَّاسُ وَالْحِجَارَةُ… »\n• Al-Baqara 2:174 — « أُولَٰئِكَ مَا يَأْكُلُونَ فِي بُطُونِهِمْ إِلَّا النَّارَ… »\n• Âl ʿImrân 3:131 — « وَاتَّقُوا النَّارَ الَّتِي أُعِدَّتْ لِلْكَافِرِينَ »\n• An-Nisâʾ 4:56 — « إِنَّ الَّذِينَ كَفَرُوا بِآيَاتِنَا سَوْفَ نُصْلِيهِمْ نَارًا… »\n• Al-Aḥzâb 33:64 — « إِنَّ اللَّهَ لَعَنَ الْكَافِرِينَ وَأَعَدَّ لَهُمْ سَعِيرًا »\n\nLe mot النار apparaît dans plus de 100 versets du Coran." },
+  { id:43, cat:'Défis', icon:'⚔️', level:'Difficile', pts:3, isDefi:true, timed:true, timerSec:120, content:"⚔️ Défi de récitation — الصَّبر (la Patience)\n\nLa première équipe à réciter un verset complet contenant le mot الصبر (aṣ-ṣabr, la patience) ou une forme dérivée gagne le point.\n\n⏱ 2 minutes.", response:"Exemples de versets acceptés :\n\n• Al-Baqara 2:45 — « وَاسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ… »\n• Al-Baqara 2:153 — « يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ إِنَّ اللَّهَ مَعَ الصَّابِرِينَ »\n• Âl ʿImrân 3:200 — « يَا أَيُّهَا الَّذِينَ آمَنُوا اصْبِرُوا وَصَابِرُوا وَرَابِطُوا… »\n• Az-Zumar 39:10 — « إِنَّمَا يُوَفَّى الصَّابِرُونَ أَجْرَهُم بِغَيْرِ حِسَابٍ »\n• Al-ʿAṣr 103:3 — « … وَتَوَاصَوْا بِالْحَقِّ وَتَوَاصَوْا بِالصَّبْرِ »" },
 ];
 
 const FINALE_CHALLENGES = [
@@ -2189,6 +2210,7 @@ function renderCardGrid(animate) {
       else if (catKey === 'culture') faceClass += 'cat-culture';
       else if (catKey === 'devinettes') faceClass += 'cat-devinettes';
       else if (catKey === 'vocabulaire') faceClass += 'cat-vocabulaire';
+      else if (catKey === 'bonus') faceClass += 'cat-bonus';
       else if (catKey === 'fiqh') faceClass += 'cat-fiqh';
       else if (catKey === 'espiègle') faceClass += 'cat-espiegle';
       else faceClass += 'cat-culture'; // fallback
