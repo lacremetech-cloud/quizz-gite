@@ -179,6 +179,48 @@
     .chip.correct .mark { background: var(--green-mid); }
     .chip.wrong .mark { background: var(--red); }
     .answer-fix { margin-top: 0.35rem; font-size: 0.78rem; font-weight: 800; color: var(--green-mid); }
+    .chip-text { display: block; }
+
+    /* ── Grand écran (≥1200px) : 3 colonnes, tout visible sans défilement ── */
+    @media (min-width: 1200px) {
+      .container { max-width: 1780px; padding: 0.35rem 1.5rem 0.35rem; }
+      .game-top { padding: 0.3rem 0.7rem; margin-bottom: 0.3rem; }
+      .progress-wrap { margin-bottom: 0.25rem; height: 6px; }
+      .hint { display: none; }
+      .col-label { margin-bottom: 0.18rem; font-size: 0.66rem; }
+
+      /* prophètes = colonne 1 (étroite) ; événements = colonnes 2 & 3 */
+      .board { grid-template-columns: minmax(290px, 22%) 1fr; gap: 0.9rem; }
+
+      /* colonne 1 très compacte (c'est elle qui dicte la hauteur : 25 lignes) */
+      .slots { gap: 0.1rem; }
+      /* minmax(0,…) sur la colonne événement : elle peut rétrécir → l'ellipsis coupe
+         vraiment le texte au lieu d'élargir la case et d'écraser le nom du prophète */
+      .slot-row { grid-template-columns: minmax(86px, 0.62fr) minmax(0, 1.38fr); padding: 0.1rem 0.28rem; border-radius: 8px; gap: 0.28rem; align-items: center; }
+      .slot-row .dropzone { min-width: 0; }
+      .slot-row .chip.in-slot { min-width: 0; max-width: 100%; }
+      .prophet .p-fr, .prophet .p-ar { white-space: nowrap; }
+      .prophet { padding: 0.05rem 0.22rem; gap: 0.28rem; border-radius: 6px; }
+      .p-num { width: 1.2rem; height: 1.2rem; font-size: 0.64rem; }
+      .p-fr { font-size: 0.75rem; line-height: 1.05; }
+      .p-ar { font-size: 0.78rem; }
+      .dropzone { min-height: 22px; border-radius: 6px; padding: 0.08rem 0.22rem; }
+      .dropzone .placeholder { font-size: 0.64rem; }
+      .chip.in-slot { padding: 0.06rem 0.38rem; font-size: 0.72rem; line-height: 1.1; }
+      .chip.in-slot .chip-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .chip.in-slot .mark { width: 17px; height: 17px; font-size: 0.62rem; top: -6px; right: -6px; }
+      .answer-fix { margin-top: 0.1rem; font-size: 0.66rem; }
+
+      /* colonnes 2 & 3 : événements confortables (peu de lignes chacune) */
+      .pool { display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem 0.7rem; align-content: start; min-height: 0; }
+      .pool-empty { grid-column: 1 / -1; padding: 0.5rem; }
+      .chip { padding: 0.3rem 0.55rem; font-size: 0.82rem; line-height: 1.25; border-radius: 8px; }
+
+      .game-actions { margin-top: 0.4rem; }
+      .game-actions .btn { padding: 0.4rem 1.4rem; font-size: 0.9rem; }
+      .game-actions .btn-sm { padding: 0.35rem 0.9rem; }
+      .round-result { margin-top: 0.4rem; font-size: 0.95rem; }
+    }
 
     /* Floating drag ghost */
     .ghost {
@@ -434,7 +476,8 @@
       const chip = document.createElement('div');
       chip.className = 'chip' + (inSlot ? ' in-slot' : '');
       chip.dataset.ev = String(eIdx);
-      chip.innerHTML = `${inSlot ? '' : '<span class="grip">⋮⋮</span>'}${PROPHETS[eIdx].ev}`;
+      chip.innerHTML = `${inSlot ? '' : '<span class="grip">⋮⋮</span>'}<span class="chip-text">${PROPHETS[eIdx].ev}</span>`;
+      if (inSlot) chip.title = PROPHETS[eIdx].ev;
       if (this.selected === eIdx) chip.classList.add('selected');
 
       if (this.checked) {
