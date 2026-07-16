@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Les Prophètes — Défis du savoir</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --green-dark:   #1F3D2B;
+      --green-mid:    #3E6B4E;
+      --green-light:  #A8C3A0;
+      --green-tint:   #EBF2E8;
+      --green-bg:     #F3F7F1;
+      --gold-dark:    #8A6E2A;
+      --gold-mid:     #C2A65A;
+      --gold-light:   #DCC882;
+      --gold-tint:    #F8F2E4;
+      --cream:        #F1EBDD;
+      --cream-dark:   #E4D8C3;
+      --text-dark:    #1F3D2B;
+      --text-mid:     #3E6B4E;
+      --text-light:   #6B8C78;
+      --text-muted:   #A0B8A8;
+      --red:          #C0392B;
+      --red-light:    #FADBD8;
+      --shadow-sm:    0 1px 3px rgba(31,61,43,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md:    0 4px 12px rgba(31,61,43,0.12), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg:    0 8px 24px rgba(31,61,43,0.15), 0 4px 8px rgba(0,0,0,0.08);
+      --shadow-xl:    0 20px 40px rgba(31,61,43,0.18), 0 8px 16px rgba(0,0,0,0.08);
+    }
+    html, body { -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow-x: hidden;
+      touch-action: manipulation;
+    }
+    .pattern-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%236B8F71' stroke-width='0.5' opacity='0.13'%3E%3Crect x='5' y='5' width='30' height='30' rx='0' transform='rotate(45 20 20)'/%3E%3Crect x='10' y='10' width='20' height='20' rx='0' transform='rotate(45 20 20)'/%3E%3Cline x1='20' y1='0' x2='20' y2='40'/%3E%3Cline x1='0' y1='20' x2='40' y2='20'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 40px 40px;
+    }
+    .container { position: relative; z-index: 1; padding: 1rem; max-width: 1100px; margin: 0 auto; }
+    @media (min-width: 768px) { .container { padding: 1.5rem 2rem 3rem; } }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+      font-weight: 800; border: none; cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+      border-radius: 12px; font-family: 'Nunito', sans-serif;
+      padding: 0.85rem 1.8rem; font-size: 1rem;
+    }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-primary { background: var(--green-mid); color:#fff; box-shadow: 0 2px 0 var(--green-dark), var(--shadow-md); }
+    .btn-primary:hover:not(:disabled){ background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 3px 0 #2A4D38, var(--shadow-lg); }
+    .btn-primary:active:not(:disabled){ transform: translateY(1px); box-shadow: 0 1px 0 var(--green-dark); }
+    .btn-gold { background: var(--gold-mid); color:#fff; box-shadow: 0 2px 0 var(--gold-dark), var(--shadow-md); }
+    .btn-gold:hover:not(:disabled){ background: var(--gold-dark); transform: translateY(-1px); }
+    .btn-gold:active:not(:disabled){ transform: translateY(1px); box-shadow: 0 1px 0 var(--gold-dark); }
+    .btn-ghost { background: var(--gold-tint); color: var(--gold-dark); border: 1.5px solid var(--gold-light); box-shadow: var(--shadow-sm); }
+    .btn-ghost:hover { background:#FAF3D5; }
+    .btn-sm { padding: 0.5rem 0.95rem; font-size: 0.8125rem; border-radius: 10px; }
+
+    /* ── Hero / intro ── */
+    .screen { display: none; }
+    .screen.active { display: block; animation: fade 0.35s ease; }
+    @keyframes fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .hero { text-align: center; padding: 2rem 1rem 1.5rem; }
+    .hero-tag {
+      display: inline-block; font-size: 0.75rem; font-weight: 800; color: var(--gold-dark);
+      letter-spacing: 0.18em; text-transform: uppercase; background: var(--gold-tint);
+      padding: 0.4rem 0.9rem; border-radius: 999px; border: 1.5px solid var(--gold-light); margin-bottom: 1rem;
+    }
+    .hero-title { font-size: 2.4rem; font-weight: 900; color: var(--green-dark); line-height: 1.1; margin-bottom: 0.4rem; }
+    .hero-title .ar { display:block; font-family:'Amiri', serif; font-size:2rem; color: var(--gold-dark); margin-top:0.3rem; font-weight:700; }
+    @media (min-width: 768px){ .hero-title { font-size: 3.25rem; } }
+    .hero-sub { font-size: 1.05rem; color: var(--text-mid); max-width: 560px; margin: 0.8rem auto 0; line-height: 1.6; }
+
+    .rules {
+      max-width: 620px; margin: 1.75rem auto 0; background:#fff; border-radius: 18px;
+      border: 1.5px solid rgba(31,61,43,0.08); box-shadow: var(--shadow-md); padding: 1.5rem 1.5rem;
+      text-align: left;
+    }
+    .rules h2 { font-size: 1rem; color: var(--green-dark); margin-bottom: 0.9rem; display:flex; align-items:center; gap:0.5rem; }
+    .rules ol { list-style: none; counter-reset: r; display: flex; flex-direction: column; gap: 0.7rem; }
+    .rules li { counter-increment: r; position: relative; padding-left: 2.4rem; color: var(--text-mid); line-height: 1.45; font-weight: 600; }
+    .rules li::before {
+      content: counter(r); position: absolute; left: 0; top: -0.1rem;
+      width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--green-tint); color: var(--green-dark);
+      font-weight: 900; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+    .intro-actions { text-align: center; margin-top: 1.75rem; display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; }
+
+    /* ── Game header ── */
+    .game-top {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+      background:#fff; border-radius: 16px; border:1.5px solid rgba(31,61,43,0.08);
+      box-shadow: var(--shadow-sm); padding: 0.7rem 0.95rem; margin-bottom: 1rem; flex-wrap: wrap;
+    }
+    .gt-left { display:flex; align-items:center; gap:0.6rem; }
+    .gt-title { font-weight: 900; color: var(--green-dark); font-size: 1.05rem; }
+    .gt-title .ar { font-family:'Amiri', serif; color: var(--gold-dark); font-weight:700; margin-left:0.35rem; }
+    .pill { font-size: 0.75rem; font-weight: 800; padding: 0.3rem 0.7rem; border-radius: 999px; letter-spacing:0.03em; }
+    .pill-round { background: var(--green-tint); color: var(--green-dark); }
+    .pill-score { background: var(--gold-tint); color: var(--gold-dark); border:1.5px solid var(--gold-light); }
+    .gt-right { display:flex; align-items:center; gap:0.5rem; }
+
+    .progress-wrap { height: 7px; background: var(--cream-dark); border-radius: 999px; overflow: hidden; margin-bottom: 1.1rem; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--green-mid), var(--gold-mid)); border-radius: 999px; transition: width 0.4s ease; width: 0%; }
+
+    .hint { text-align:center; font-size:0.85rem; color: var(--text-light); font-weight:700; margin-bottom: 0.9rem; }
+    .hint b { color: var(--gold-dark); }
+
+    /* ── Board ── */
+    .board { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+    @media (min-width: 720px){ .board { grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; } }
+
+    .col-label { font-size:0.7rem; font-weight:800; text-transform:uppercase; letter-spacing:0.14em; color: var(--text-light); margin-bottom:0.6rem; padding-left:0.2rem; }
+
+    .slots { display: flex; flex-direction: column; gap: 0.7rem; }
+    .slot-row {
+      display: grid; grid-template-columns: 1fr; gap: 0.4rem;
+      background:#fff; border-radius: 14px; border:1.5px solid rgba(31,61,43,0.08);
+      box-shadow: var(--shadow-sm); padding: 0.6rem;
+    }
+    @media (min-width: 460px){ .slot-row { grid-template-columns: minmax(120px, 0.85fr) 1.15fr; align-items: stretch; } }
+    .prophet {
+      display:flex; align-items:center; gap:0.55rem; padding: 0.35rem 0.5rem;
+      background: linear-gradient(135deg, var(--green-tint), #fff); border-radius: 10px; min-width:0;
+    }
+    .p-num {
+      flex: none; width: 1.65rem; height: 1.65rem; border-radius: 50%;
+      background: var(--green-mid); color:#fff; font-weight:900; font-size:0.8rem;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .p-name { min-width:0; }
+    .p-fr { font-weight: 900; color: var(--green-dark); font-size: 0.95rem; line-height:1.15; }
+    .p-ar { font-family:'Amiri', serif; color: var(--gold-dark); font-size: 1rem; line-height:1.1; font-weight:700; }
+
+    .dropzone {
+      min-height: 52px; border-radius: 10px; border: 2px dashed var(--cream-dark);
+      background: var(--green-bg); display:flex; align-items:center; justify-content:center;
+      padding: 0.3rem; transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .dropzone .placeholder { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
+    .dropzone.over { border-color: var(--gold-mid); background: var(--gold-tint); }
+    .dropzone.filled { border-style: solid; border-color: var(--green-light); background:#fff; }
+
+    .pool { display:flex; flex-direction: column; gap: 0.6rem; min-height: 60px; padding: 0.15rem; border-radius: 12px; }
+    .pool.over { outline: 2px dashed var(--gold-mid); outline-offset: 3px; }
+    .pool-empty { text-align:center; color: var(--text-muted); font-weight:700; font-size:0.85rem; padding: 1rem; }
+
+    .chip {
+      user-select: none; -webkit-user-select: none; touch-action: none; cursor: grab;
+      background:#fff; border: 1.5px solid var(--green-light); border-radius: 10px;
+      padding: 0.6rem 0.75rem; font-size: 0.9rem; font-weight: 700; color: var(--text-dark);
+      line-height: 1.35; box-shadow: var(--shadow-sm); position: relative;
+      transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+    }
+    .chip:hover { border-color: var(--gold-mid); box-shadow: var(--shadow-md); }
+    .chip.selected { border-color: var(--gold-mid); background: var(--gold-tint); box-shadow: 0 0 0 3px rgba(194,166,90,0.35); }
+    .chip.dragging-src { opacity: 0.35; }
+    .chip .grip { color: var(--text-muted); font-weight: 900; margin-right: 0.15rem; }
+    .chip.in-slot { width: 100%; border-color: var(--green-light); }
+
+    .chip.correct { border-color: var(--green-mid); background: var(--green-tint); }
+    .chip.wrong { border-color: var(--red); background: var(--red-light); }
+    .chip .mark { position:absolute; top:-8px; right:-8px; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:900; color:#fff; box-shadow: var(--shadow-sm); }
+    .chip.correct .mark { background: var(--green-mid); }
+    .chip.wrong .mark { background: var(--red); }
+    .answer-fix { margin-top: 0.35rem; font-size: 0.78rem; font-weight: 800; color: var(--green-mid); }
+
+    /* Floating drag ghost */
+    .ghost {
+      position: fixed; z-index: 9999; pointer-events: none; max-width: 300px;
+      background:#fff; border: 1.5px solid var(--gold-mid); border-radius: 10px;
+      padding: 0.6rem 0.75rem; font-size: 0.9rem; font-weight: 700; color: var(--text-dark);
+      box-shadow: var(--shadow-xl); transform: translate(-50%, -50%) rotate(-2deg); line-height:1.3;
+    }
+
+    .game-actions { display:flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+    .round-result { text-align:center; font-weight:800; margin-top:1rem; font-size:1.05rem; display:none; }
+    .round-result.show { display:block; animation: fade 0.3s ease; }
+    .round-result .good { color: var(--green-mid); }
+
+    /* ── End screen ── */
+    .end-card {
+      max-width: 560px; margin: 2.5rem auto 0; background:#fff; border-radius: 22px;
+      border: 1.5px solid rgba(31,61,43,0.08); box-shadow: var(--shadow-xl); padding: 2.25rem 1.75rem; text-align: center;
+    }
+    .end-emoji { font-size: 3.5rem; }
+    .end-title { font-size: 1.8rem; font-weight: 900; color: var(--green-dark); margin: 0.5rem 0; }
+    .end-score { font-size: 3rem; font-weight: 900; color: var(--gold-dark); line-height:1; }
+    .end-score small { font-size: 1.1rem; color: var(--text-light); font-weight: 800; }
+    .end-msg { color: var(--text-mid); margin: 0.9rem auto 0; max-width: 420px; line-height:1.55; font-weight:600; }
+    .end-actions { display:flex; gap:0.75rem; justify-content:center; margin-top:1.75rem; flex-wrap: wrap; }
+
+    .foot { text-align:center; margin-top: 2.5rem; color: var(--text-light); font-size: 0.8rem; }
+    .foot strong { color: var(--green-mid); }
+    a.home { text-decoration:none; }
+  </style>
+</head>
+<body>
+  <div class="pattern-bg"></div>
+  <div class="container">
+
+    <!-- ══════════ INTRO ══════════ -->
+    <section id="screen-intro" class="screen active">
+      <div class="hero">
+        <span class="hero-tag">✦ Défis du savoir ✦</span>
+        <h1 class="hero-title">Les Prophètes<span class="ar">الأنبياء</span></h1>
+        <p class="hero-sub">
+          25 prophètes cités dans le Coran. Relie chaque prophète à
+          <b>l'événement ou la mission</b> qui lui correspond !
+        </p>
+      </div>
+
+      <div class="rules">
+        <h2>📜 Comment jouer</h2>
+        <ol>
+          <li>Un seul plateau : <b>les 25 prophètes</b> (ordre chronologique) et leurs <b>25 événements mélangés</b>.</li>
+          <li><b>Glisse</b> chaque étiquette « événement » sur le bon prophète — ou <b>tape</b> une étiquette puis la case du prophète.</li>
+          <li>Quand les 25 sont placés, appuie sur <b>Vérifier</b>.</li>
+          <li>Tu gagnes <b>1 point par bonne association</b>. Score final sur 25 !</li>
+        </ol>
+      </div>
+
+      <div class="intro-actions">
+        <button class="btn btn-primary" onclick="Game.start()">▶ Commencer</button>
+        <a class="home" href="index.html"><span class="btn btn-ghost">🏠 Accueil</span></a>
+      </div>
+    </section>
+
+    <!-- ══════════ GAME ══════════ -->
+    <section id="screen-game" class="screen">
+      <div class="game-top">
+        <div class="gt-left">
+          <span class="gt-title">Les Prophètes<span class="ar">الأنبياء</span></span>
+        </div>
+        <div class="gt-right">
+          <span class="pill pill-round" id="placedPill">0/25 placés</span>
+          <span class="pill pill-score" id="scorePill" style="display:none">0 pt</span>
+          <a class="home" href="index.html"><span class="btn btn-ghost btn-sm">🏠</span></a>
+        </div>
+      </div>
+
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+      <p class="hint" id="hint">Associe les <b>25 prophètes</b> à leur événement.</p>
+
+      <div class="board">
+        <div>
+          <div class="col-label">Prophètes <span id="slotsLabelCount"></span></div>
+          <div class="slots" id="slots"></div>
+        </div>
+        <div>
+          <div class="col-label">Événements à placer <span id="poolLabelCount"></span></div>
+          <div class="pool" id="pool" data-slot="pool"></div>
+        </div>
+      </div>
+
+      <div class="round-result" id="roundResult"></div>
+
+      <div class="game-actions" id="gameActions">
+        <button class="btn btn-ghost btn-sm" id="resetBtn" onclick="Game.resetBoard()">↺ Réinitialiser</button>
+        <button class="btn btn-gold" id="checkBtn" onclick="Game.check()" disabled>✓ Vérifier</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="Game.end()" style="display:none">Voir mon score →</button>
+      </div>
+    </section>
+
+    <!-- ══════════ END ══════════ -->
+    <section id="screen-end" class="screen">
+      <div class="end-card">
+        <div class="end-emoji" id="endEmoji">🏆</div>
+        <h2 class="end-title">Partie terminée !</h2>
+        <div class="end-score"><span id="endScore">0</span><small> / 25</small></div>
+        <p class="end-msg" id="endMsg"></p>
+        <div class="end-actions">
+          <button class="btn btn-primary" onclick="Game.start()">↻ Rejouer</button>
+          <a class="home" href="index.html"><span class="btn btn-ghost">🏠 Accueil</span></a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p>Fait avec ❤️ pour les soirées en famille — <strong>Défis du savoir</strong></p>
+    </footer>
+  </div>
+
+  <script>
+  /* ══════════════ DONNÉES : 25 prophètes ══════════════ */
+  const PROPHETS = [
+    { fr: "Âdam",        ar: "آدم",     ev: "Premier homme et premier prophète, père de l'humanité." },
+    { fr: "Idrîs",       ar: "إدريس",   ev: "Élevé par Allah à un haut rang pour sa piété et sa science." },
+    { fr: "Nûḥ",         ar: "نوح",     ev: "Prêcha 950 ans, puis vint le Déluge et l'Arche." },
+    { fr: "Hûd",         ar: "هود",     ev: "Envoyé au peuple des ʿÂd, puissants mais orgueilleux." },
+    { fr: "Ṣâliḥ",       ar: "صالح",    ev: "Envoyé aux Thamûd ; le miracle de la chamelle fut rejeté." },
+    { fr: "Ibrâhîm",     ar: "إبراهيم", ev: "Combattit l'idolâtrie et fut jeté au feu sans brûler." },
+    { fr: "Lûṭ",         ar: "لوط",     ev: "Envoyé aux gens de Sodome ; dénonça leur corruption." },
+    { fr: "Ismâʿîl",     ar: "إسماعيل", ev: "Fils d'Ibrâhîm ; reconstruisit la Kaʿba, modèle de patience." },
+    { fr: "Isḥâq",       ar: "إسحاق",   ev: "Fils d'Ibrâhîm ; ancêtre des prophètes des Enfants d'Israël." },
+    { fr: "Yaʿqûb",      ar: "يعقوب",   ev: "Aussi appelé Israël ; père des douze tribus." },
+    { fr: "Yûsuf",       ar: "يوسف",    ev: "Vendu par ses frères, devenu ministre d'Égypte." },
+    { fr: "Shuʿayb",     ar: "شعيب",    ev: "Envoyé à Madyan ; combattit la fraude commerciale." },
+    { fr: "Ayyûb",       ar: "أيوب",    ev: "Éprouvé dans sa santé et ses biens : exemple de patience." },
+    { fr: "Dhû al-Kifl", ar: "ذو الكفل",ev: "Homme très vertueux, connu pour sa patience et sa droiture." },
+    { fr: "Mûsâ",        ar: "موسى",    ev: "Envoyé à Pharaon ; le prophète le plus cité du Coran." },
+    { fr: "Hârûn",       ar: "هارون",   ev: "Frère de Mûsâ ; l'assista dans sa mission face à Pharaon." },
+    { fr: "Dâwûd",       ar: "داود",    ev: "Vainqueur de Goliath ; reçut les Psaumes (Zabûr)." },
+    { fr: "Sulaymân",    ar: "سليمان",  ev: "Roi-prophète : Allah lui soumit les vents et les djinns." },
+    { fr: "Ilyâs",       ar: "إلياس",   ev: "Envoyé à un peuple adorant Baal ; les appela au monothéisme." },
+    { fr: "Al-Yasaʿ",    ar: "اليسع",   ev: "Successeur d'Ilyâs auprès des Enfants d'Israël." },
+    { fr: "Yûnus",       ar: "يونس",    ev: "Avalé par un grand poisson ; envoyé aux gens de Ninive." },
+    { fr: "Zakariyyâ",   ar: "زكريا",   ev: "Tuteur de Maryam ; père de Yahyâ malgré son grand âge." },
+    { fr: "Yahyâ",       ar: "يحيى",    ev: "Fils de Zakariyyâ ; d'une pureté exceptionnelle, sage enfant." },
+    { fr: "ʿÎsâ",        ar: "عيسى",    ev: "Né miraculeusement de Maryam ; reçut l'Injîl." },
+    { fr: "Muḥammad ﷺ",  ar: "محمد",    ev: "Dernier prophète, miséricorde pour l'humanité, porteur du Coran." },
+  ];
+  /* ══════════════ UTILITAIRES ══════════════ */
+  function shuffle(arr){
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+  const $ = (id) => document.getElementById(id);
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ══════════════ MOTEUR DE JEU ══════════════ */
+  const Game = {
+    score: 0,
+    checked: false,
+    slotOrder: [],       // index PROPHETS dans l'ordre affiché (= ordre chronologique)
+    poolOrder: [],       // index des événements dans l'ordre (mélangé)
+    assign: {},          // prophetIndex -> eventProphetIndex placé (ou undefined)
+    selected: null,      // eventProphetIndex sélectionné (mode tap)
+
+    start(){
+      this.checked = false;
+      this.selected = null;
+      this.assign = {};
+      this.score = 0;
+      this.slotOrder = PROPHETS.map((_, i) => i);      // chronologique 0..24
+      this.poolOrder = shuffle(this.slotOrder);        // événements mélangés
+      $('scorePill').style.display = 'none';
+      $('scorePill').textContent = `0 pt`;
+      $('progressBar').style.width = '0%';
+      $('hint').innerHTML = 'Associe les <b>25 prophètes</b> à leur événement.';
+      $('roundResult').classList.remove('show');
+      $('checkBtn').style.display = '';
+      $('checkBtn').disabled = true;
+      $('resetBtn').style.display = '';
+      $('nextBtn').style.display = 'none';
+      showScreen('screen-game');
+      this.render();
+    },
+
+    render(){
+      this.renderSlots();
+      this.renderPool();
+      this.updateCheckBtn();
+      this.updateCounters();
+    },
+
+    updateCounters(){
+      const placed = Object.keys(this.assign).length;
+      const total = this.slotOrder.length;
+      $('placedPill').textContent = `${placed}/${total} placés`;
+      $('slotsLabelCount').textContent = '';
+      $('poolLabelCount').textContent = `(${total - placed})`;
+      if (!this.checked) $('progressBar').style.width = `${(placed / total) * 100}%`;
+    },
+
+    renderSlots(){
+      const wrap = $('slots');
+      wrap.innerHTML = '';
+      this.slotOrder.forEach((pIdx, pos) => {
+        const p = PROPHETS[pIdx];
+        const row = document.createElement('div');
+        row.className = 'slot-row';
+
+        const prophet = document.createElement('div');
+        prophet.className = 'prophet';
+        prophet.innerHTML = `<span class="p-num">${pIdx + 1}</span>
+          <span class="p-name"><span class="p-fr">${p.fr}</span> <span class="p-ar">${p.ar}</span></span>`;
+
+        const zone = document.createElement('div');
+        zone.className = 'dropzone';
+        zone.dataset.slot = String(pIdx);
+        const placed = this.assign[pIdx];
+        if (placed === undefined) {
+          zone.innerHTML = '<span class="placeholder">Déposer ici</span>';
+        } else {
+          zone.classList.add('filled');
+          zone.appendChild(this.makeChip(placed, true));
+        }
+        zone.addEventListener('click', () => this.onZoneTap(pIdx));
+
+        row.appendChild(prophet);
+        row.appendChild(zone);
+        wrap.appendChild(row);
+      });
+    },
+
+    renderPool(){
+      const pool = $('pool');
+      pool.innerHTML = '';
+      const remaining = this.poolOrder.filter(e => !Object.values(this.assign).includes(e));
+      if (remaining.length === 0) {
+        pool.innerHTML = '<div class="pool-empty">✓ Toutes les étiquettes sont placées</div>';
+      } else {
+        remaining.forEach(e => pool.appendChild(this.makeChip(e, false)));
+      }
+      pool.onclick = (ev) => { if (ev.target === pool && this.selected !== null) this.returnToPool(this.selected); };
+    },
+
+    makeChip(eIdx, inSlot){
+      const chip = document.createElement('div');
+      chip.className = 'chip' + (inSlot ? ' in-slot' : '');
+      chip.dataset.ev = String(eIdx);
+      chip.innerHTML = `${inSlot ? '' : '<span class="grip">⋮⋮</span>'}${PROPHETS[eIdx].ev}`;
+      if (this.selected === eIdx) chip.classList.add('selected');
+
+      if (this.checked) {
+        // Ce chip est dans un slot : détermine le prophète du slot
+        const slotP = Object.keys(this.assign).find(k => this.assign[k] === eIdx);
+        if (slotP !== undefined) {
+          const correct = Number(slotP) === eIdx;
+          chip.classList.add(correct ? 'correct' : 'wrong');
+          const mark = document.createElement('span');
+          mark.className = 'mark';
+          mark.textContent = correct ? '✓' : '✗';
+          chip.appendChild(mark);
+          if (!correct) {
+            const fix = document.createElement('div');
+            fix.className = 'answer-fix';
+            fix.textContent = '→ ' + PROPHETS[eIdx].fr;
+            chip.appendChild(fix);
+          }
+        }
+        return chip;
+      }
+
+      // interactions (seulement avant vérification)
+      chip.addEventListener('pointerdown', (e) => Drag.onDown(e, eIdx, chip));
+      chip.addEventListener('click', (e) => {
+        // click géré comme "tap sélection" seulement si pas de drag
+        if (Drag.suppressClick) { Drag.suppressClick = false; return; }
+        e.stopPropagation();
+        this.toggleSelect(eIdx);
+      });
+      return chip;
+    },
+
+    toggleSelect(eIdx){
+      this.selected = (this.selected === eIdx) ? null : eIdx;
+      this.render();
+    },
+
+    onZoneTap(pIdx){
+      if (this.checked) return;
+      if (this.selected !== null) {
+        this.place(this.selected, pIdx);
+        this.selected = null;
+      } else if (this.assign[pIdx] !== undefined) {
+        // reprend le chip du slot -> le sélectionne
+        const e = this.assign[pIdx];
+        this.returnToPool(e);
+        this.selected = e;
+        this.render();
+      }
+    },
+
+    // Place l'événement eIdx dans le slot du prophète pIdx (ou 'pool')
+    place(eIdx, target){
+      if (this.checked) return;
+      // retire eIdx d'où il est
+      for (const k of Object.keys(this.assign)) {
+        if (this.assign[k] === eIdx) delete this.assign[k];
+      }
+      if (target === 'pool') { this.render(); return; }
+      const pIdx = Number(target);
+      // si le slot est occupé, l'ancien chip retourne au pool
+      if (this.assign[pIdx] !== undefined) delete this.assign[pIdx];
+      this.assign[pIdx] = eIdx;
+      this.render();
+    },
+
+    returnToPool(eIdx){
+      for (const k of Object.keys(this.assign)) {
+        if (this.assign[k] === eIdx) delete this.assign[k];
+      }
+    },
+
+    updateCheckBtn(){
+      const allPlaced = this.slotOrder.every(p => this.assign[p] !== undefined);
+      $('checkBtn').disabled = !allPlaced || this.checked;
+    },
+
+    check(){
+      if (!this.slotOrder.every(p => this.assign[p] !== undefined)) return;
+      this.checked = true;
+      let good = 0;
+      this.slotOrder.forEach(p => { if (this.assign[p] === p) good++; });
+      this.score = good;
+      $('scorePill').style.display = '';
+      $('scorePill').textContent = `${this.score} pt`;
+      $('progressBar').style.width = '100%';
+      $('checkBtn').style.display = 'none';
+      $('resetBtn').style.display = 'none';
+      $('nextBtn').style.display = '';
+      const rr = $('roundResult');
+      rr.innerHTML = `<span class="good">${good}/${this.slotOrder.length}</span> bonne(s) association(s) !`;
+      rr.classList.add('show');
+      $('hint').innerHTML = good === this.slotOrder.length
+        ? '🎉 Sans faute ! Les bonnes réponses sont en vert.'
+        : 'Les erreurs sont en rouge, avec le bon prophète indiqué.';
+      this.render();
+      if (good === this.slotOrder.length && window.confetti) {
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#3E6B4E','#C2A65A','#DCC882'] });
+      }
+      $('roundResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    },
+
+    resetBoard(){
+      if (this.checked) return;
+      this.assign = {};
+      this.selected = null;
+      this.render();
+    },
+
+    end(){
+      $('progressBar').style.width = '100%';
+      const total = PROPHETS.length;
+      $('endScore').textContent = this.score;
+      let emoji, msg;
+      const pct = this.score / total;
+      if (pct === 1) { emoji = '🏆'; msg = "Score parfait ! Tu connais tous les prophètes et leurs missions. Mâ shâ Allah !"; }
+      else if (pct >= 0.8) { emoji = '🌟'; msg = "Excellent ! Tu maîtrises presque tout. Encore un petit effort pour le sans-faute."; }
+      else if (pct >= 0.6) { emoji = '👍'; msg = "Bien joué ! De bonnes bases. Rejoue pour retenir les événements qui t'ont échappé."; }
+      else if (pct >= 0.4) { emoji = '📚'; msg = "Pas mal ! Encore quelques révisions et tu vas progresser vite."; }
+      else { emoji = '🌱'; msg = "C'est un début ! Relis les histoires des prophètes puis retente ta chance, in shâ Allah."; }
+      $('endEmoji').textContent = emoji;
+      $('endMsg').textContent = msg;
+      showScreen('screen-end');
+      if (pct >= 0.8 && window.confetti) {
+        confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 }, colors: ['#3E6B4E','#C2A65A','#DCC882','#1F3D2B'] });
+      }
+    },
+  };
+
+  /* ══════════════ GLISSER-DÉPOSER (souris + tactile) ══════════════ */
+  const Drag = {
+    active: null,        // { eIdx, chip, startX, startY, moved }
+    ghost: null,
+    suppressClick: false,
+
+    onDown(e, eIdx, chip){
+      if (Game.checked) return;
+      if (e.button !== undefined && e.button !== 0) return;   // clic gauche uniquement
+      this.active = { eIdx, chip, startX: e.clientX, startY: e.clientY, moved: false };
+      this.moveHandler = (ev) => this.onMove(ev);
+      this.upHandler = (ev) => this.onUp(ev);
+      document.addEventListener('pointermove', this.moveHandler, { passive: false });
+      document.addEventListener('pointerup', this.upHandler);
+      document.addEventListener('pointercancel', this.upHandler);
+    },
+
+    onMove(e){
+      if (!this.active) return;
+      const dx = e.clientX - this.active.startX;
+      const dy = e.clientY - this.active.startY;
+      if (!this.active.moved) {
+        if (Math.hypot(dx, dy) < 8) return;
+        this.active.moved = true;
+        Game.selected = null;
+        this.active.chip.classList.add('dragging-src');
+        this.makeGhost(this.active.eIdx);
+      }
+      e.preventDefault();
+      this.lastX = e.clientX; this.lastY = e.clientY;
+      this.positionGhost(e.clientX, e.clientY);
+      this.highlight(e.clientX, e.clientY);
+      this.autoScrollTick();
+    },
+
+    // Défilement automatique quand le curseur/doigt approche le haut ou le bas
+    autoScrollTick(){
+      if (!this.active || !this.active.moved) { this.stopAutoScroll(); return; }
+      const EDGE = 90, y = this.lastY, h = window.innerHeight;
+      let delta = 0;
+      if (y < EDGE) delta = -Math.ceil((EDGE - y) / 6) - 3;
+      else if (y > h - EDGE) delta = Math.ceil((y - (h - EDGE)) / 6) + 3;
+      if (delta !== 0) {
+        window.scrollBy(0, delta);
+        this.highlight(this.lastX, this.lastY);
+        if (!this.autoRAF) {
+          const loop = () => { this.autoRAF = requestAnimationFrame(loop); this.autoScrollTick(); };
+          this.autoRAF = requestAnimationFrame(loop);
+        }
+      } else {
+        this.stopAutoScroll();
+      }
+    },
+    stopAutoScroll(){ if (this.autoRAF) { cancelAnimationFrame(this.autoRAF); this.autoRAF = null; } },
+
+    onUp(e){
+      document.removeEventListener('pointermove', this.moveHandler);
+      document.removeEventListener('pointerup', this.upHandler);
+      document.removeEventListener('pointercancel', this.upHandler);
+      this.stopAutoScroll();
+      const act = this.active;
+      this.active = null;
+      if (!act) return;
+
+      if (act.moved) {
+        this.suppressClick = true;        // évite le toggle-select après un drag
+        const zone = this.zoneUnder(e.clientX, e.clientY);
+        this.removeGhost();
+        this.clearHighlight();
+        if (zone) {
+          Game.place(act.eIdx, zone.dataset.slot);
+        } else {
+          Game.render();                  // relâché dans le vide : on re-rend (chip reste où il était)
+        }
+      }
+      // si pas "moved" : le click handler gèrera la sélection
+    },
+
+    makeGhost(eIdx){
+      const g = document.createElement('div');
+      g.className = 'ghost';
+      g.textContent = PROPHETS[eIdx].ev;
+      document.body.appendChild(g);
+      this.ghost = g;
+    },
+    positionGhost(x, y){ if (this.ghost) { this.ghost.style.left = x + 'px'; this.ghost.style.top = y + 'px'; } },
+    removeGhost(){ if (this.ghost) { this.ghost.remove(); this.ghost = null; } },
+
+    zoneUnder(x, y){
+      const el = document.elementFromPoint(x, y);
+      if (!el) return null;
+      const zone = el.closest('.dropzone');
+      if (zone) return zone;
+      if (el.closest('#pool')) return { dataset: { slot: 'pool' } };
+      return null;
+    },
+    highlight(x, y){
+      this.clearHighlight();
+      const el = document.elementFromPoint(x, y);
+      if (!el) return;
+      const zone = el.closest('.dropzone');
+      if (zone) zone.classList.add('over');
+      else if (el.closest('#pool')) $('pool').classList.add('over');
+    },
+    clearHighlight(){
+      document.querySelectorAll('.dropzone.over').forEach(z => z.classList.remove('over'));
+      $('pool').classList.remove('over');
+    },
+  };
+
+  window.Game = Game;
+  </script>
+</body>
+</html>
