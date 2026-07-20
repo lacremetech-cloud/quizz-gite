@@ -184,6 +184,13 @@
   .media-ph{font-size:clamp(3.5rem,11vw,6.5rem);text-align:center;background:rgba(0,0,0,.28);border:2px dashed var(--line2);
     border-radius:18px;padding:1.1rem;margin:.3rem 0 .7rem}
   .zoom-img{display:block;max-width:100%;max-height:42vh;margin:.4rem auto;border-radius:14px;border:2px solid var(--line2)}
+  /* blind test : lecteur YouTube avec la vidéo masquée (audio seulement) */
+  .yt-stage{position:relative;width:min(440px,82%);aspect-ratio:16/9;margin:.4rem auto .3rem;border-radius:16px;overflow:hidden;border:2px solid var(--line2);background:#0c1a12}
+  .yt-stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .yt-cover{position:absolute;inset:0;z-index:2;background:linear-gradient(160deg,#20406b,#101f36);display:flex;flex-direction:column;gap:.5rem;align-items:center;justify-content:center}
+  .yt-cover .disc{font-size:clamp(2.6rem,7vw,3.6rem);animation:spin 3s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .yt-hint{font-size:.8rem;font-weight:800;color:var(--txt-dim)}
 
   /* doors (choix) */
   .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0}
@@ -353,7 +360,6 @@ const CONTENT = {
     {type:"text", cat:"Logique", q:"Complète la suite : 3 – 6 – 12 – 24 – ?", a:"48", gain:3, penalite:1},
     {type:"text", cat:"Logique", q:"Je monte mais je ne descends jamais. Qui suis-je ?", a:"L'âge", gain:3, penalite:1},
     {type:"text", cat:"Logique", q:"Quel nombre manque ? 5 – 10 – 20 – 40 – ?", a:"80", gain:3, penalite:1},
-    {type:"text", cat:"Logique", q:"Je peux être cassé sans être touché. Qui suis-je ?", a:"Une promesse", gain:3, penalite:1},
     {type:"text", cat:"Logique", q:"Combien y a-t-il de secondes dans une heure ?", a:"3600", gain:2, penalite:1},
     // ─ Culture G · Culture générale ─
     {type:"text", cat:"Culture G", q:"Quel est le plus petit os du corps humain ?", a:"L'étrier", gain:3, penalite:1},
@@ -766,7 +772,14 @@ class Game{
       <span class="modal-title">${titleExtra||''}</span></div>`;
   }
   openModal(html){ document.getElementById('modal').innerHTML=html; document.getElementById('overlay').classList.add('show'); }
-  closeModal(){ document.getElementById('overlay').classList.remove('show'); this.stopTimer(); }
+  closeModal(){ this.stopExtract(); document.getElementById('overlay').classList.remove('show'); this.stopTimer(); }
+  ytId(url){ if(!url)return''; const m=url.match(/[?&]v=([A-Za-z0-9_-]{6,})/)||url.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/)||url.match(/embed\/([A-Za-z0-9_-]{6,})/); return m?m[1]:''; }
+  playExtract(id){
+    const f=document.getElementById('ytFrame'); if(!f)return;
+    f.src=`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&controls=0&modestbranding=1&rel=0&playsinline=1&fs=0&disablekb=1`;
+    clearTimeout(this._ytTimer); this._ytTimer=setTimeout(()=>this.stopExtract(),9000);
+  }
+  stopExtract(){ clearTimeout(this._ytTimer); const f=document.getElementById('ytFrame'); if(f&&f.src&&!/about:blank/.test(f.src))f.src='about:blank'; }
 
   openInfo(ico,title,txt){
     this.openModal(`<div class="modal-head"><span class="modal-badge" style="background:var(--c-safe)">${ico} ${title}</span></div>
@@ -809,11 +822,15 @@ class Game{
     const badge=isAudio?{ico:'🎵',name:'Blind test'}:isZoom?{ico:'🔍',name:'Zoom mystère'}:{ico:'🎯',name:'Défi'};
     let media='', note='', playBtn='';
     if(isAudio){
-      media = d.audio? `<audio controls src="${d.audio}" style="width:100%;margin:.5rem 0"></audio>` : `<div class="media-ph">🎵</div>`;
-      if(d.yt){
-        playBtn = `<a class="btn btn-blue btn-lg" href="${d.yt}" target="_blank" rel="noopener">▶ Écouter l'extrait</a>`;
-        note = `<p style="text-align:center;color:var(--txt-mut);font-size:.85rem;margin:-.1rem 0 .7rem">🔇 À jouer sur l'appareil du MJ, <b>hors écran</b> — le titre YouTube révèle la réponse.</p>`;
-      }
+      const id=d.audio?'':this.ytId(d.yt||'');
+      if(d.audio){ media=`<audio controls src="${d.audio}" style="width:100%;margin:.5rem 0"></audio>`; }
+      else if(id){
+        media=`<div class="yt-stage"><iframe id="ytFrame" allow="autoplay" src="about:blank"></iframe>
+          <div class="yt-cover"><div class="disc">🎵</div><span class="yt-hint">🔒 Audio seulement — vidéo masquée</span></div></div>`;
+        playBtn=`<button class="btn btn-blue btn-lg" onclick="G.playExtract('${id}')">▶ Jouer l'extrait</button>
+          <button class="btn btn-ghost btn-lg" onclick="G.stopExtract()">⏹ Stop</button>`;
+        note=`<p style="text-align:center;color:var(--txt-mut);font-size:.82rem;margin:.1rem 0 .5rem">La vidéo reste masquée : les équipes entendent l'extrait <b>sans voir le titre</b>.</p>`;
+      } else { media=`<div class="media-ph">🎵</div>`; }
     }
     else if(isZoom) media = d.img? `<img class="zoom-img" src="${d.img}" alt="zoom">` : `<div class="media-ph">🔍</div>`;
     this.openModal(`<div class="modal-head"><span class="modal-badge" style="background:var(--c-defi)">${badge.ico} ${badge.name}</span><span class="modal-title">${d.cat||''}</span></div>
