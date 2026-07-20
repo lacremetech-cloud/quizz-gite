@@ -380,11 +380,12 @@ const CONTENT = {
     {type:"anagramme", cat:"Anagramme", a:"MÉTÉOROLOGIE", gain:3, penalite:1},
     {type:"anagramme", cat:"Anagramme", a:"PHOTOGRAPHIE", gain:3, penalite:1},
     // ─ Trouver l'intrus ─
-    {type:"intrus", cat:"Intrus", options:["Mars","Jupiter","Saturne","Lune"], a:"Lune (ce n'est pas une planète)", gain:2, penalite:1},
-    {type:"intrus", cat:"Intrus", options:["Pomme","Poire","Banane","Carotte"], a:"Carotte (ce n'est pas un fruit)", gain:2, penalite:1},
-    {type:"intrus", cat:"Intrus", options:["Paris","Madrid","Rome","Amazonie"], a:"Amazonie (ce n'est pas une ville)", gain:2, penalite:1},
-    {type:"intrus", cat:"Intrus", options:["Carré","Triangle","Rectangle","Banane"], a:"Banane (ce n'est pas une forme)", gain:2, penalite:1},
-    {type:"intrus", cat:"Intrus", options:["Bleu","Rouge","Vert","Lion"], a:"Lion (ce n'est pas une couleur)", gain:2, penalite:1},
+    {type:"intrus", cat:"Intrus · Animaux", options:["Dauphin","Baleine","Requin","Orque","Cachalot"], a:"Le requin — les autres sont des mammifères marins ; le requin est un poisson.", gain:3, penalite:1},
+    {type:"intrus", cat:"Intrus · Mots français", options:["Chou","Bijou","Caillou","Genou","Clou"], a:"Clou — les autres prennent un « x » au pluriel (choux, bijoux, cailloux, genoux) ; on écrit « des clous ».", gain:3, penalite:1},
+    {type:"intrus", cat:"Intrus · Langue française", options:["Courir","Dormir","Partir","Sortir","Finir"], a:"Finir — seul verbe du 2ᵉ groupe ; les autres sont du 3ᵉ groupe.", gain:3, penalite:1},
+    {type:"intrus", cat:"Intrus · Géographie", options:["Sahara","Gobi","Atacama","Kalahari","Amazonie"], a:"L'Amazonie — les autres sont des déserts ; l'Amazonie est une forêt tropicale.", gain:3, penalite:1},
+    {type:"intrus", cat:"Intrus · Monuments", options:["Colisée","Parthénon","Tour Eiffel","Pyramide de Khéops","Machu Picchu"], a:"La tour Eiffel — seul monument contemporain ; les autres sont anciens ou précolombiens.", gain:3, penalite:1},
+    {type:"intrus", cat:"Intrus · Nombres", options:["9","16","25","36","45"], a:"45 — les autres sont des carrés parfaits (3²=9, 4²=16, 5²=25, 6²=36).", gain:3, penalite:1},
   ],
   /* ── DÉFIS (le maître du jeu diffuse un média) — types : blindtest · zoom ──
      Pour un vrai média : renseignez "audio" (URL .mp3) ou "img" (URL d'image). Sinon le MJ le diffuse lui-même. */
