@@ -413,12 +413,18 @@ const CONTENT = {
     {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une touche de clavier", duree:20, gain:2, penalite:1, img:""},
   ],
   duels: [
-    {t:"Première équipe à nommer une capitale européenne l'emporte !", duree:10},
-    {t:"Premier à citer un océan gagne le duel.", duree:10},
-    {t:"Chacune son tour, citez une couleur de l'arc-en-ciel : la dernière équipe qui répond gagne.", duree:30},
-    {t:"Premier à donner le résultat de 7 × 8 gagne. (Réponse : 56)", duree:8},
-    {t:"Premier à citer un animal qui vole gagne.", duree:10},
-    {t:"Chaque équipe cite un pays d'Afrique à tour de rôle : la première à sécher perd.", duree:30},
+    {t:"Duel : première équipe à donner la bonne réponse. En quelle année l'Homme a-t-il marché sur la Lune ?", a:"1969", duree:12},
+    {t:"Duel : quelle est la capitale de l'Australie ?", a:"Canberra", duree:12},
+    {t:"Duel : quel est le symbole chimique du fer ?", a:"Fe", duree:12},
+    {t:"Duel : combien font 12 × 12 ?", a:"144", duree:10},
+    {t:"Duel : qui a écrit « Les Misérables » ?", a:"Victor Hugo", duree:12},
+    {t:"Duel : quel est le plus grand pays du monde par superficie ?", a:"La Russie", duree:12},
+    {t:"Duel : quel est le plus grand mammifère du monde ?", a:"La baleine bleue", duree:12},
+    {t:"Duel : combien de touches possède un piano classique ?", a:"88", duree:12},
+    {t:"Duel : dans quel pays se trouve la ville de Marrakech ?", a:"Le Maroc", duree:12},
+    {t:"Duel : quelle planète est surnommée « la planète rouge » ?", a:"Mars", duree:10},
+    {t:"Duel : quel océan borde la côte ouest du continent américain ?", a:"L'océan Pacifique", duree:12},
+    {t:"Duel : combien de minutes y a-t-il dans une journée ?", a:"1440", duree:15},
   ],
 };
 
@@ -887,9 +893,14 @@ class Game{
         <div class="duel-team" style="border-color:${B.color}"><div class="dt-name" style="color:${B.color}">${B.name}</div>
           <button class="btn btn-lg" style="background:${B.color};margin-top:.6rem" onclick="G.resolveDuel(1)">🏆 Gagne</button></div>
       </div>
-      <div class="modal-actions"><button class="btn btn-gold" onclick="G.startTimer(${d.duree})">▶ Chrono ${d.duree}s</button></div>
+      <div id="ansSlot"></div>
+      <div class="modal-actions">
+        <button class="btn btn-gold" onclick="G.startTimer(${d.duree})">▶ Chrono ${d.duree}s</button>
+        ${d.a?`<button class="btn btn-ghost" onclick="G.showDuelAns()">👁️ Solution</button>`:''}
+      </div>
       </div>`);
   }
+  showDuelAns(){ const d=this._pending.d; const s=document.getElementById('ansSlot'); if(s&&d.a)s.innerHTML=`<div class="answer-box"><div class="al">Réponse</div><div class="av">${d.a}</div></div>`; }
   async resolveDuel(winner){
     this.closeModal(); const loser=1-winner;
     toast(`🏆 ${this.teams[winner].name} remporte le duel !`,'good'); confettiBurst();
