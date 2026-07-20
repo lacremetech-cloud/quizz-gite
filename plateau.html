@@ -86,15 +86,19 @@
   .main{display:grid;grid-template-columns:1fr 340px;gap:1rem;padding:1rem;min-height:0}
   @media(max-width:900px){.main{grid-template-columns:1fr}}
 
-  /* board */
-  .board-wrap{background:rgba(0,0,0,.18);border:1.5px solid var(--line);border-radius:22px;padding:1rem;min-height:0;position:relative;overflow:hidden}
-  #board{position:relative;display:grid;gap:.5rem;height:100%;width:100%}
-  .case{position:relative;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    text-align:center;padding:.25rem;border:2px solid rgba(255,255,255,.14);color:#08140d;
-    background:#cbd6cf;font-weight:800;overflow:hidden;box-shadow:inset 0 -3px 0 rgba(0,0,0,.12)}
-  .case .ico{font-size:min(2.3vw,1.7rem);line-height:1}
-  .case .lbl{font-size:min(1.05vw,.72rem);font-weight:800;text-transform:uppercase;letter-spacing:.03em;opacity:.85;line-height:1.05;margin-top:.1rem}
-  .case .num{position:absolute;top:2px;left:4px;font-size:.62rem;font-weight:900;opacity:.55}
+  /* board / parcours */
+  .board-wrap{background:radial-gradient(130% 120% at 50% -10%,#1a4630 0%,rgba(0,0,0,.18) 62%);border:1.5px solid var(--line);border-radius:22px;padding:.8rem;min-height:0;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:.4rem}
+  #board{position:relative;flex:1;width:100%;min-height:0}
+  svg.road{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+  .case{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+    border-radius:26%;border:3px solid rgba(255,255,255,.95);color:#08140d;background:#cbd6cf;font-weight:800;overflow:hidden;
+    box-shadow:0 6px 13px rgba(0,0,0,.5),inset 0 -4px 0 rgba(0,0,0,.16);z-index:2;transition:box-shadow .2s,transform .2s}
+  .case .ico{line-height:1}
+  .case .lbl{font-weight:900;text-transform:uppercase;letter-spacing:.02em;opacity:.9;line-height:1;margin-top:.05rem}
+  .case .num{position:absolute;top:2%;left:8%;font-weight:900;opacity:.5}
+  .legend-strip{display:flex;flex-wrap:wrap;gap:.25rem .7rem;justify-content:center;padding:.1rem .3rem;flex:none}
+  .lgi{display:inline-flex;align-items:center;gap:.28rem;font-size:.7rem;font-weight:800;color:var(--txt-dim)}
+  .lgi i{width:14px;height:14px;border-radius:4px;display:inline-block;border:1.5px solid rgba(255,255,255,.55)}
   .case.t-start{background:linear-gradient(160deg,#bff0d1,#8AD1A6)}
   .case.t-question{background:linear-gradient(160deg,#bfe3fb,#7fc2f0)}
   .case.t-defi{background:linear-gradient(160deg,#e6d4f6,#c39be8)}
@@ -250,9 +254,11 @@
 
   <div class="main">
     <div class="board-wrap">
-      <div id="board"></div>
-      <div class="pawn" id="pawn0"></div>
-      <div class="pawn" id="pawn1"></div>
+      <div id="board">
+        <div class="pawn" id="pawn0"></div>
+        <div class="pawn" id="pawn1"></div>
+      </div>
+      <div class="legend-strip" id="legend"></div>
     </div>
 
     <div class="side">
@@ -466,40 +472,81 @@ class Game{
   replay(){ document.getElementById('victory').classList.remove('show'); document.getElementById('setup').classList.remove('hidden'); document.getElementById('game').classList.add('hidden'); this.renderSetup(); }
   confirmReset(){ if(confirm("Démarrer une nouvelle partie ? La partie en cours sera perdue.")) this.replay(); }
 
-  /* ---------- board / pawns ---------- */
+  /* ---------- board / parcours ---------- */
   renderBoard(){
     const b=document.getElementById('board');
-    const rows=Math.ceil(this.board.length/BOARD_COLS);
-    b.style.gridTemplateColumns=`repeat(${BOARD_COLS},1fr)`;
-    b.style.gridTemplateRows=`repeat(${rows},1fr)`;
-    b.innerHTML='';
+    // keep pawns, rebuild road + tokens
+    const NS='http://www.w3.org/2000/svg';
+    const svg=document.createElementNS(NS,'svg'); svg.setAttribute('class','road'); svg.id='road';
+    ['roadEdge','roadFill','roadDash'].forEach(id=>{const pl=document.createElementNS(NS,'polyline');pl.id=id;pl.setAttribute('fill','none');pl.setAttribute('stroke-linecap','round');pl.setAttribute('stroke-linejoin','round');svg.appendChild(pl);});
+    // wipe old tokens/road but keep pawn nodes
+    [...b.querySelectorAll('.case,svg.road')].forEach(n=>n.remove());
+    b.insertBefore(svg,b.firstChild);
     this.board.forEach((c,idx)=>{
-      const row=Math.floor(idx/BOARD_COLS);
-      const colInRow=idx%BOARD_COLS;
-      const col=(row%2===0)?colInRow:(BOARD_COLS-1-colInRow); // serpent
       const m=TYPE_META[c.type];
       const el=document.createElement('div');
       el.className='case t-'+c.type; el.dataset.idx=idx;
-      el.style.gridColumn=col+1; el.style.gridRow=row+1;
-      el.innerHTML=`<span class="num">${idx}</span><span class="ico">${m.ico}</span><span class="lbl">${c.type==='question'&&c.cat?c.cat:m.lbl}</span>`;
+      const showLbl=(c.type==='start'||c.type==='final');
+      el.innerHTML=`<span class="num">${idx}</span><span class="ico">${m.ico}</span>${showLbl?`<span class="lbl">${m.lbl}</span>`:''}`;
       b.appendChild(el);
     });
-    // reposition pawns after layout settles
-    requestAnimationFrame(()=>{this.placePawn(0,false);this.placePawn(1,false);});
+    this.renderLegend();
+    this.relayout();
+    requestAnimationFrame(()=>this.relayout());
   }
-  cellCenter(idx){
-    const cell=document.querySelector(`.case[data-idx="${idx}"]`);
-    const board=document.getElementById('board');
-    if(!cell)return{x:0,y:0};
-    const cr=cell.getBoundingClientRect(), br=board.getBoundingClientRect();
-    return{x:cr.left-br.left+cr.width/2, y:cr.top-br.top+cr.height/2};
+  computeLayout(){
+    const b=document.getElementById('board');
+    const W=b.clientWidth, H=b.clientHeight, N=this.board.length;
+    const cols=BOARD_COLS, rows=Math.ceil(N/cols);
+    const cellW=W/cols, cellH=H/rows;
+    const token=Math.max(30,Math.min(cellW*0.78, cellH*0.82));
+    this.token=token; this.points=[];
+    for(let i=0;i<N;i++){
+      const row=Math.floor(i/cols), pir=i%cols;
+      const col=(row%2===0)?pir:(cols-1-pir);
+      this.points.push({x:(col+0.5)*cellW, y:(row+0.5)*cellH});
+    }
   }
+  layoutTokens(){
+    this.board.forEach((c,i)=>{
+      const el=document.querySelector(`.case[data-idx="${i}"]`); if(!el)return;
+      const big=(c.type==='final'||c.type==='start');
+      const sz=this.token*(big?1.14:1);
+      const p=this.points[i];
+      el.style.width=el.style.height=sz+'px';
+      el.style.left=(p.x-sz/2)+'px'; el.style.top=(p.y-sz/2)+'px';
+      const ico=el.querySelector('.ico'); if(ico)ico.style.fontSize=(sz*(big?0.5:0.44))+'px';
+      const num=el.querySelector('.num'); if(num)num.style.fontSize=Math.max(8,sz*0.16)+'px';
+      const lbl=el.querySelector('.lbl'); if(lbl)lbl.style.fontSize=Math.max(8,sz*0.15)+'px';
+    });
+  }
+  drawRoad(){
+    const pts=this.points.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const w=this.token;
+    const edge=document.getElementById('roadEdge'), fill=document.getElementById('roadFill'), dash=document.getElementById('roadDash');
+    if(!edge)return;
+    edge.setAttribute('points',pts); edge.setAttribute('stroke','#7a5a34'); edge.setAttribute('stroke-width',(w*0.82).toFixed(1)); edge.setAttribute('opacity','.55');
+    fill.setAttribute('points',pts); fill.setAttribute('stroke','#efe0c0'); fill.setAttribute('stroke-width',(w*0.66).toFixed(1)); fill.setAttribute('opacity','.9');
+    dash.setAttribute('points',pts); dash.setAttribute('stroke','#b98f4e'); dash.setAttribute('stroke-width',Math.max(3,w*0.07).toFixed(1)); dash.setAttribute('stroke-dasharray',`0.1 ${(w*0.42).toFixed(1)}`); dash.setAttribute('opacity','.75');
+  }
+  relayout(){ this.computeLayout(); this.layoutTokens(); this.drawRoad(); this.placePawn(0); this.placePawn(1); }
+  renderLegend(){
+    const order=['question','defi','duel','bonus','piege','hasard','choix','safe','final'];
+    document.getElementById('legend').innerHTML=order.map(t=>{
+      const m=TYPE_META[t];
+      return `<span class="lgi"><i style="background:${m.color}"></i>${m.ico} ${m.name}</span>`;
+    }).join('');
+  }
+  cellCenter(idx){ return (this.points&&this.points[idx])?this.points[idx]:{x:0,y:0}; }
   placePawn(i){
     const p=document.getElementById('pawn'+i); const t=this.teams[i];
+    if(!this.token)this.computeLayout();
     const c=this.cellCenter(t.pos);
-    const off=i===0?-13:13;
+    const off=i===0?-this.token*0.22:this.token*0.22;
+    const sz=Math.max(26,this.token*0.5);
+    p.style.width=p.style.height=sz+'px'; p.style.fontSize=(sz*0.62)+'px';
     p.style.background=t.color;
-    p.style.transform=`translate(${c.x+off}px,${c.y-4}px) translate(-50%,-50%)`;
+    p.style.transform=`translate(${c.x+off}px,${c.y-this.token*0.05}px) translate(-50%,-50%)`;
     p.textContent=i===0?'①':'②';
   }
 
@@ -898,7 +945,7 @@ function toast(msg,kind){ const w=document.getElementById('toasts'); const el=do
 function confettiBurst(){ if(window.confetti)confetti({particleCount:60,spread:65,origin:{y:.6},colors:['#E7C558','#2ECC71','#3AA0E3','#F2A93B']}); }
 function bigConfetti(color){ if(!window.confetti)return; const end=Date.now()+1800; (function frame(){ confetti({particleCount:6,angle:60,spread:70,origin:{x:0},colors:[color,'#E7C558','#fff']}); confetti({particleCount:6,angle:120,spread:70,origin:{x:1},colors:[color,'#E7C558','#fff']}); if(Date.now()<end)requestAnimationFrame(frame); })(); }
 
-window.addEventListener('resize',()=>{ if(G&&!document.getElementById('game').classList.contains('hidden')){ G.placePawn(0);G.placePawn(1);} });
+window.addEventListener('resize',()=>{ if(G&&G.points&&!document.getElementById('game').classList.contains('hidden')){ G.relayout(); } });
 
 /* boot */
 G=new Game(); G.renderSetup();
