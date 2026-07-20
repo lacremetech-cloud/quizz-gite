@@ -170,6 +170,20 @@
   .answer-box .al{font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#7fe0a6}
   .answer-box .av{font-family:'Baloo 2';font-weight:700;font-size:clamp(1.3rem,2.6vw,1.9rem);color:#d7f7e3;margin-top:.2rem}
   .modal-actions{display:flex;gap:.7rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem}
+  /* question-type visuals */
+  .flag-big{font-size:clamp(5rem,17vw,9.5rem);text-align:center;line-height:1;margin:.2rem 0 .4rem;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4))}
+  .tiles{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin:.7rem 0 .9rem}
+  .tile{width:clamp(46px,7vw,66px);height:clamp(46px,7vw,66px);display:flex;align-items:center;justify-content:center;
+    font-family:'Baloo 2';font-weight:800;font-size:clamp(1.6rem,4vw,2.5rem);color:#08140d;background:linear-gradient(160deg,#fff,#e3dcc9);
+    border-radius:12px;border:2px solid rgba(0,0,0,.15);box-shadow:0 4px 0 rgba(0,0,0,.2)}
+  .opts{display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;margin:.3rem 0 1rem}
+  .opt{font-family:'Baloo 2';font-weight:800;font-size:clamp(1.2rem,3vw,1.9rem);color:#fff;background:rgba(255,255,255,.1);
+    border:2px solid var(--line2);border-radius:14px;padding:.55rem 1.4rem}
+  .rebus{max-width:660px;margin:.6rem auto 1.1rem;text-align:center}
+  .rebus p{font-family:'Baloo 2';font-weight:600;font-size:clamp(1.2rem,2.7vw,1.8rem);color:#fff;line-height:1.45;margin:.3rem 0}
+  .media-ph{font-size:clamp(3.5rem,11vw,6.5rem);text-align:center;background:rgba(0,0,0,.28);border:2px dashed var(--line2);
+    border-radius:18px;padding:1.1rem;margin:.3rem 0 .7rem}
+  .zoom-img{display:block;max-width:100%;max-height:42vh;margin:.4rem auto;border-radius:14px;border:2px solid var(--line2)}
 
   /* doors (choix) */
   .doors{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin:1rem 0}
@@ -309,49 +323,90 @@
    Chaque question : { q, a, cat, niveau(1-3), gain, penalite }
 ════════════════════════════════════════════════════════════════════ */
 const CONTENT = {
+  /* ── QUESTIONS (une équipe répond) — types : text · drapeau · anagramme · intrus · rebus ── */
   questions: [
-    {q:"Combien y a-t-il de piliers en Islam ?", a:"Cinq (5)", cat:"Culture", niveau:1, gain:2, penalite:1},
-    {q:"Quel est le premier mois du calendrier hégirien ?", a:"Mouharram", cat:"Culture", niveau:2, gain:2, penalite:1},
-    {q:"Dans quelle ville se trouve la Kaʿba ?", a:"La Mecque", cat:"Culture", niveau:1, gain:2, penalite:1},
-    {q:"Quel prophète a construit l'Arche ?", a:"Nûḥ (Noé)", cat:"Prophètes", niveau:1, gain:2, penalite:1},
-    {q:"Que signifie le mot « Islam » ?", a:"La soumission (à Dieu)", cat:"Vocabulaire", niveau:2, gain:3, penalite:1},
-    {q:"Combien de sourates compte le Coran ?", a:"114", cat:"Coran", niveau:2, gain:3, penalite:1},
-    {q:"Quelle est la première sourate du Coran ?", a:"Al-Fâtiha", cat:"Coran", niveau:1, gain:2, penalite:1},
-    {q:"Comment dit-on « livre » en arabe ?", a:"Kitâb (كتاب)", cat:"Vocabulaire", niveau:1, gain:2, penalite:1},
-    {q:"Quel prophète a été avalé par un grand poisson ?", a:"Yûnus (Jonas)", cat:"Prophètes", niveau:2, gain:3, penalite:1},
-    {q:"Combien de fois prie-t-on par jour (obligatoire) ?", a:"Cinq fois", cat:"Culture", niveau:1, gain:2, penalite:1},
-    {q:"Quelle sourate est appelée « le cœur du Coran » ?", a:"Yâ-Sîn", cat:"Coran", niveau:3, gain:3, penalite:2},
-    {q:"Comment dit-on « paix » en arabe ?", a:"Salâm (سلام)", cat:"Vocabulaire", niveau:1, gain:2, penalite:1},
-    {q:"Quel compagnon était surnommé « le Véridique » ?", a:"Abû Bakr aṣ-Ṣiddîq", cat:"Culture", niveau:3, gain:3, penalite:2},
-    {q:"Dans quel mois jeûne-t-on ?", a:"Ramadan", cat:"Culture", niveau:1, gain:2, penalite:1},
-    {q:"Quel ange a transmis la révélation ?", a:"Jibrîl (Gabriel)", cat:"Culture", niveau:2, gain:2, penalite:1},
-    {q:"Comment dit-on « eau » en arabe ?", a:"Mâʾ (ماء)", cat:"Vocabulaire", niveau:1, gain:2, penalite:1},
-    {q:"Quel prophète parlait aux animaux et aux djinns ?", a:"Sulaymân (Salomon)", cat:"Prophètes", niveau:2, gain:3, penalite:1},
-    {q:"Quelle est la direction de la prière ?", a:"La Qibla (vers la Kaʿba)", cat:"Culture", niveau:2, gain:2, penalite:1},
-    {q:"Combien de versets compte Al-Fâtiha ?", a:"Sept (7)", cat:"Coran", niveau:2, gain:3, penalite:1},
-    {q:"Comment dit-on « lumière » en arabe ?", a:"Nûr (نور)", cat:"Vocabulaire", niveau:2, gain:3, penalite:1},
-    {q:"Quel prophète a reçu la Torah ?", a:"Mûsâ (Moïse)", cat:"Prophètes", niveau:1, gain:2, penalite:1},
-    {q:"Quel est le jour saint hebdomadaire des musulmans ?", a:"Le vendredi", cat:"Culture", niveau:1, gain:2, penalite:1},
-    {q:"Comment dit-on « savoir/science » en arabe ?", a:"ʿIlm (علم)", cat:"Vocabulaire", niveau:2, gain:3, penalite:1},
-    {q:"Quelle sourate protège, récitée le vendredi ?", a:"Al-Kahf", cat:"Coran", niveau:3, gain:3, penalite:2},
+    // ─ Culture G · Géographie ─
+    {type:"text", cat:"Géographie", q:"Quelle est la capitale de la Norvège ?", a:"Oslo", gain:2, penalite:1},
+    {type:"text", cat:"Géographie", q:"Quel est le plus grand désert du monde (tous types confondus) ?", a:"L'Antarctique", gain:3, penalite:1},
+    {type:"text", cat:"Géographie", q:"Quel pays possède le plus de volcans actifs ?", a:"L'Indonésie", gain:3, penalite:1},
+    {type:"text", cat:"Géographie", q:"Quel fleuve traverse Londres ?", a:"La Tamise", gain:2, penalite:1},
+    {type:"text", cat:"Géographie", q:"Quel pays est traversé par l'Équateur et possède les îles Galápagos ?", a:"L'Équateur", gain:2, penalite:1},
+    // ─ Culture G · Français ─
+    {type:"text", cat:"Français", q:"Que signifie le mot « ubuesque » ?", a:"Ridicule, absurde.", gain:3, penalite:1},
+    {type:"text", cat:"Français", q:"Quel est le pluriel de « corail » ?", a:"Coraux", gain:2, penalite:1},
+    {type:"text", cat:"Français", q:"Comment appelle-t-on un mot formé à partir des initiales de plusieurs mots ?", a:"Un acronyme", gain:2, penalite:1},
+    {type:"text", cat:"Français", q:"Quel est le contraire d'« optimiste » ?", a:"Pessimiste", gain:2, penalite:1},
+    {type:"text", cat:"Français", q:"Que signifie « être méticuleux » ?", a:"Être très soigneux.", gain:2, penalite:1},
+    // ─ Culture G · Sciences ─
+    {type:"text", cat:"Sciences", q:"Combien d'os possède un adulte ?", a:"206", gain:2, penalite:1},
+    {type:"text", cat:"Sciences", q:"Quelle planète possède les anneaux les plus visibles ?", a:"Saturne", gain:2, penalite:1},
+    {type:"text", cat:"Sciences", q:"Quel métal est liquide à température ambiante ?", a:"Le mercure", gain:2, penalite:1},
+    {type:"text", cat:"Sciences", q:"Quel est l'organe le plus grand du corps humain ?", a:"La peau", gain:2, penalite:1},
+    {type:"text", cat:"Sciences", q:"Quel est le symbole chimique du potassium ?", a:"K", gain:3, penalite:1},
+    // ─ Culture G · Histoire ─
+    {type:"text", cat:"Histoire", q:"Qui a découvert l'Amérique en 1492 ?", a:"Christophe Colomb", gain:2, penalite:1},
+    {type:"text", cat:"Histoire", q:"Dans quel pays est née Cléopâtre ?", a:"En Égypte", gain:2, penalite:1},
+    {type:"text", cat:"Histoire", q:"Quelle civilisation a construit le Colisée ?", a:"Les Romains", gain:2, penalite:1},
+    {type:"text", cat:"Histoire", q:"Qui était le premier empereur français ?", a:"Napoléon Bonaparte", gain:2, penalite:1},
+    {type:"text", cat:"Histoire", q:"Quel mur est tombé en 1989 ?", a:"Le mur de Berlin", gain:2, penalite:1},
+    // ─ Culture G · Logique ─
+    {type:"text", cat:"Logique", q:"Complète la suite : 3 – 6 – 12 – 24 – ?", a:"48", gain:3, penalite:1},
+    {type:"text", cat:"Logique", q:"Je monte mais je ne descends jamais. Qui suis-je ?", a:"L'âge", gain:3, penalite:1},
+    {type:"text", cat:"Logique", q:"Quel nombre manque ? 5 – 10 – 20 – 40 – ?", a:"80", gain:3, penalite:1},
+    {type:"text", cat:"Logique", q:"Je peux être cassé sans être touché. Qui suis-je ?", a:"Une promesse", gain:3, penalite:1},
+    {type:"text", cat:"Logique", q:"Combien y a-t-il de secondes dans une heure ?", a:"3600", gain:2, penalite:1},
+    // ─ Culture G · Culture générale ─
+    {type:"text", cat:"Culture G", q:"Quel est le plus petit os du corps humain ?", a:"L'étrier", gain:3, penalite:1},
+    {type:"text", cat:"Culture G", q:"Quel pays a inventé les pizzas modernes ?", a:"L'Italie", gain:2, penalite:1},
+    {type:"text", cat:"Culture G", q:"Quel animal dort debout ?", a:"Le cheval", gain:2, penalite:1},
+    {type:"text", cat:"Culture G", q:"Combien de joueurs y a-t-il dans une équipe de football sur le terrain ?", a:"11", gain:2, penalite:1},
+    {type:"text", cat:"Culture G", q:"Quel est le plus grand océan ?", a:"Le Pacifique", gain:2, penalite:1},
+    // ─ Drapeaux ─
+    {type:"drapeau", cat:"Drapeau", flag:"🇲🇽", a:"Le Mexique", gain:2, penalite:1},
+    {type:"drapeau", cat:"Drapeau", flag:"🇯🇵", a:"Le Japon", gain:2, penalite:1},
+    {type:"drapeau", cat:"Drapeau", flag:"🇧🇷", a:"Le Brésil", gain:2, penalite:1},
+    {type:"drapeau", cat:"Drapeau", flag:"🇿🇦", a:"L'Afrique du Sud", gain:3, penalite:1},
+    {type:"drapeau", cat:"Drapeau", flag:"🇨🇭", a:"La Suisse", gain:2, penalite:1},
+    // ─ Anagrammes (les lettres sont mélangées à l'affichage) ─
+    {type:"anagramme", cat:"Anagramme", a:"MAISON", gain:2, penalite:1},
+    {type:"anagramme", cat:"Anagramme", a:"FORÊT", gain:2, penalite:1},
+    {type:"anagramme", cat:"Anagramme", a:"NATURE", gain:2, penalite:1},
+    {type:"anagramme", cat:"Anagramme", a:"ÉCOLE", gain:2, penalite:1},
+    {type:"anagramme", cat:"Anagramme", a:"ARMOIRE", gain:3, penalite:1},
+    // ─ Trouver l'intrus ─
+    {type:"intrus", cat:"Intrus", options:["Mars","Jupiter","Saturne","Lune"], a:"Lune (ce n'est pas une planète)", gain:2, penalite:1},
+    {type:"intrus", cat:"Intrus", options:["Pomme","Poire","Banane","Carotte"], a:"Carotte (ce n'est pas un fruit)", gain:2, penalite:1},
+    {type:"intrus", cat:"Intrus", options:["Paris","Madrid","Rome","Amazonie"], a:"Amazonie (ce n'est pas une ville)", gain:2, penalite:1},
+    {type:"intrus", cat:"Intrus", options:["Carré","Triangle","Rectangle","Banane"], a:"Banane (ce n'est pas une forme)", gain:2, penalite:1},
+    {type:"intrus", cat:"Intrus", options:["Bleu","Rouge","Vert","Lion"], a:"Lion (ce n'est pas une couleur)", gain:2, penalite:1},
+    // ─ Rébus / Charades ─
+    {type:"rebus", cat:"Rébus", lines:["Mon premier est le contraire de « tard ».","Mon deuxième est la première lettre de l'alphabet.","Mon tout est un arbre."], a:"Sapin", gain:3, penalite:1},
+    {type:"rebus", cat:"Rébus", lines:["Mon premier est un animal qui miaule.","Mon deuxième est la note après « do ».","Mon tout sert à écrire."], a:"Crayon", gain:3, penalite:1},
+    {type:"rebus", cat:"Rébus", lines:["Mon premier est la moitié de « papa ».","Mon deuxième est la première voyelle.","Mon tout est un fruit."], a:"Pomme", gain:3, penalite:1},
+    {type:"rebus", cat:"Rébus", lines:["Je peux avoir des aiguilles sans jamais piquer.","Qui suis-je ?"], a:"Une horloge / une montre", gain:2, penalite:1},
+    {type:"rebus", cat:"Rébus", lines:["Je suis plein de villes mais je n'ai aucune maison.","Je suis plein de routes mais aucune voiture.","Qui suis-je ?"], a:"Une carte", gain:3, penalite:1},
   ],
+  /* ── DÉFIS (le maître du jeu diffuse un média) — types : blindtest · zoom ──
+     Pour un vrai média : renseignez "audio" (URL .mp3) ou "img" (URL d'image). Sinon le MJ le diffuse lui-même. */
   defis: [
-    {t:"Citez 3 prophètes cités dans le Coran en 15 secondes.", duree:15, gain:3, penalite:1},
-    {t:"Épelez le mot « RAMADAN » à l'envers.", duree:20, gain:2, penalite:1},
-    {t:"Remettez dans l'ordre : Fajr, ʿIshâ, Dhuhr, Maghrib, ʿAsr.", a:"Fajr, Dhuhr, ʿAsr, Maghrib, ʿIshâ", duree:25, gain:3, penalite:1},
-    {t:"Mimez « faire ses ablutions » — l'autre équipe devine.", duree:30, gain:2, penalite:0},
-    {t:"Citez 5 mots d'arabe que vous connaissez en 20 secondes.", duree:20, gain:3, penalite:1},
-    {t:"Trouvez le mot mystère : K _ ʿ B A (lieu saint).", a:"Kaʿba", duree:15, gain:2, penalite:1},
-    {t:"Chantez ou récitez 3 lettres de l'alphabet arabe.", duree:15, gain:2, penalite:0},
-    {t:"En équipe, citez les 5 piliers de l'Islam dans l'ordre.", a:"Shahâda, Salât, Zakât, Sawm, Hajj", duree:25, gain:3, penalite:1},
+    {type:"blindtest", cat:"Blind test", t:"Le maître du jeu lance l'extrait audio (5 s). De quel univers s'agit-il ?", a:"Harry Potter", duree:20, gain:3, penalite:1, audio:""},
+    {type:"blindtest", cat:"Blind test", t:"Le maître du jeu lance l'extrait audio (5 s). De quel univers s'agit-il ?", a:"Pirates des Caraïbes", duree:20, gain:3, penalite:1, audio:""},
+    {type:"blindtest", cat:"Blind test", t:"Le maître du jeu lance l'extrait audio (5 s). De quel univers s'agit-il ?", a:"Le Roi Lion", duree:20, gain:3, penalite:1, audio:""},
+    {type:"blindtest", cat:"Blind test", t:"Le maître du jeu lance l'extrait audio (5 s). De quel univers s'agit-il ?", a:"Minecraft", duree:20, gain:3, penalite:1, audio:""},
+    {type:"blindtest", cat:"Blind test", t:"Le maître du jeu lance l'extrait audio (5 s). De quel univers s'agit-il ?", a:"Mario Bros", duree:20, gain:3, penalite:1, audio:""},
+    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une fermeture éclair", duree:20, gain:2, penalite:1, img:""},
+    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une balle de tennis", duree:20, gain:2, penalite:1, img:""},
+    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une ruche", duree:20, gain:2, penalite:1, img:""},
+    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une tranche de kiwi", duree:20, gain:2, penalite:1, img:""},
+    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une touche de clavier", duree:20, gain:2, penalite:1, img:""},
   ],
   duels: [
-    {t:"Première équipe à nommer une sourate du Coran l'emporte !", duree:10},
-    {t:"Bras de fer de connaissances : citez chacun un prophète, la dernière équipe qui répond gagne.", duree:30},
-    {t:"Qui trouve en premier : combien de piliers de la foi (îmân) ? (réponse : 6)", duree:10},
-    {t:"Duel de rapidité : premier à dire « Bismillâh » en entier gagne.", duree:8},
-    {t:"Chaque équipe cite un mois hégirien à tour de rôle, la première à sécher perd.", duree:30},
-    {t:"Premier à citer le nom d'un ange gagne le duel.", duree:10},
+    {t:"Première équipe à nommer une capitale européenne l'emporte !", duree:10},
+    {t:"Premier à citer un océan gagne le duel.", duree:10},
+    {t:"Chacune son tour, citez une couleur de l'arc-en-ciel : la dernière équipe qui répond gagne.", duree:30},
+    {t:"Premier à donner le résultat de 7 × 8 gagne. (Réponse : 56)", duree:8},
+    {t:"Premier à citer un animal qui vole gagne.", duree:10},
+    {t:"Chaque équipe cite un pays d'Afrique à tour de rôle : la première à sécher perd.", duree:30},
   ],
 };
 
@@ -677,7 +732,7 @@ class Game{
     const t=this.teams[this.current];
     const c=this.board[t.pos];
     switch(c.type){
-      case 'question': this.openQuestion(c); break;
+      case 'question': this.openQuestion(); break;
       case 'defi': this.openDefi(); break;
       case 'duel': this.openDuel(false); break;
       case 'bonus': this.openBonus(); break;
@@ -690,12 +745,22 @@ class Game{
   }
 
   /* ---------- content drawing (no repeats) ---------- */
-  drawQuestion(cat){
+  drawQuestion(){
     let pool=CONTENT.questions.map((q,i)=>({q,i})).filter(o=>!this.usedQ.includes(o.i));
-    if(cat){ const byCat=pool.filter(o=>o.q.cat===cat); if(byCat.length)pool=byCat; }
     if(!pool.length){ this.usedQ=[]; pool=CONTENT.questions.map((q,i)=>({q,i})); }
     const pick=pool[Math.floor(Math.random()*pool.length)];
     this.usedQ.push(pick.i); return pick.q;
+  }
+  qTypeMeta(t){ return ({text:{ico:'❓',name:'Question'},drapeau:{ico:'🚩',name:'Drapeau'},anagramme:{ico:'🔤',name:'Anagramme'},intrus:{ico:'🎯',name:"Trouver l'intrus"},rebus:{ico:'🧩',name:'Rébus / Charade'}})[t]||{ico:'❓',name:'Question'}; }
+  scramble(w){ const a=[...w]; let s; do{ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} s=a.join(''); }while(s===w && w.length>1); return a; }
+  qBody(q,scrambled){
+    switch(q.type){
+      case 'drapeau': return `<div class="flag-big">${q.flag}</div><p class="qtext" style="font-size:1.7rem">Quel est ce pays ?</p>`;
+      case 'anagramme': return `<div class="tiles">${scrambled.map(l=>`<span class="tile">${l}</span>`).join('')}</div><p class="qtext" style="font-size:1.4rem">Retrouvez le mot caché</p>`;
+      case 'intrus': return `<p class="qtext" style="font-size:1.5rem;margin-bottom:.6rem">Trouvez l'intrus !</p><div class="opts">${q.options.map(o=>`<span class="opt">${o}</span>`).join('')}</div>`;
+      case 'rebus': return `<div class="rebus">${q.lines.map(l=>`<p>${l}</p>`).join('')}</div>`;
+      default: return `<p class="qtext">${q.q}</p>`;
+    }
   }
   drawDefi(){ let p=CONTENT.defis.map((d,i)=>({d,i})).filter(o=>!this.usedD.includes(o.i)); if(!p.length){this.usedD=[];p=CONTENT.defis.map((d,i)=>({d,i}));} const k=p[Math.floor(Math.random()*p.length)]; this.usedD.push(k.i); return k.d; }
   drawDuel(){ let p=CONTENT.duels.map((d,i)=>({d,i})).filter(o=>!this.usedDu.includes(o.i)); if(!p.length){this.usedDu=[];p=CONTENT.duels.map((d,i)=>({d,i}));} const k=p[Math.floor(Math.random()*p.length)]; this.usedDu.push(k.i); return k.d; }
@@ -715,13 +780,15 @@ class Game{
       <div class="modal-actions"><button class="btn btn-gold btn-lg" onclick="G.resolveTurn()">Continuer →</button></div></div>`);
   }
 
-  openQuestion(c){
-    const q=this.drawQuestion(c.cat);
-    this._pending={q};
-    this.openModal(this.modalHead('question',c.cat||'')+`<div class="modal-body">
-      <div class="qmeta"><span class="qchip">📚 ${q.cat}</span><span class="qchip">Niveau ${q.niveau}</span>
-        <span class="qchip">✅ +${q.gain}</span><span class="qchip">❌ −${q.penalite} case(s)</span></div>
-      <p class="qtext">${q.q}</p>
+  openQuestion(){
+    const q=this.drawQuestion();
+    const scrambled=(q.type==='anagramme')?this.scramble(q.a):null;
+    this._pending={q,scrambled};
+    const m=this.qTypeMeta(q.type);
+    this.openModal(`<div class="modal-head"><span class="modal-badge" style="background:var(--c-question)">${m.ico} ${m.name}</span><span class="modal-title">${q.cat||''}</span></div>
+      <div class="modal-body">
+      <div class="qmeta"><span class="qchip">📚 ${q.cat}</span><span class="qchip">✅ +${q.gain}</span><span class="qchip">❌ −${q.penalite} case(s)</span></div>
+      ${this.qBody(q,scrambled)}
       <div id="ansSlot"></div>
       <div class="modal-actions">
         <button class="btn btn-ghost btn-lg" id="showAns" onclick="G.showAnswer()">👁️ Afficher la réponse</button>
@@ -744,13 +811,20 @@ class Game{
 
   openDefi(){
     const d=this.drawDefi(); this._pending={d};
-    this.openModal(this.modalHead('defi')+`<div class="modal-body">
+    const isAudio=d.type==='blindtest', isZoom=d.type==='zoom';
+    const badge=isAudio?{ico:'🎵',name:'Blind test'}:isZoom?{ico:'🔍',name:'Zoom mystère'}:{ico:'🎯',name:'Défi'};
+    let media='';
+    if(isAudio) media = d.audio? `<audio controls src="${d.audio}" style="width:100%;margin:.5rem 0"></audio>` : `<div class="media-ph">🎵</div>`;
+    else if(isZoom) media = d.img? `<img class="zoom-img" src="${d.img}" alt="zoom">` : `<div class="media-ph">🔍</div>`;
+    this.openModal(`<div class="modal-head"><span class="modal-badge" style="background:var(--c-defi)">${badge.ico} ${badge.name}</span><span class="modal-title">${d.cat||''}</span></div>
+      <div class="modal-body">
       <div class="qmeta"><span class="qchip">⏱️ ${d.duree}s</span><span class="qchip">✅ +${d.gain}</span><span class="qchip">❌ −${d.penalite}</span></div>
-      <p class="qtext">${d.t}</p>
-      ${d.a?`<div id="ansSlot"></div>`:''}
+      ${media}
+      <p class="qtext" style="font-size:1.5rem">${d.t}</p>
+      <div id="ansSlot"></div>
       <div class="modal-actions">
         <button class="btn btn-gold btn-lg" onclick="G.startTimer(${d.duree})">▶ Chrono ${d.duree}s</button>
-        ${d.a?`<button class="btn btn-ghost btn-lg" onclick="G.showDefiAns()">👁️ Solution</button>`:''}
+        <button class="btn btn-ghost btn-lg" onclick="G.showDefiAns()">👁️ Solution</button>
       </div>
       <div class="modal-actions" style="margin-top:1rem">
         <button class="btn btn-green btn-lg" onclick="G.resolveDefi(true)">✅ Réussi</button>
