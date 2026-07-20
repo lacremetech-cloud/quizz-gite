@@ -469,15 +469,19 @@ const PALETTE=[
 
 /* ════════════ BOARD GENERATION ════════════ */
 function buildBoard(len){
-  // Répartition mesurée : ~55% Question, ~13% Défi, ~30% spéciales (bonus/piège/
-  // hasard/choix/duel), et jamais deux cases spéciales à la suite. Refuges tous les 7.
-  const block=["question","defi","question","bonus","question","question","hasard",
-               "question","defi","question","piege","question","question","choix","question","duel"];
+  // Répartition mesurée : ~85% contenu (Question/Défi) et seulement ~15% de cases
+  // spéciales, jamais deux à la suite. Les 5 types de spéciales apparaissent quand
+  // même (cyclés : bonus, hasard, piège, choix, duel). Refuges tous les 7.
+  const specials=["bonus","hasard","piege","choix","duel"];
   const board=[{type:"start"}];
-  let bi=0;
+  let si=0, sinceSpecial=0, content=0;
   for(let i=1;i<len-1;i++){
     if(i%7===0){ board.push({type:"safe"}); continue; }
-    board.push({type:block[bi%block.length]}); bi++;
+    if(sinceSpecial>=6){ // une spéciale environ toutes les 7 cases de contenu (~14%)
+      board.push({type:specials[si%specials.length]}); si++; sinceSpecial=0; continue;
+    }
+    sinceSpecial++; content++;
+    board.push({type: content%6===0 ? "defi" : "question"}); // ~1 défi pour 5 questions
   }
   board.push({type:"final"});
   return board;
@@ -524,7 +528,7 @@ class Game{
     this.board=buildBoard(len);
     this.teams.forEach(t=>{t.pos=0;t.score=0;t.shield=false;t.doubleNext=false;t.cancelPen=false;t.extraTurn=false;t.skip=0;t.lastSafe=0;});
     this.current=0;this.turns=0;this.gameOver=false;this.busy=false;this.rolledThisTurn=false;this.awaitingNext=false;
-    this.history=[];this.usedQ=[];this.usedD=[];this.usedDu=[];
+    this.history=[];this.usedQ=[];this.usedD=[];this.usedDu=[];this.lastQType=null;
     document.getElementById('setup').classList.add('hidden');
     document.getElementById('victory').classList.remove('show');
     document.getElementById('game').classList.remove('hidden');
@@ -758,8 +762,11 @@ class Game{
   drawQuestion(){
     let pool=CONTENT.questions.map((q,i)=>({q,i})).filter(o=>!this.usedQ.includes(o.i));
     if(!pool.length){ this.usedQ=[]; pool=CONTENT.questions.map((q,i)=>({q,i})); }
+    // Mélange des catégories : évite de tirer deux fois de suite le même type
+    // (culture, drapeau, anagramme, intrus) tant qu'un autre type est disponible.
+    if(this.lastQType){ const varied=pool.filter(o=>o.q.type!==this.lastQType); if(varied.length)pool=varied; }
     const pick=pool[Math.floor(Math.random()*pool.length)];
-    this.usedQ.push(pick.i); return pick.q;
+    this.usedQ.push(pick.i); this.lastQType=pick.q.type; return pick.q;
   }
   qTypeMeta(t){ return ({text:{ico:'❓',name:'Question'},drapeau:{ico:'🚩',name:'Drapeau'},anagramme:{ico:'🔤',name:'Anagramme'},intrus:{ico:'🎯',name:"Trouver l'intrus"},rebus:{ico:'🧩',name:'Rébus / Charade'}})[t]||{ico:'❓',name:'Question'}; }
   scramble(w){ const a=[...w]; let s; do{ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} s=a.join(''); }while(s===w && w.length>1); return a; }
