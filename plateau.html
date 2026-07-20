@@ -253,9 +253,9 @@
     <div class="setup-opts">
       <label>Cases du plateau
         <select id="boardLenSel">
-          <option value="short">Courte (~28)</option>
-          <option value="normal" selected>Normale (~42)</option>
-          <option value="long">Longue (~56)</option>
+          <option value="short">Courte (~32)</option>
+          <option value="normal" selected>Normale (~48)</option>
+          <option value="long">Longue (~64)</option>
         </select>
       </label>
     </div>
@@ -367,6 +367,17 @@ const CONTENT = {
     {type:"text", cat:"Culture G", q:"Quel animal dort debout ?", a:"Le cheval", gain:2, penalite:1},
     {type:"text", cat:"Culture G", q:"Combien de joueurs y a-t-il dans une équipe de football sur le terrain ?", a:"11", gain:2, penalite:1},
     {type:"text", cat:"Culture G", q:"Quel est le plus grand océan ?", a:"Le Pacifique", gain:2, penalite:1},
+    // ─ Culture G · ajout ─
+    {type:"text", cat:"Géographie", q:"Quelle est la capitale de l'Australie ?", a:"Canberra", gain:3, penalite:1},
+    {type:"text", cat:"Géographie", q:"Combien de continents y a-t-il sur Terre ?", a:"Sept (7)", gain:2, penalite:1},
+    {type:"text", cat:"Géographie", q:"Quel est le plus long fleuve du monde ?", a:"Le Nil", gain:3, penalite:1},
+    {type:"text", cat:"Sciences", q:"Quelle est la planète la plus proche du Soleil ?", a:"Mercure", gain:2, penalite:1},
+    {type:"text", cat:"Sciences", q:"Quel gaz les plantes absorbent-elles pour la photosynthèse ?", a:"Le dioxyde de carbone (CO₂)", gain:3, penalite:1},
+    {type:"text", cat:"Sciences", q:"Combien de côtés a un hexagone ?", a:"Six (6)", gain:2, penalite:1},
+    {type:"text", cat:"Histoire", q:"En quelle année a commencé la Révolution française ?", a:"1789", gain:2, penalite:1},
+    {type:"text", cat:"Culture G", q:"Qui a peint la Joconde ?", a:"Léonard de Vinci", gain:2, penalite:1},
+    {type:"text", cat:"Culture G", q:"Quel est l'animal terrestre le plus rapide ?", a:"Le guépard", gain:2, penalite:1},
+    {type:"text", cat:"Culture G", q:"Quelle est la langue la plus parlée dans le monde (langue maternelle) ?", a:"Le mandarin (chinois)", gain:3, penalite:1},
     // ─ Drapeaux ─
     {type:"drapeau", cat:"Drapeau", flag:"🇲🇽", a:"Le Mexique", gain:2, penalite:1},
     {type:"drapeau", cat:"Drapeau", flag:"🇯🇵", a:"Le Japon", gain:2, penalite:1},
@@ -458,17 +469,15 @@ const PALETTE=[
 
 /* ════════════ BOARD GENERATION ════════════ */
 function buildBoard(len){
-  // motif répété entre départ (0) et arrivée (len-1), avec refuges réguliers
-  const pattern=["question","bonus","question","defi","hasard","question","piege","choix","question","duel"];
+  // Répartition mesurée : ~55% Question, ~13% Défi, ~30% spéciales (bonus/piège/
+  // hasard/choix/duel), et jamais deux cases spéciales à la suite. Refuges tous les 7.
+  const block=["question","defi","question","bonus","question","question","hasard",
+               "question","defi","question","piege","question","question","choix","question","duel"];
   const board=[{type:"start"}];
-  let pi=0, qcat=0;
-  const cats=["Culture","Coran","Prophètes","Vocabulaire"];
+  let bi=0;
   for(let i=1;i<len-1;i++){
-    if(i%6===0){ board.push({type:"safe"}); continue; }
-    let type=pattern[pi%pattern.length]; pi++;
-    const c={type};
-    if(type==="question"){ c.cat=cats[qcat%cats.length]; qcat++; }
-    board.push(c);
+    if(i%7===0){ board.push({type:"safe"}); continue; }
+    board.push({type:block[bi%block.length]}); bi++;
   }
   board.push({type:"final"});
   return board;
@@ -510,8 +519,8 @@ class Game{
   }
 
   start(){
-    const lenMap={short:28,normal:42,long:56};
-    const len=lenMap[document.getElementById('boardLenSel').value]||42;
+    const lenMap={short:32,normal:48,long:64};
+    const len=lenMap[document.getElementById('boardLenSel').value]||48;
     this.board=buildBoard(len);
     this.teams.forEach(t=>{t.pos=0;t.score=0;t.shield=false;t.doubleNext=false;t.cancelPen=false;t.extraTurn=false;t.skip=0;t.lastSafe=0;});
     this.current=0;this.turns=0;this.gameOver=false;this.busy=false;this.rolledThisTurn=false;this.awaitingNext=false;
