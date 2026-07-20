@@ -406,11 +406,6 @@ const CONTENT = {
     {type:"blindtest", cat:"Blind test", t:"Écoutez l'extrait (5 s). De quel univers s'agit-il ?", a:"Le Roi Lion (Circle of Life)", duree:20, gain:3, penalite:1, audio:"", yt:"https://www.youtube.com/watch?v=GibiNy4d4gc"},
     {type:"blindtest", cat:"Blind test", t:"Écoutez l'extrait (5 s). De quel univers s'agit-il ?", a:"Pocahontas (L'air du vent / Colors of the Wind)", duree:20, gain:3, penalite:1, audio:"", yt:"https://www.youtube.com/watch?v=O9MvdMqKvpU"},
     {type:"blindtest", cat:"Blind test", t:"Écoutez l'extrait (5 s). De quel univers s'agit-il ?", a:"Mario Bros (thème principal)", duree:20, gain:3, penalite:1, audio:"", yt:"https://www.youtube.com/watch?v=iy3qq7zc4EY"},
-    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une fermeture éclair", duree:20, gain:2, penalite:1, img:""},
-    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une balle de tennis", duree:20, gain:2, penalite:1, img:""},
-    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une ruche", duree:20, gain:2, penalite:1, img:""},
-    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une tranche de kiwi", duree:20, gain:2, penalite:1, img:""},
-    {type:"zoom", cat:"Zoom mystère", t:"Le maître du jeu affiche l'image très zoomée. Qu'est-ce que c'est ?", a:"Une touche de clavier", duree:20, gain:2, penalite:1, img:""},
   ],
   duels: [
     {t:"Duel : première équipe à donner la bonne réponse. En quelle année l'Homme a-t-il marché sur la Lune ?", a:"1969", duree:12},
@@ -478,7 +473,7 @@ function buildBoard(len){
   // Répartition mesurée : ~85% contenu (Question/Défi) et seulement ~15% de cases
   // spéciales, jamais deux à la suite. Les 5 types de spéciales apparaissent quand
   // même (cyclés : bonus, hasard, piège, choix, duel). Refuges tous les 7.
-  const specials=["bonus","hasard","piege","choix","duel"];
+  const specials=["bonus","piege","choix","duel"];
   const board=[{type:"start"}];
   let si=0, sinceSpecial=0, content=0;
   for(let i=1;i<len-1;i++){
@@ -606,7 +601,7 @@ class Game{
   }
   relayout(){ this.computeLayout(); this.layoutTokens(); this.drawRoad(); this.placePawn(0); this.placePawn(1); }
   renderLegend(){
-    const order=['question','defi','duel','bonus','piege','hasard','choix','safe','final'];
+    const order=['question','defi','duel','bonus','piege','choix','safe','final'];
     document.getElementById('legend').innerHTML=order.map(t=>{
       const m=TYPE_META[t];
       return `<span class="lgi"><i style="background:${m.color}"></i>${m.ico} ${m.name}</span>`;
